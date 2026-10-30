@@ -5,6 +5,9 @@
     "src/core/catalog.ts",
     "src/core/rules",
     "test/fixtures",
-    "site/src/presets.ts"
+    "site/src/presets.ts",
+    "site/src/Xray.tsx",
+    "site/src/Allow.tsx",
+    "site/src/Indo.tsx"
   ]
 }

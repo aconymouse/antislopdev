@@ -1,0 +1,195 @@
+import { useEffect, useState, type ReactNode } from 'react'
+import { catalog } from '../../src/core/index.js'
+import type { Copy } from './copy'
+import { track } from './track'
+
+const parts: string[][] = [['UI-12'], ['UI-02', 'UI-04'], ['UI-11', 'TX-09'], ['TX-05'], ['TX-08', 'UI-16'], ['TR-01', 'UI-21'], ['UI-20'], ['UI-01'], ['UI-06', 'UI-32', 'UI-05'], ['TR-02']]
+const total = new Set(parts.flat()).size
+const title = (id: string) => catalog.find((r) => r.id === id)?.title ?? id
+const level = (id: string) => catalog.find((r) => r.id === id)?.level ?? 'warn'
+
+function Part({ ids, active, onPoint, className, children }: { ids: string[]; active: string[] | null; onPoint: (ids: string[] | null) => void; className: string; children: ReactNode }) {
+  const on = active === ids
+  return (
+    <div
+      className={`part ${className} ${on ? 'on' : ''}`}
+      role="button"
+      tabIndex={0}
+      aria-label={ids.map((id) => `${id} ${title(id)}`).join(', ')}
+      onMouseEnter={() => onPoint(ids)}
+      onMouseLeave={() => onPoint(null)}
+      onFocus={() => onPoint(ids)}
+      onBlur={() => onPoint(null)}
+      onClick={() => onPoint(ids)}
+    >
+      {children}
+      <span className="part-tag" aria-hidden="true">
+        {ids.map((id) => (
+          <b key={id} className={level(id)}>
+            {id}
+          </b>
+        ))}
+      </span>
+    </div>
+  )
+}
+
+export function Xray({ t }: { t: Copy['xray'] }) {
+  const [fixed, setFixed] = useState(false)
+  const [active, setActive] = useState<string[] | null>(null)
+  const [touch, setTouch] = useState(false)
+  useEffect(() => setTouch(window.matchMedia('(hover: none)').matches), [])
+  const p = { active, onPoint: setActive }
+
+  return (
+    <section className="split xray flip" aria-labelledby="xray-title">
+      <div className="split-copy">
+        <h2 id="xray-title">{t.title}</h2>
+        <p>{t.p1}</p>
+        <p>{t.p2}</p>
+        <button
+          type="button"
+          className="button solid"
+          aria-pressed={fixed}
+          onClick={() => {
+            setFixed(!fixed)
+            setActive(null)
+            track('xray_toggle', { to: fixed ? 'generated' : 'rewritten' })
+          }}
+        >
+          {fixed ? t.restore : t.rewrite}
+        </button>
+      </div>
+      <div className="split-stage" data-demo>
+        <div className="browser">
+          <div className="browser-top" aria-hidden="true">
+            <span className="dots">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="browser-url">flowly.app</span>
+          </div>
+          <div className={`fx ${fixed ? 'is-fixed' : ''}`}>
+            <div className="fx-slop" aria-hidden={fixed}>
+              <Part ids={parts[0]!} {...p} className="fx-blobs">
+                <i />
+                <i />
+              </Part>
+              <div className="fx-nav">
+                <b>Flowly</b>
+                <span>Product</span>
+                <span>Pricing</span>
+                <span className="fx-pill-btn">Get started</span>
+              </div>
+              <div className="fx-hero">
+                <Part ids={parts[1]!} {...p} className="fx-badge">
+                  <span>✨ New: AI-powered workflows</span>
+                </Part>
+                <Part ids={parts[2]!} {...p} className="fx-h1">
+                  <span>Unlock the power of seamless collaboration</span>
+                </Part>
+                <Part ids={parts[3]!} {...p} className="fx-lead">
+                  <span>In today&apos;s fast-paced world, teams need a robust, intuitive, and powerful platform.</span>
+                </Part>
+                <Part ids={parts[4]!} {...p} className="fx-ctas">
+                  <span className="fx-cta">Get started →</span>
+                  <span className="fx-ghost">Learn more →</span>
+                </Part>
+                <Part ids={parts[5]!} {...p} className="fx-proof">
+                  <span className="fx-avatars">
+                    <i />
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span>Trusted by 10,000+ teams</span>
+                </Part>
+                <Part ids={parts[6]!} {...p} className="fx-logos">
+                  <span>ACME</span>
+                  <span>Globex</span>
+                  <span>Initech</span>
+                  <span>Umbrella</span>
+                </Part>
+              </div>
+              <Part ids={parts[7]!} {...p} className="fx-eyebrow">
+                <span>FEATURES</span>
+              </Part>
+              <Part ids={parts[8]!} {...p} className="fx-cards">
+                {[
+                  ['⚡', 'Lightning fast'],
+                  ['🔒', 'Bank-grade security'],
+                  ['🚀', 'Scales with you'],
+                ].map(([e, h]) => (
+                  <span key={h} className="fx-card">
+                    <span className="fx-tile">{e}</span>
+                    <b>{h}</b>
+                    <span className="fx-line" />
+                    <span className="fx-line short" />
+                  </span>
+                ))}
+              </Part>
+              <Part ids={parts[9]!} {...p} className="fx-quote">
+                <span>&ldquo;Flowly changed everything.&rdquo;</span>
+                <small>Sarah Chen, CEO at TechCorp</small>
+              </Part>
+            </div>
+            <div className="fx-clean" aria-hidden={!fixed}>
+              <div className="fx-nav">
+                <b>Flowly</b>
+                <span>How it works</span>
+                <span>Pricing</span>
+                <span>Sign in</span>
+              </div>
+              <div className="fx-clean-hero">
+                <h3>Shared notes that turn into a task list</h3>
+                <p>Write the meeting notes together. Every line that starts with a name becomes a task for that person, linked back to the meeting.</p>
+                <div className="fx-clean-actions">
+                  <span className="fx-cta plain">Create a workspace</span>
+                  <span className="fx-link">See how importing works</span>
+                </div>
+                <small>Free for teams of up to 5.</small>
+              </div>
+              <div className="fx-product">
+                <div className="fx-notes">
+                  <small>Weekly sync · Tue</small>
+                  <p>
+                    <b>Rani</b> send the new deck to Ops
+                  </p>
+                  <p>Launch moves to the 14th</p>
+                  <p>
+                    <b>Dimas</b> check the refund flow
+                  </p>
+                </div>
+                <div className="fx-tasks">
+                  <small>Tasks</small>
+                  <p>
+                    <i /> Send the new deck to Ops <span>Rani</span>
+                  </p>
+                  <p>
+                    <i /> Check the refund flow <span>Dimas</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="xray-info" aria-live="polite">
+          {fixed ? (
+            <span className="clean">0 block · 0 justify · 0 warn</span>
+          ) : active ? (
+            active.map((id) => (
+              <span key={id}>
+                <b className={level(id)}>{id}</b> {title(id)}
+              </span>
+            ))
+          ) : (
+            <span>
+              {touch ? t.tap : t.point} · {total} {t.rules}
+            </span>
+          )}
+        </p>
+      </div>
+    </section>
+  )
+}

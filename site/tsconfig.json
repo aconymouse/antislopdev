@@ -4,7 +4,9 @@
     "noEmit": true,
     "rootDir": "..",
     "module": "esnext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": []
   },
   "include": ["src", "../src/core"]
 }
