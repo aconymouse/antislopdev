@@ -1,0 +1,49 @@
+{
+  "name": "antislopdev",
+  "version": "0.1.0",
+  "description": "Rules and a checker that catch generic AI output in UI, copy, and code.",
+  "license": "MIT",
+  "author": "Hafidz Nc",
+  "homepage": "https://antislopdev.aconymous.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aconymouse/antislopdev.git"
+  },
+  "keywords": [
+    "ai",
+    "slop",
+    "lint",
+    "agent",
+    "skill",
+    "claude",
+    "cursor",
+    "design",
+    "copywriting"
+  ],
+  "type": "module",
+  "bin": {
+    "antislopdev": "dist/cli/index.js"
+  },
+  "exports": {
+    ".": "./dist/core/index.js"
+  },
+  "files": [
+    "dist",
+    "RULES.md",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "catalog": "node scripts/catalog.mjs",
+    "build": "node scripts/catalog.mjs && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "prepublishOnly": "npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

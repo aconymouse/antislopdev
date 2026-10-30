@@ -1,0 +1,4 @@
+fix: rows with zero hours no longer end up on the invoice
+
+The filter ran after totals were computed, so empty days still showed
+up as 0.00 lines. Filter first, then total.

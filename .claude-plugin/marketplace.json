@@ -1,0 +1,11 @@
+{
+  "name": "antislopdev",
+  "owner": { "name": "Hafidz Nc" },
+  "plugins": [
+    {
+      "name": "antislopdev",
+      "source": "./",
+      "description": "122 rules and a checker that catch generic AI output in UI, copy, docs, commits and code."
+    }
+  ]
+}

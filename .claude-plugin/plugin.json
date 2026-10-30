@@ -1,0 +1,10 @@
+{
+  "name": "antislopdev",
+  "version": "0.1.0",
+  "description": "122 rules and a checker that catch generic AI output in UI, copy, docs, commits and code.",
+  "author": { "name": "Hafidz Nc" },
+  "homepage": "https://antislopdev.aconymous.com",
+  "repository": "https://github.com/aconymouse/antislopdev",
+  "license": "MIT",
+  "keywords": ["design", "copywriting", "lint", "review"]
+}
