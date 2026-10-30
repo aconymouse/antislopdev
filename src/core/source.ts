@@ -74,7 +74,7 @@ export class Source {
   constructor(input: SourceInput & { kind: FileKind }) {
     this.path = input.path
     this.kind = input.kind
-    this.text = input.kind === 'commit' ? input.text.replace(/^#.*$/gm, '') : input.text
+    this.text = input.kind === 'commit' ? input.text.replace(/^#.*$/gm, (m) => ' '.repeat(m.length)) : input.text
     this.ext = (this.path.split('.').pop() ?? '').toLowerCase()
     for (let i = 0; i < this.text.length; i++) if (this.text[i] === '\n') this.starts.push(i + 1)
   }

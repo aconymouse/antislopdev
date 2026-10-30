@@ -31,6 +31,8 @@ export interface Finding {
   path: string
   line: number
   column: number
+  offset: number
+  length: number
   excerpt: string
   escalated?: boolean
   allowed?: string

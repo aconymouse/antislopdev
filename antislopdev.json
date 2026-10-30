@@ -4,6 +4,7 @@
     "skills/antislopdev/RULES.md",
     "src/core/catalog.ts",
     "src/core/rules",
-    "test/fixtures"
+    "test/fixtures",
+    "site/src/presets.ts"
   ]
 }

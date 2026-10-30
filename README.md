@@ -44,7 +44,7 @@ Every rule has a level:
 
 - `block` fails the run.
 - `justify` fails unless a reason sits on the same line or the line above: `antislopdev-allow UI-11: the wordmark gradient is the brand`. Use `antislopdev-allow-file` for a whole file.
-- `warn` is reported but never fails on its own. Three warns of the same rule in one file count as `justify`.
+- `warn` is reported but never fails on its own. Three warns of the same rule in one file count as `justify`. A warn can carry the same reason comment when it is deliberate.
 
 Options:
 

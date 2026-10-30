@@ -51,9 +51,11 @@ function nextFilled(src: Source, line: number): number {
 
 function finding(src: Source, rule: string, hit: Hit): Finding {
   const m = meta.get(rule)!
-  const { line, column } = src.position(Math.min(hit.index, Math.max(0, src.text.length - 1)))
+  const offset = Math.min(hit.index, Math.max(0, src.text.length - 1))
+  const { line, column } = src.position(offset)
   const text = src.line(line).trim()
-  const f: Finding = { rule, level: m.level, title: m.title, path: src.path, line, column, excerpt: text.length > 140 ? text.slice(0, 139) + '…' : text }
+  const length = hit.length ?? Math.max(1, src.line(line).length - column + 1)
+  const f: Finding = { rule, level: m.level, title: m.title, path: src.path, line, column, offset, length, excerpt: text.length > 140 ? text.slice(0, 139) + '…' : text }
   if (hit.note !== undefined) f.note = hit.note
   return f
 }
@@ -112,7 +114,7 @@ export function checkSources(sources: readonly Source[], options: CheckOptions =
   let allowed = 0
   const cache = new Map<string, Allow[]>()
   for (const f of unique) {
-    if (f.level !== 'justify') continue
+    if (f.level === 'block') continue
     const src = bySource.get(f.path)
     if (!src) continue
     if (!cache.has(f.path)) cache.set(f.path, allowances(src))

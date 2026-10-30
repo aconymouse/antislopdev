@@ -107,7 +107,7 @@ async function deadLinks(inputs: SourceInput[]): Promise<Finding[]> {
         const problem = await status.get(job.url)
         if (!problem) continue
         const { line, column } = job.s.position(job.index)
-        results.push({ rule: 'TR-07', level: meta.level, title: meta.title, note: `${job.url} (${problem})`, path: job.s.path, line, column, excerpt: job.s.line(line).trim().slice(0, 140) })
+        results.push({ rule: 'TR-07', level: meta.level, title: meta.title, note: `${job.url} (${problem})`, path: job.s.path, line, column, offset: job.index, length: job.url.length, excerpt: job.s.line(line).trim().slice(0, 140) })
       }
     }),
   )
