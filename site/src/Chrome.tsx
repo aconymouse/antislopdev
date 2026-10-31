@@ -224,6 +224,7 @@ export function Footer({ lang }: { lang: Lang }) {
           <a href={repo} onClick={() => track('github_click', { place: 'footer' })}>
             GitHub
           </a>
+          <a href="https://www.npmjs.com/package/antislopdev">npm</a>
           <a href={`${repo}/blob/main/LICENSE`}>MIT</a>
         </nav>
       </div>
