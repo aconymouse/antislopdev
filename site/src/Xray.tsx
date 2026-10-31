@@ -51,21 +51,23 @@ export function Xray({ t }: { t: Copy['xray'] }) {
         <p>{t.p1}</p>
         <p>{t.p2}</p>
         <div className="xray-act">
-          <button
-            type="button"
-            className="go"
-            aria-pressed={fixed}
-            onClick={() => {
-              setFixed(!fixed)
-              setActive(null)
-              track('xray_toggle', { to: fixed ? 'generated' : 'rewritten' })
-            }}
-          >
-            {fixed ? t.restore : t.rewrite}
-            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M2.5 5.5h10l-3-3M13.5 10.5h-10l3 3" />
-            </svg>
-          </button>
+          <div className="xray-switch" role="group">
+            {[false, true].map((to) => (
+              <button
+                key={String(to)}
+                type="button"
+                aria-pressed={fixed === to}
+                onClick={() => {
+                  if (fixed === to) return
+                  setFixed(to)
+                  setActive(null)
+                  track('xray_toggle', { to: to ? 'rewritten' : 'generated' })
+                }}
+              >
+                {to ? t.rewrite : t.slop}
+              </button>
+            ))}
+          </div>
           <svg key={fixed ? 'result' : 'button'} className={`scribble ${fixed ? 'to-result' : 'to-button'}`} viewBox={fixed ? '0 0 120 80' : '0 0 96 64'} aria-hidden="true">
             {fixed ? (
               <>
@@ -197,7 +199,9 @@ export function Xray({ t }: { t: Copy['xray'] }) {
         </div>
         <p className="xray-info" aria-live="polite">
           {fixed ? (
-            <span className="clean">0 block · 0 justify · 0 warn</span>
+            <span className="clean">
+              {t.rewritten} · 0 block · 0 justify · 0 warn
+            </span>
           ) : active ? (
             active.map((id) => (
               <span key={id}>
