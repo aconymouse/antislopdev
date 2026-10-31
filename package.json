@@ -1,7 +1,7 @@
 {
   "name": "antislopdev",
   "version": "0.1.0",
-  "description": "Rules and a checker that catch generic AI output in UI, copy, and code.",
+  "description": "Rules and a checker that catch generic AI output in UI, copy, code, SEO and security.",
   "license": "MIT",
   "author": "Hafidz Nc",
   "homepage": "https://antislopdev.aconymous.com",
@@ -18,7 +18,10 @@
     "claude",
     "cursor",
     "design",
-    "copywriting"
+    "copywriting",
+    "seo",
+    "security",
+    "linter"
   ],
   "type": "module",
   "bin": {
