@@ -1159,10 +1159,9 @@ b.warn {
 }
 
 .scribble.to-result {
-  right: calc(100% + 4px);
-  bottom: 2px;
-  width: 120px;
-  height: 80px;
+  top: calc(100% + 2px);
+  left: -100px;
+  height: 56px;
 }
 
 @keyframes scribble {

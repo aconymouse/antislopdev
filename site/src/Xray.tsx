@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { catalog } from '../../src/core/index.js'
 import type { Copy } from './copy'
 import { track } from './track'
@@ -41,6 +41,19 @@ export function Xray({ t }: { t: Copy['xray'] }) {
   const [touch, setTouch] = useState(false)
   useEffect(() => setTouch(window.matchMedia('(hover: none)').matches), [])
   const p = { active, onPoint: setActive }
+  const rewrite = useRef<HTMLButtonElement>(null)
+  const [from, setFrom] = useState(130)
+  useLayoutEffect(() => {
+    const measure = () => {
+      const b = rewrite.current
+      if (b) setFrom(Math.round(b.offsetLeft + b.offsetWidth / 2))
+    }
+    measure()
+    document.fonts?.ready.then(measure)
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [t])
+  const w = from + 100
 
   return (
     <section className="split xray flip" aria-labelledby="xray-title">
@@ -55,6 +68,7 @@ export function Xray({ t }: { t: Copy['xray'] }) {
             {[false, true].map((to) => (
               <button
                 key={String(to)}
+                ref={to ? rewrite : undefined}
                 type="button"
                 aria-pressed={fixed === to}
                 onClick={() => {
@@ -68,19 +82,17 @@ export function Xray({ t }: { t: Copy['xray'] }) {
               </button>
             ))}
           </div>
-          <svg key={fixed ? 'result' : 'button'} className={`scribble ${fixed ? 'to-result' : 'to-button'}`} viewBox={fixed ? '0 0 120 80' : '0 0 96 64'} aria-hidden="true">
-            {fixed ? (
-              <>
-                <path pathLength={1} d="M112 72c-14-30-38-52-70-58-12-2-22-1-31 1" />
-                <path className="head" pathLength={1} d="M22 4 10 15l13 7" />
-              </>
-            ) : (
-              <>
-                <path pathLength={1} d="M90 5c-3 22-24 38-50 41-9 1-18 1-25-1" />
-                <path className="head" pathLength={1} d="M26 35 14 45l13 6" />
-              </>
-            )}
-          </svg>
+          {fixed ? (
+            <svg key="result" className="scribble to-result" viewBox={`0 0 ${w} 56`} style={{ width: `${w}px` }} aria-hidden="true">
+              <path pathLength={1} d={`M${w} 3C${w - 4} 38 ${w * 0.55} 50 44 42C26 38 15 28 8 14`} />
+              <path className="head" pathLength={1} d="M6.2 25.9 8 14l10.5 5.7" />
+            </svg>
+          ) : (
+            <svg key="button" className="scribble to-button" viewBox="0 0 96 64" aria-hidden="true">
+              <path pathLength={1} d="M90 5c-3 22-24 38-50 41-9 1-18 1-25-1" />
+              <path className="head" pathLength={1} d="M26 35 14 45l13 6" />
+            </svg>
+          )}
         </div>
       </div>
       <div className="split-stage" data-demo>
