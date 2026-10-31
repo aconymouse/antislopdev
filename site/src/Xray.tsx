@@ -52,7 +52,7 @@ export function Xray({ t }: { t: Copy['xray'] }) {
         <p>{t.p2}</p>
         <button
           type="button"
-          className="button solid"
+          className="go"
           aria-pressed={fixed}
           onClick={() => {
             setFixed(!fixed)
@@ -61,6 +61,9 @@ export function Xray({ t }: { t: Copy['xray'] }) {
           }}
         >
           {fixed ? t.restore : t.rewrite}
+          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M2.5 5.5h10l-3-3M13.5 10.5h-10l3 3" />
+          </svg>
         </button>
       </div>
       <div className="split-stage" data-demo>
@@ -71,7 +74,7 @@ export function Xray({ t }: { t: Copy['xray'] }) {
               <i />
               <i />
             </span>
-            <span className="browser-url">flowly.app</span>
+            <span className="browser-url">generic.app</span>
           </div>
           <div className={`fx ${fixed ? 'is-fixed' : ''}`}>
             <div className="fx-slop" aria-hidden={fixed}>
@@ -80,7 +83,7 @@ export function Xray({ t }: { t: Copy['xray'] }) {
                 <i />
               </Part>
               <div className="fx-nav">
-                <b>Flowly</b>
+                <b>Generic</b>
                 <span>Product</span>
                 <span>Pricing</span>
                 <span className="fx-pill-btn">Get started</span>
@@ -133,13 +136,13 @@ export function Xray({ t }: { t: Copy['xray'] }) {
                 ))}
               </Part>
               <Part ids={parts[9]!} {...p} className="fx-quote">
-                <span>&ldquo;Flowly changed everything.&rdquo;</span>
+                <span>&ldquo;Generic changed everything.&rdquo;</span>
                 <small>Sarah Chen, CEO at TechCorp</small>
               </Part>
             </div>
             <div className="fx-clean" aria-hidden={!fixed}>
               <div className="fx-nav">
-                <b>Flowly</b>
+                <b>Generic</b>
                 <span>How it works</span>
                 <span>Pricing</span>
                 <span>Sign in</span>

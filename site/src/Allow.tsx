@@ -11,7 +11,7 @@ const before = `export function Wordmark() {
 const reason = `    // antislopdev-allow UI-10, UI-11: the wordmark gradient is the brand
 `
 const after = `    <h1 className="bg-gradient-to-r from-sky-400 to-violet-500 bg-clip-text text-transparent">
-      Flowly
+      Generic
     </h1>
   )
 }
@@ -43,7 +43,7 @@ export function Allow({ t }: { t: Copy['allow'] }) {
         <p>{t.p1}</p>
         <button
           type="button"
-          className="button"
+          className="go"
           aria-pressed={on}
           onClick={() => {
             setOn(!on)
@@ -51,6 +51,9 @@ export function Allow({ t }: { t: Copy['allow'] }) {
           }}
         >
           {on ? t.remove : t.toggle}
+          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M2.5 5.5h10l-3-3M13.5 10.5h-10l3 3" />
+          </svg>
         </button>
       </div>
       <div className="split-stage" data-demo>

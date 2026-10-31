@@ -90,7 +90,7 @@ npx antislopdev check --commit "$1"`}
               <i />
               <i />
             </span>
-            <span>~/flowly</span>
+            <span>~/generic</span>
           </div>
           <div className="term-body">
             {run.map((line, i) => {

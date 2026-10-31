@@ -1063,6 +1063,14 @@ b.warn {
   font-size: 17px;
 }
 
+.split-copy .go {
+  margin-top: 28px;
+}
+
+button.go:hover svg {
+  transform: rotate(180deg);
+}
+
 .split-copy .button {
   margin-top: 30px;
 }
@@ -1086,7 +1094,7 @@ b.warn {
 .agent-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px 22px;
   margin: 30px 0 0;
   padding: 0;
   list-style: none;
@@ -1096,10 +1104,6 @@ b.warn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
   color: var(--muted);
   font-size: 14px;
 }
@@ -1121,9 +1125,7 @@ b.warn {
 .browser,
 .paper {
   border: 1px solid var(--line);
-  border-radius: var(--card);
   background: var(--panel);
-  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -1150,7 +1152,6 @@ b.warn {
   display: flex;
   gap: 12px;
   padding: 12px 14px;
-  border-radius: 10px;
   background: var(--raise);
   font-size: 15px;
 }
@@ -1236,7 +1237,6 @@ b.warn {
   margin-top: 18px;
   padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 10px;
   font-size: 14px;
   opacity: 0;
   transition: opacity 0.4s;
@@ -1738,7 +1738,6 @@ b.warn {
   margin: 24px 0 0;
   padding: 16px 18px;
   border: 1px solid var(--line);
-  border-radius: 10px;
   background: var(--panel);
   color: var(--code);
   font-size: 13px;
@@ -2199,14 +2198,13 @@ b.warn {
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 4px 20px;
 }
 
 .chips button {
   height: 34px;
-  padding: 0 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  padding: 0;
+  border-bottom: 1px solid transparent;
   color: var(--muted);
   font-size: 13.5px;
   transition: border-color 0.15s, color 0.15s;
@@ -2219,11 +2217,11 @@ b.warn {
 }
 
 .chips button:hover {
-  color: var(--ink);
+  color: var(--accent-ink);
 }
 
 .chips button[aria-pressed='true'] {
-  border-color: var(--accent-ink);
+  border-color: var(--ink);
   color: var(--ink);
 }
 

@@ -17,7 +17,7 @@ export function Hero() {
   return (
     <section className="relative text-center">
       <div className="absolute -top-24 left-1/2 size-96 rounded-full bg-violet-500 blur-3xl" />
-      <span className="rounded-full border px-3 py-1 text-xs">✨ Introducing Flowly 2.0</span>
+      <span className="rounded-full border px-3 py-1 text-xs">✨ Introducing Generic 2.0</span>
       <h1 className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
         Unlock the power of seamless collaboration
       </h1>
@@ -38,7 +38,7 @@ export function Hero() {
           </div>
         ))}
       </div>
-      <blockquote>"Flowly changed everything." <cite>Sarah Chen, CEO at TechCorp</cite></blockquote>
+      <blockquote>"Generic changed everything." <cite>Sarah Chen, CEO at TechCorp</cite></blockquote>
     </section>
   )
 }
@@ -56,7 +56,7 @@ export function Hero({ teams }: { teams: number }) {
         </p>
         <Link href="/signup">Create a workspace</Link>
         <Link href="/docs/import">Import notes from Google Docs</Link>
-        <p>{teams} teams used Flowly this week.</p>
+        <p>{teams} teams used Generic this week.</p>
       </div>
       <img src="/notes-to-tasks.webp" alt="A meeting note on the left, the tasks it created on the right" width="960" height="720" />
     </section>
@@ -68,7 +68,7 @@ export function Hero({ teams }: { teams: number }) {
     id: 'readme',
     label: 'README',
     path: 'README.md',
-    slop: `# 🚀 Flowly
+    slop: `# 🚀 Generic
 
 ## ✨ Features
 
@@ -76,32 +76,32 @@ export function Hero({ teams }: { teams: number }) {
 - 🔒 **Secure by default**
 - 🎨 Beautiful UI
 
-Whether you're a beginner or a pro, Flowly helps you delve into your data. It's worth noting that experts say this is the best approach.
+Whether you're a beginner or a pro, Generic helps you delve into your data. It's worth noting that experts say this is the best approach.
 
 ## Getting Started
 
 \`\`\`bash
-npm install “flowly”
+npm install “generic”
 \`\`\`
 
 ## Star History
 
 Built with ❤️ by the team. Happy coding!
 `,
-    fixed: `# Flowly
+    fixed: `# Generic
 
 Turns meeting notes into tasks. A line that starts with a name becomes a task for that person.
 
 ## Install
 
 \`\`\`bash
-npm install flowly
+npm install generic
 \`\`\`
 
 ## Use
 
 \`\`\`bash
-flowly notes.md --assign
+generic notes.md --assign
 \`\`\`
 
 Lines without a name stay as notes. If a name does not match anyone in the workspace, the command stops and lists the unknown names instead of guessing.
@@ -117,9 +117,9 @@ MIT
     path: 'produk.md',
     slop: `## Solusi Terbaik untuk Bisnis Anda
 
-Di era digital saat ini, bisnis Anda butuh solusi terbaik yang revolusioner. Flowly tidak hanya cepat, tetapi juga aman, yang menunjukkan komitmen kami pada kualitas.
+Di era digital saat ini, bisnis Anda butuh solusi terbaik yang revolusioner. Generic tidak hanya cepat, tetapi juga aman, yang menunjukkan komitmen kami pada kualitas.
 
-Para ahli mengatakan Flowly menjadi bukti nyata transformasi digital, mulai dari UMKM hingga korporasi. Kamu gak perlu khawatir, Anda tinggal daftar!
+Para ahli mengatakan Generic menjadi bukti nyata transformasi digital, mulai dari UMKM hingga korporasi. Kamu gak perlu khawatir, Anda tinggal daftar!
 
 [Selengkapnya](/fitur)
 

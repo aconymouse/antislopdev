@@ -5,7 +5,7 @@ import { Words } from './theater'
 
 const sample = `Di era digital saat ini, bisnis Anda butuh solusi terbaik yang revolusioner.
 
-Flowly tidak hanya cepat, tetapi juga aman. Para ahli mengatakan aplikasi ini menjadi bukti nyata transformasi digital, mulai dari UMKM hingga korporasi.
+Generic tidak hanya cepat, tetapi juga aman. Para ahli mengatakan aplikasi ini menjadi bukti nyata transformasi digital, mulai dari UMKM hingga korporasi.
 
 Tentu! Berikut adalah versi yang sudah direvisi.
 

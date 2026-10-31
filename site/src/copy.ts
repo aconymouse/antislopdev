@@ -43,7 +43,7 @@ const en = {
     you: 'You',
     note: 'Delivery note',
     scenes: [
-      { prompt: 'Build a pricing page for Flowly.', wrote: 'Wrote app/pricing/page.tsx', fixed: 'Fixed 4 findings', kept: 'Kept UI-11: the wordmark gradient is the brand.' },
+      { prompt: 'Build a pricing page for Generic.', wrote: 'Wrote app/pricing/page.tsx', fixed: 'Fixed 4 findings', kept: 'Kept UI-11: the wordmark gradient is the brand.' },
       { prompt: 'Write the README for the CLI.', wrote: 'Wrote README.md', fixed: 'Fixed 3 findings', kept: 'No justify kept. Checked install steps by running them.' },
       { prompt: 'Commit the billing fix.', wrote: 'Drafted the commit message', fixed: 'Rewrote the subject line', kept: 'No justify kept.' },
     ],
@@ -153,7 +153,7 @@ const id: Copy = {
     you: 'Kamu',
     note: 'Catatan serah',
     scenes: [
-      { prompt: 'Bikin halaman harga buat Flowly.', wrote: 'Menulis app/pricing/page.tsx', fixed: 'Membereskan 4 temuan', kept: 'UI-11 dipertahankan: gradien wordmark itu identitas merek.' },
+      { prompt: 'Bikin halaman harga buat Generic.', wrote: 'Menulis app/pricing/page.tsx', fixed: 'Membereskan 4 temuan', kept: 'UI-11 dipertahankan: gradien wordmark itu identitas merek.' },
       { prompt: 'Tulis README buat CLI-nya.', wrote: 'Menulis README.md', fixed: 'Membereskan 3 temuan', kept: 'Gak ada justify. Langkah instalasi dicek dengan dijalankan.' },
       { prompt: 'Commit perbaikan tagihan.', wrote: 'Menyusun pesan commit', fixed: 'Menulis ulang baris subjek', kept: 'Gak ada justify.' },
     ],
