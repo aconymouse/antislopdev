@@ -121,20 +121,26 @@ export function Playground({ t }: { t: Copy['play'] }) {
           <p className="play-summary" data-state={state} aria-live="polite">
             {findings.length === 0 ? t.clean : [block && `${block} block`, justify && `${justify} justify`, warn && `${warn} warn`].filter(Boolean).join(' · ')}
           </p>
-          <ol className="play-findings">
-            {findings.map((f, n) => (
-              <li key={`${f.rule}-${f.offset}-${n}`}>
-                <button type="button" className={f.level} onClick={() => jump(f)} aria-current={here === f ? 'true' : undefined}>
-                  <span className="lv">{f.level}</span>
-                  <span className="id">{f.rule}</span>
-                  <span className="t">{f.title}</span>
-                  <span className="ln">
-                    {t.line} {f.line}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ol>
+          <div className="play-scroll">
+            <div className="play-row play-th" aria-hidden="true">
+              <span>{t.cols.level}</span>
+              <span>{t.cols.rule}</span>
+              <span>{t.cols.title}</span>
+              <span>{t.cols.line}</span>
+            </div>
+            <ol className="play-findings">
+              {findings.map((f, n) => (
+                <li key={`${f.rule}-${f.offset}-${n}`}>
+                  <button type="button" className={`play-row ${f.level}`} onClick={() => jump(f)} aria-current={here === f ? 'true' : undefined} aria-label={`${f.level} ${f.rule} ${f.title}, ${t.line} ${f.line}`}>
+                    <span className="lv">{f.level}</span>
+                    <span className="id">{f.rule}</span>
+                    <span className="t">{f.title}</span>
+                    <span className="ln">{f.line}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
       <div className="play-status">
