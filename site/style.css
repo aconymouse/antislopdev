@@ -65,6 +65,7 @@ html {
 
 body {
   margin: 0;
+  overflow-x: clip;
   background: var(--paper);
   color: var(--ink);
   font: 16px/1.6 var(--sans);
@@ -2422,7 +2423,7 @@ b.warn {
   .split,
   .faq,
   .source {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 36px;
   }
 
@@ -2450,7 +2451,7 @@ b.warn {
   }
 
   .docs {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
   }
 
@@ -2495,20 +2496,74 @@ b.warn {
   }
 
   .hz h1 {
-    font-size: clamp(38px, 11vw, 56px);
-    line-height: 1.04;
+    font-size: clamp(30px, 9vw, 44px);
+    line-height: 1.05;
   }
 
   .hz h1 > span {
     white-space: normal;
   }
 
+  .lead,
   .hz .lead {
-    font-size: 17px;
+    margin-top: 18px;
+    font-size: 15px;
   }
 
-  .lead {
-    font-size: 17px;
+  .split-copy h2,
+  .section-head h2,
+  .faq h2,
+  .source h2 {
+    font-size: clamp(24px, 7.4vw, 32px);
+  }
+
+  .page-head h1,
+  .doc h1 {
+    font-size: clamp(30px, 9vw, 40px);
+  }
+
+  .split-copy p,
+  .section-head p,
+  .source p {
+    margin-top: 14px;
+    font-size: 15px;
+  }
+
+  .faq-list summary {
+    padding: 15px 0;
+    font-size: 15px;
+  }
+
+  .faq-list p {
+    font-size: 14.5px;
+  }
+
+  .group-top b {
+    font-size: 15px;
+  }
+
+  .group-ex {
+    font-size: 12.5px;
+  }
+
+  .doc h2 {
+    font-size: 21px;
+  }
+
+  .doc p,
+  .doc li,
+  .doc td {
+    font-size: 15px;
+  }
+
+  .snippet,
+  .source .snippet {
+    padding: 14px;
+    font-size: 12px;
+  }
+
+  .site-menu-links a {
+    font-size: clamp(26px, 8.4vw, 36px);
   }
 
   .actions .button {
@@ -2519,8 +2574,29 @@ b.warn {
     display: none;
   }
 
+  .actions .button {
+    height: 44px;
+    font-size: 14px;
+  }
+
   .actions .button.install {
     justify-content: space-between;
+    min-width: 0;
+    padding: 0 14px;
+  }
+
+  .actions .button.install code {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+  }
+
+  .play-tabs button,
+  .play-switch button {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 12.5px;
   }
 
   .play-bar {
@@ -2534,9 +2610,14 @@ b.warn {
 
   .play-mirror,
   .play-input {
-    padding: 14px;
+    inset: 0 auto auto 0;
+    width: 125%;
+    height: 125%;
+    padding: 16px;
     font-size: 16px;
     line-height: 24px;
+    transform: scale(0.8);
+    transform-origin: 0 0;
   }
 
   .play-editor {
@@ -2585,7 +2666,7 @@ b.warn {
   }
 
   .group-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .rules-bar {
