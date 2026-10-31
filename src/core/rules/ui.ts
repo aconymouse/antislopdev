@@ -1,7 +1,7 @@
 import type { Hit } from '../types.js'
-import type { Source, Tag } from '../source.js'
+import { empty, paste, type Source, type Tag } from '../source.js'
 import { markup, styled, type Rule } from '../rule.js'
-import { cssRules, hasEmoji, hue, quote, rgb, scan } from '../util.js'
+import { blocks, cssRules, hasEmoji, hue, quote, rgb, scan } from '../util.js'
 
 const iconPackages = /from\s+['"](lucide-react|lucide-vue-next|lucide-svelte|@lucide\/[\w-]+|@heroicons\/react[\w/-]*|react-icons\/\w+|@tabler\/icons-react|@phosphor-icons\/react|phosphor-react|@radix-ui\/react-icons|@iconify\/react|react-feather)['"]/
 const sparkle = new Set(['sparkle', 'sparkles', 'wand', 'wand2', 'wandsparkles', 'magicwand', 'stars', 'aisparkle', 'magic'])
@@ -34,13 +34,12 @@ function headingAfter(src: Source, index: number, within: number, levels = '1-3'
 
 function styleText(src: Source): string {
   if (src.kind === 'style') return src.text
-  let t = src.text.replace(/[^\n]/g, ' ')
-  for (const m of src.text.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>|style=\{\{([\s\S]*?)\}\}|style="([^"]*)"/g)) {
-    const body = m[1] ?? m[2] ?? m[3] ?? ''
-    const at = m.index + m[0].indexOf(body)
-    t = t.slice(0, at) + body + t.slice(at + body.length)
-  }
-  return t
+  const t = empty(src.text)
+  const keep = (from: number, to: number) => paste(t, src.text.slice(from, to), from)
+  for (const b of blocks(src.text, /<style\b[^<>]*>/i, /<\/style\b[^<>]*>/i)) keep(b.body, b.bodyEnd)
+  for (const b of blocks(src.text, /style=\{\{/, /\}\}/)) keep(b.body, b.bodyEnd)
+  for (const m of src.text.matchAll(/style="([^"]*)"/g)) keep(m.index + 7, m.index + 7 + m[1]!.length)
+  return t.join('')
 }
 
 const tagHits = (src: Source, test: (t: Tag) => string | false | undefined): Hit[] =>
@@ -201,7 +200,7 @@ export const ui: Rule[] = [
     on: styled,
     run(src) {
       const hits = tagHits(src, (t) => /\bbg-(grid|dot|dots|grid-pattern|dot-pattern)\b|bg-\[(radial|linear)-gradient\([^\]]*1px/.test(t.classes) && 'patterned background')
-      return hits.concat(scan(styleText(src), /(radial|linear)-gradient\([^;]*?\b1px\b[^;]*?transparent[^;]*?\)/g, () => 'grid or dot background'))
+      return hits.concat(scan(styleText(src), /(radial|linear)-gradient\([^;]{0,300}?\b1px\b[^;]{0,300}?transparent[^;]{0,300}?\)/g, () => 'grid or dot background'))
     },
   },
   {

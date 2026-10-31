@@ -1,4 +1,5 @@
 import type { FileKind, SourceInput } from './types.js'
+import { blocks } from './util.js'
 
 export interface Span {
   start: number
@@ -61,6 +62,16 @@ function blankAll(text: string, re: RegExp): string {
   return chars.join('')
 }
 
+function blankBlocks(text: string, open: RegExp, close: RegExp): string {
+  const chars = text.split('')
+  for (const b of blocks(text, open, close)) clear(chars, b.start, b.end)
+  return chars.join('')
+}
+
+const comment = [/<!--/, /--!?>/] as const
+const script = [/<script\b[^<>]*>/i, /<\/script\b[^<>]*>/i] as const
+const style = [/<style\b[^<>]*>/i, /<\/style\b[^<>]*>/i] as const
+
 const idWords = /\b(yang|dan|di|ini|itu|untuk|dengan|tidak|ke|dari|kita|kamu|anda|adalah|bisa|juga|akan|pada|atau|saja|gak)\b/gi
 const enWords = /\b(the|and|is|to|of|for|with|that|you|this|are|it|be|on|or|can|will|your|from|not)\b/gi
 
@@ -122,11 +133,35 @@ export class Source {
     return this.text.slice(start, end - 1)
   }
 
+  lineLength(n: number): number {
+    const start = this.starts[n - 1] ?? 0
+    const end = this.starts[n] ?? this.text.length + 1
+    return end - 1 - start
+  }
+
+  private excerpts = new Map<number, string>()
+
+  excerpt(n: number): string {
+    const known = this.excerpts.get(n)
+    if (known !== undefined) return known
+    const start = this.starts[n - 1] ?? 0
+    const end = (this.starts[n] ?? this.text.length + 1) - 1
+    let a = start
+    while (a < end && /\s/.test(this.text[a]!)) a++
+    const text = this.text.slice(a, Math.min(end, a + 400)).trimEnd()
+    const out = text.length > 140 ? text.slice(0, 139) + '…' : text
+    this.excerpts.set(n, out)
+    return out
+  }
+
   get jsxText(): Span[] {
     return this.memo('jsxText', () => {
       const out: Span[] = []
       if (this.kind !== 'jsx') return out
-      for (const m of this.text.matchAll(/(?<=[^=\-\s]\s*)>([^<>]+)</g)) {
+      for (const m of this.text.matchAll(/>([^<>]+)</g)) {
+        let k = m.index - 1
+        while (k >= 0 && /\s/.test(this.text[k]!)) k--
+        if (k < 0 || /[=\-\s]/.test(this.text[k]!)) continue
         const raw = m[1]!
         if (!/\p{L}/u.test(raw)) continue
         if (/=>|&&|\|\||;\s*$|^\s*[)\]}]|\b(return|const|let|function|import|export)\b|^\s*=/.test(raw)) continue
@@ -159,24 +194,24 @@ export class Source {
         const pc = p.split('')
         for (const b of this.codeBlocks) clear(pc, b.start, b.end)
         p = pc.join('')
-        p = blankAll(p, /<!--[\s\S]*?-->/g)
+        p = blankBlocks(p, ...comment)
         p = blankAll(p, /`[^`\n]+`/g)
-        p = blankAll(p, /(?<=\]\()[^)\s]+(?:\s+"[^"]*")?(?=\))/g)
-        p = blankAll(p, /<https?:[^>\s]+>/g)
+        p = blankAll(p, /(?<=\]\()[^()\s]+(?:[ \t]+"[^"\n]*")?(?=\))/g)
+        p = blankAll(p, /<https?:[^<>\s]+>/g)
         p = blankAll(p, /!(?=\[)/g)
-        p = blankAll(p, /<\/?[a-zA-Z][^>]*>/g)
-        p = blankAll(p, /^\s*\[[^\]]+\]:\s*\S+.*$/gm)
+        p = blankAll(p, /<\/?[a-zA-Z][^<>]*>/g)
+        p = blankAll(p, /^[ \t]*\[[^\[\]\n]+\]:[ \t]*\S.*$/gm)
         return p
       }
       if (this.kind === 'markup') {
         let p = t
-        p = blankAll(p, /<script\b[\s\S]*?<\/script>/gi)
-        p = blankAll(p, /<style\b[\s\S]*?<\/style>/gi)
-        p = blankAll(p, /<!--[\s\S]*?-->/g)
+        p = blankBlocks(p, ...script)
+        p = blankBlocks(p, ...style)
+        p = blankBlocks(p, ...comment)
         if (this.ext === 'astro') p = blankAll(p, /^---\n[\s\S]*?\n---\n/g)
-        if (this.ext === 'vue') p = blankAll(p, /\{\{[\s\S]*?\}\}/g)
+        if (this.ext === 'vue') p = blankBlocks(p, /\{\{/, /\}\}/)
         if (this.ext === 'svelte' || this.ext === 'astro') p = blankAll(p, /\{[^{}]*\}/g)
-        p = blankAll(p, /<[^>]*>/g)
+        p = blankAll(p, /<[^<>]*>/g)
         return p
       }
       if (this.kind === 'jsx') {
@@ -217,23 +252,39 @@ export class Source {
     return this.memo('codeBlocks', () => {
       const out: CodeBlock[] = []
       if (this.kind !== 'prose') return out
-      for (const m of this.text.matchAll(/^([ \t]*)(`{3,}|~{3,})[ \t]*([\w+#.-]*)[^\n]*\n([\s\S]*?)^\1\2[ \t]*$/gm)) {
-        const bodyStart = m.index + m[0].indexOf('\n') + 1
-        out.push({ start: m.index, end: m.index + m[0].length, text: m[4]!, lang: m[3]!.toLowerCase(), bodyStart })
+      const t = this.text
+      let open: { start: number; indent: string; fence: string; lang: string; bodyStart: number } | undefined
+      let at = 0
+      while (at <= t.length) {
+        const nl = t.indexOf('\n', at)
+        const end = nl === -1 ? t.length : nl
+        const line = t.slice(at, end)
+        if (open) {
+          if (line.startsWith(open.indent + open.fence) && /^[ \t]*$/.test(line.slice(open.indent.length + open.fence.length))) {
+            out.push({ start: open.start, end, text: t.slice(open.bodyStart, at), lang: open.lang, bodyStart: open.bodyStart })
+            open = undefined
+          }
+        } else if (nl !== -1) {
+          const m = line.match(/^([ \t]*)(`{3,}|~{3,})[ \t]*([\w+#.-]*)/)
+          if (m) open = { start: at, indent: m[1]!, fence: m[2]!, lang: m[3]!.toLowerCase(), bodyStart: nl + 1 }
+        }
+        if (nl === -1) break
+        at = nl + 1
       }
       return out
     })
   }
 
-  private tokenize(): { comments: Span[]; strings: Span[]; code: string } {
+  private tokenize(): { comments: Span[]; strings: Span[]; regexes: Span[]; code: string } {
     const comments: Span[] = []
     const strings: Span[] = []
+    const regexes: Span[] = []
     const base = this.text.split('')
     for (const s of this.jsxText) clear(base, s.start, s.end)
     if (this.kind === 'markup') {
       const only = empty(this.text)
-      for (const m of this.text.matchAll(/(<script\b[^>]*>)([\s\S]*?)<\/script>/gi)) paste(only, m[2]!, m.index + m[1]!.length)
-      for (const m of this.text.matchAll(/<!--([\s\S]*?)-->/g)) comments.push({ start: m.index, end: m.index + m[0].length, text: m[1]! })
+      for (const b of blocks(this.text, ...script)) paste(only, this.text.slice(b.body, b.bodyEnd), b.body)
+      for (const b of blocks(this.text, ...comment)) comments.push({ start: b.start, end: b.end, text: this.text.slice(b.body, b.bodyEnd) })
       base.splice(0, base.length, ...only)
     }
     const t = base.join('')
@@ -272,7 +323,8 @@ export class Source {
       if (!hash && !css && c === '/' && regexAllowed(t, i)) {
         let j = i + 1
         let klass = false
-        while (j < n && t[j] !== '\n') {
+        const limit = Math.min(n, i + 2000)
+        while (j < limit && t[j] !== '\n') {
           if (t[j] === '\\') {
             j += 2
             continue
@@ -283,6 +335,7 @@ export class Source {
           j++
         }
         if (j < n && t[j] === '/') {
+          regexes.push({ start: i + 1, end: j, text: t.slice(i + 1, j) })
           clear(code, i + 1, j)
           i = j + 1
           while (i < n && /[a-z]/.test(t[i]!)) i++
@@ -310,7 +363,7 @@ export class Source {
       }
       i++
     }
-    return { comments, strings, code: code.join('') }
+    return { comments, strings, regexes, code: code.join('') }
   }
 
   get comments(): Span[] {
@@ -319,6 +372,10 @@ export class Source {
 
   get strings(): Span[] {
     return this.memo('tokens', () => this.tokenize()).strings
+  }
+
+  get regexes(): Span[] {
+    return this.memo('tokens', () => this.tokenize()).regexes
   }
 
   get code(): string {
@@ -340,16 +397,17 @@ export class Source {
 
   inner(tag: Tag): string {
     if (this.text.slice(tag.start, tag.end).endsWith('/>')) return ''
-    const close = this.text.indexOf(`</${tag.name}>`, tag.end)
-    if (close === -1 || close - tag.end > 4000) return ''
-    return this.text.slice(tag.end, close)
+    const window = this.text.slice(tag.end, tag.end + 4000 + tag.name.length + 3)
+    const close = window.indexOf(`</${tag.name}>`)
+    if (close === -1 || close > 4000) return ''
+    return window.slice(0, close)
   }
 
   get sheets(): { text: string; offset: number }[] {
     return this.memo('sheets', () => {
       if (this.kind === 'style') return [{ text: this.text, offset: 0 }]
       if (!this.isMarkup) return []
-      return [...this.text.matchAll(/(<style\b[^>]*>)([\s\S]*?)<\/style>/gi)].map((m) => ({ text: m[2]!, offset: m.index + m[1]!.length }))
+      return blocks(this.text, ...style).map((b) => ({ text: this.text.slice(b.body, b.bodyEnd), offset: b.body }))
     })
   }
 

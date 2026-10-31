@@ -77,14 +77,14 @@ export function links(src: Source): { url: string; index: number }[] {
   const out: { url: string; index: number }[] = []
   if (src.kind === 'prose') {
     const p = src.text
-    for (const m of p.matchAll(/(?<!!)\[[^\]\n]*\]\((https?:\/\/[^)\s]+)\)|<(https?:\/\/[^>\s]+)>/g)) {
+    for (const m of p.matchAll(/(?<!!)\[[^[\]\n]*\]\((https?:\/\/[^()\s]+)\)|<(https?:\/\/[^<>\s]+)>/g)) {
       const inCode = src.codeBlocks.some((b) => m.index >= b.start && m.index < b.end)
       if (!inCode) out.push({ url: (m[1] ?? m[2])!, index: m.index })
     }
   }
   if (src.isMarkup) {
     for (const t of src.tags) {
-      const m = t.attrs.match(/\bhref\s*=\s*\{?\s*["'`](https?:\/\/[^"'`\s]+)["'`]/)
+      const m = t.attrs.match(/\bhref\s*=\s*(?:\{\s*)?["'`](https?:\/\/[^"'`\s]+)["'`]/)
       if (m) out.push({ url: m[1]!, index: t.start })
     }
   }

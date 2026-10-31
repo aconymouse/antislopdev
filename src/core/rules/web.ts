@@ -1,24 +1,24 @@
 import type { FileKind, Hit } from '../types.js'
 import { type Rule, coded, markup } from '../rule.js'
 import type { Source, Tag } from '../source.js'
-import { quote, scan } from '../util.js'
+import { blocks, escapeRegExp, quote, scan } from '../util.js'
 
 const everywhere: readonly FileKind[] = ['script', 'jsx', 'markup', 'style', 'config', 'manifest', 'prose']
 const server: readonly FileKind[] = ['script', 'jsx']
 const media = /^(img|Image|source|picture)$/
 
 function attr(t: Tag, name: string): string | undefined {
-  const m = t.attrs.match(new RegExp(`(?:^|\\s)${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|\\{\\s*["'\`]([^"'\`]*)["'\`]\\s*\\})`, 'i'))
+  const m = t.attrs.match(new RegExp(`(?:^|\\s)${escapeRegExp(name)}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|\\{\\s*["'\`]([^"'\`]*)["'\`]\\s*\\})`, 'i'))
   return m ? (m[1] ?? m[2] ?? m[3]) : undefined
 }
 
 function has(t: Tag, name: string): boolean {
-  return new RegExp(`(?:^|\\s)${name}\\s*=`, 'i').test(t.attrs)
+  return new RegExp(`(?:^|\\s)${escapeRegExp(name)}\\s*=`, 'i').test(t.attrs)
 }
 
 function headOf(src: Source): { start: number; end: number } | undefined {
-  const m = src.text.match(/<head\b[^>]*>[\s\S]*?<\/head>/i)
-  return m && m.index !== undefined ? { start: m.index, end: m.index + m[0].length } : undefined
+  const b = blocks(src.text, /<head\b[^<>]*>/i, /<\/head\b[^<>]*>/i)[0]
+  return b && b.bodyEnd < src.text.length ? { start: b.start, end: b.end } : undefined
 }
 
 function inHead(src: Source): Tag[] {
@@ -58,7 +58,119 @@ const strong = [
 ]
 const assigned = /\b(api[_-]?key|secret(?:[_-]?key)?|access[_-]?token|auth[_-]?token|client[_-]?secret|passw(?:or)?d)\b["']?\s*[:=]\s*["']([^"'\s]{16,})["']/gi
 const placeholder = /your|example|xxx|changeme|placeholder|dummy|sample|test|redacted|<|\$\{|\*{3}/i
-const sql = /\b(select\b[\s\S]+?\bfrom|insert\s+into|update\s+[\w."`[\]]+\s+set|delete\s+from)\b/i
+const sql = /\b(select\b[\s\S]{1,2000}?\bfrom|insert\s+into|update\s+[\w."`[\]]+\s+set|delete\s+from)\b/i
+
+
+interface Atom {
+  start: number
+  min: number
+  max: number
+  pump: boolean
+}
+
+function pumpable(alt: Atom[]): boolean {
+  let open = 0
+  let needed = 0
+  for (const a of alt) {
+    if (a.max === Infinity || a.pump) open++
+    if (a.min > 0) needed++
+  }
+  return open > 0 && needed <= 1 && alt.every((a) => a.min === 0 || a.max === Infinity || a.pump)
+}
+
+function backtracks(p: string): number {
+  const stack: { start: number; alts: Atom[][] }[] = [{ start: 0, alts: [[]] }]
+  let i = 0
+  while (i < p.length) {
+    const c = p[i]!
+    let atom: Atom
+    if (c === '\\') {
+      atom = { start: i, min: 1, max: 1, pump: false }
+      i += 2
+    } else if (c === '[') {
+      let j = i + 1
+      if (p[j] === '^') j++
+      if (p[j] === ']') j++
+      while (j < p.length && p[j] !== ']') j += p[j] === '\\' ? 2 : 1
+      atom = { start: i, min: 1, max: 1, pump: false }
+      i = j + 1
+    } else if (c === '(') {
+      stack.push({ start: i, alts: [[]] })
+      i++
+      if (p[i] === '?') {
+        const m = p.slice(i, i + 40).match(/^\?(?:<[=!]|[:=!]|<[\w$]+>)/)
+        i += m ? m[0].length : 1
+      }
+      continue
+    } else if (c === '|') {
+      stack.at(-1)!.alts.push([])
+      i++
+      continue
+    } else if (c === ')') {
+      if (stack.length < 2) return -1
+      const g = stack.pop()!
+      atom = { start: g.start, min: 1, max: 1, pump: g.alts.some(pumpable) }
+      i++
+    } else if (c === '^' || c === '$') {
+      i++
+      continue
+    } else {
+      atom = { start: i, min: 1, max: 1, pump: false }
+      i++
+    }
+    const q = p[i]
+    if (q === '*' || q === '+' || q === '?') {
+      atom.min = q === '+' ? 1 : 0
+      atom.max = q === '?' ? 1 : Infinity
+      i++
+    } else if (q === '{') {
+      const m = p.slice(i, i + 24).match(/^\{(\d+)(,(\d*))?\}/)
+      if (m) {
+        atom.min = Number(m[1])
+        atom.max = m[2] === undefined ? atom.min : m[3] ? Number(m[3]) : Infinity
+        i += m[0].length
+      }
+    }
+    if (p[i] === '?') i++
+    if (atom.pump && atom.max === Infinity) return atom.start
+    stack.at(-1)!.alts.at(-1)!.push(atom)
+  }
+  return -1
+}
+
+function patterns(src: Source): { index: number; text: string }[] {
+  const out = src.regexes.map((r) => ({ index: r.start - 1, text: r.text }))
+  for (const s of src.strings) {
+    if (!/\bRegExp\(\s*$/.test(src.text.slice(Math.max(0, s.start - 24), s.start - 1))) continue
+    out.push({ index: s.start - 1, text: s.text.replace(/\$\{[^{}]*\}/g, 'x').replace(/\\\\/g, '\\') })
+  }
+  return out
+}
+
+function firstArgument(text: string, from: number): string {
+  let depth = 0
+  let quote = ''
+  const end = Math.min(text.length, from + 400)
+  for (let i = from; i < end; i++) {
+    const c = text[i]!
+    if (quote) {
+      if (c === '\\') i++
+      else if (c === quote) quote = ''
+      continue
+    }
+    if (c === '"' || c === "'" || c === '`') quote = c
+    else if (c === '(' || c === '[' || c === '{') depth++
+    else if (c === ')' || c === ']' || c === '}') {
+      if (depth === 0) return text.slice(from, i)
+      depth--
+    } else if (c === ',' && depth === 0) return text.slice(from, i)
+  }
+  return text.slice(from, end)
+}
+
+const input = /\b(?:req|request|params|searchParams|query|body|search|term|keyword|input|value|filter|text|name|user|word|q)\b/i
+
+const unpinnable = /^(?:https?:)?\/\/(?:www\.googletagmanager\.com|www\.google-analytics\.com|fonts\.googleapis\.com|js\.stripe\.com|challenges\.cloudflare\.com|static\.cloudflareinsights\.com|www\.google\.com\/recaptcha|www\.gstatic\.com\/recaptcha|maps\.googleapis\.com|plausible\.io|connect\.facebook\.net|platform\.twitter\.com|www\.youtube\.com|securepubads\.g\.doubleclick\.net|pagead2\.googlesyndication\.com|www\.googletagservices\.com)\//i
 
 const rules: Rule[] = [
   {
@@ -406,7 +518,62 @@ const rules: Rule[] = [
   {
     id: 'SEC-21',
     on: server,
-    run: (src) => scan(src.text, /\b(?:json|send|end|Response\.json|NextResponse\.json)\s*\([^\n]*?\b\w+\.stack\b/g, (m) => quote(m[0])).filter((h) => inCode(src, h.index)),
+    run: (src) => scan(src.text, /\b(?:json|send|end|Response\.json|NextResponse\.json)\s*\([^\n]{0,200}?\b\w+\.stack\b/g, (m) => quote(m[0])).filter((h) => inCode(src, h.index)),
+  },
+  {
+    id: 'SEC-22',
+    on: ['script', 'jsx', 'markup'],
+    run(src) {
+      const hits: Hit[] = []
+      for (const r of patterns(src)) {
+        const at = backtracks(r.text)
+        if (at !== -1) hits.push({ index: r.index, note: quote(`/${r.text}/`) })
+      }
+      return hits
+    },
+  },
+  {
+    id: 'SEC-23',
+    on: ['script', 'jsx', 'markup'],
+    run(src) {
+      const hits: Hit[] = []
+      for (const r of src.regexes) {
+        if (!/^<[\s\S]{0,40}?(?:\[\^<?>|\.\*\??>|\[\\s\\S\]|script|style|iframe)/i.test(r.text)) continue
+        if (!/\.replace(?:All)?\(\s*$/.test(src.text.slice(Math.max(0, r.start - 24), r.start - 1))) continue
+        const after = src.text.slice(r.end + 1, r.end + 24)
+        if (!/^[a-z]*\s*,\s*(["'`])\1/.test(after)) continue
+        hits.push({ index: r.start - 1, note: quote(`/${r.text}/`) })
+      }
+      return hits
+    },
+  },
+  {
+    id: 'SEC-24',
+    on: ['script', 'jsx', 'markup'],
+    run(src) {
+      const hits: Hit[] = []
+      for (const m of src.code.matchAll(/\bnew\s+RegExp\s*\(|(?<![\w$.])RegExp\s*\(/g)) {
+        const arg = firstArgument(src.text, m.index + m[0].length).trim()
+        const parts = arg.startsWith('`') ? [...arg.matchAll(/\$\{([^{}]*)\}/g)].map((x) => x[1]!) : /^["'].*["']\s*\+|\+\s*["']/.test(arg) ? [arg.replace(/(["'])(?:\\.|(?!\1)[^\\])*\1/g, '')] : []
+        if (/\\\$&|RegExp\.escape|escapeRegExp/.test(src.text.slice(Math.max(0, m.index - 300), m.index))) continue
+        if (parts.some((x) => input.test(x) && !/escape|quote|sanitiz|\.source\b/i.test(x))) hits.push({ index: m.index, note: quote(`RegExp(${arg})`) })
+      }
+      hits.push(...scan(src.text, /\.replace\(\s*(["'])(?:\\.|[<>&"'])\1\s*,\s*(["'`])(?:\\\\|&)/g, (m) => quote(m[0])).filter((h) => inCode(src, h.index)))
+      return hits
+    },
+  },
+  {
+    id: 'SEC-25',
+    on: ['markup', 'jsx'],
+    run(src) {
+      const hits: Hit[] = []
+      for (const t of src.tags) {
+        const url = /^script$/i.test(t.name) ? attr(t, 'src') : t.name === 'link' && /\b(stylesheet|modulepreload)\b/i.test(attr(t, 'rel') ?? '') ? attr(t, 'href') : undefined
+        if (!url || !/^(?:https?:)?\/\//i.test(url) || unpinnable.test(url) || local.test(url.replace(/^(?:https?:)?\/\//i, ''))) continue
+        if (!has(t, 'integrity')) hits.push({ index: t.start, note: quote(url) })
+      }
+      return hits
+    },
   },
 ]
 

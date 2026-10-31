@@ -10,7 +10,7 @@ const fixtures = (dir) => readdirSync(here + 'fixtures/' + dir).map((name) => ({
 const ids = (report) => new Set(report.findings.map((f) => f.rule))
 
 test('catalog matches RULES.md and every checked rule exists', () => {
-  assert.equal(catalog.length, 163)
+  assert.equal(catalog.length, 167)
   const known = new Set(catalog.map((r) => r.id))
   for (const id of implemented) assert.ok(known.has(id), id)
   assert.ok(implemented.length >= 100)
@@ -80,6 +80,43 @@ test('seo and security rules catch what they are named for', () => {
   const seo = ids(check(fixtures('slop').filter((f) => f.path === 'seo.html')))
   const want = ['SEO-02', 'SEO-03', 'SEO-04', 'SEO-05', 'SEO-06', 'SEO-07', 'SEO-08', 'SEO-11', 'SEO-12', 'SEO-13', 'SEO-14', 'SEO-19', 'SEO-20', 'SEC-09']
   assert.deepEqual(want.filter((id) => !seo.has(id)), [])
+})
+
+test('code scanning rules catch the pattern and leave the safe version alone', () => {
+  const bad = [
+    { path: 'r.ts', text: [
+      'export const words = /(\\w+\\s?)*$/',
+      "export const strip = (html: string) => html.replace(/<[^>]*>/g, '')",
+      'export const find = (name: string) => new RegExp(`^${name}$`)',
+      `export const attr = (v: string) => v.replace('"', '\\\\"')`,
+    ].join('\n') },
+    { path: 'p.html', text: '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>\n' },
+  ]
+  const found = ids(check(bad))
+  assert.deepEqual(['SEC-22', 'SEC-23', 'SEC-24', 'SEC-25'].filter((id) => !found.has(id)), [])
+  const good = [
+    { path: 's.ts', text: [
+      'export const list = /^(?:[a-z]+,)*[a-z]+$/',
+      "export const text = (el: HTMLElement) => el.textContent ?? ''",
+      'export const find = (name: string) => new RegExp(`^${RegExp.escape(name)}$`)',
+      `export const attr = (v: string) => v.replaceAll('"', '&quot;')`,
+    ].join('\n') },
+    { path: 'q.html', text: '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-x" crossorigin="anonymous"></script>\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-X"></script>\n' },
+  ]
+  const flagged = check(good).findings.filter((f) => /^SEC-2[2-5]$/.test(f.rule))
+  assert.deepEqual(flagged.map((f) => `${f.rule} ${f.note ?? ''}`), [])
+})
+
+test('crafted input does not stall the checker', () => {
+  const size = 60000
+  const fill = (s) => s.repeat(Math.ceil(size / s.length)).slice(0, size)
+  const cases = [['a.md', '['], ['a.md', '<http://a'], ['a.md', '!'], ['a.md', '```a\n'], ['a.html', '<!--'], ['a.html', '<style'], ['a.html', '<h1>'], ['a.html', '<a >'], ['a.css', 'a'], ['a.tsx', ' '], ['a.ts', '[</'], ['a.ts', 'json('], ['a.ts', '// antislopdev-allow UI-01: a ']]
+  for (const [path, unit] of cases) {
+    const t = performance.now()
+    check([{ path, text: fill(unit) }])
+    const ms = performance.now() - t
+    assert.ok(ms < 2000, `${path} ${JSON.stringify(unit)} took ${Math.round(ms)}ms`)
+  }
 })
 
 test('false positives the checker must not raise', () => {

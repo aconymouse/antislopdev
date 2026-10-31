@@ -5,7 +5,7 @@ description: Catch generic AI output before it ships. Use when building or revie
 
 # antiSlopdev
 
-Slop is what gets shipped when nobody decided anything: the safe default, repeated until every product looks, reads and compiles the same. This skill gives you 163 named defaults to avoid and a checker that finds most of them for you.
+Slop is what gets shipped when nobody decided anything: the safe default, repeated until every product looks, reads and compiles the same. This skill gives you 167 named defaults to avoid and a checker that finds most of them for you.
 
 The full list with IDs, levels and examples is in `RULES.md` next to this file. Read the group that matches the work before you start: `UI` for interfaces, `TX` for English copy, `ID` for Indonesian copy, `CD` for code, `DOC` for READMEs and docs, `GIT` for commits and pull requests, `TR` for claims and numbers, `AX` for accessibility, `PF` for performance, `SEO` for pages that should be found, quoted by answer engines and shared, `SEC` for anything that touches secrets, input, auth, cookies or the network.
 

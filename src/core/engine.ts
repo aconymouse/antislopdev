@@ -36,8 +36,8 @@ interface Allow {
 
 function allowances(src: Source): Allow[] {
   const out: Allow[] = []
-  for (const m of src.text.matchAll(/antislopdev-allow(-file)?[ \t]+([A-Z]+-\d+(?:[ \t]*,[ \t]*[A-Z]+-\d+)*)[ \t]*:[ \t]*([^\n]*?)[ \t]*(?:\*\/|-->|\}|$)/gm)) {
-    const reason = m[3]!.trim()
+  for (const m of src.text.matchAll(/antislopdev-allow(-file)?[ \t]+([A-Z]+-\d+(?:[ \t]*,[ \t]*[A-Z]+-\d+)*)[ \t]*:([^\n]*)/g)) {
+    const reason = m[3]!.split(/\*\/|-->|\}/, 1)[0]!.trim()
     if ((reason.match(/\p{L}/gu) ?? []).length < 3) continue
     out.push({ ids: m[2]!.split(',').map((s) => s.trim()), reason, file: Boolean(m[1]), line: src.position(m.index).line })
   }
@@ -54,9 +54,8 @@ function finding(src: Source, rule: string, hit: Hit): Finding {
   const m = meta.get(rule)!
   const offset = Math.min(hit.index, Math.max(0, src.text.length - 1))
   const { line, column } = src.position(offset)
-  const text = src.line(line).trim()
-  const length = hit.length ?? Math.max(1, src.line(line).length - column + 1)
-  const f: Finding = { rule, level: m.level, title: m.title, path: src.path, line, column, offset, length, excerpt: text.length > 140 ? text.slice(0, 139) + '…' : text }
+  const length = hit.length ?? Math.max(1, src.lineLength(line) - column + 1)
+  const f: Finding = { rule, level: m.level, title: m.title, path: src.path, line, column, offset, length, excerpt: src.excerpt(line) }
   if (hit.note !== undefined) f.note = hit.note
   return f
 }
@@ -102,7 +101,9 @@ export function checkSources(sources: readonly Source[], options: CheckOptions =
   for (const f of unique) {
     if (f.level !== 'warn') continue
     const key = `${f.path}\0${f.rule}`
-    groups.set(key, [...(groups.get(key) ?? []), f])
+    const list = groups.get(key)
+    if (list) list.push(f)
+    else groups.set(key, [f])
   }
   for (const list of groups.values()) {
     if (list.length < 3) continue

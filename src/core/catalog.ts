@@ -1141,5 +1141,33 @@ export const catalog: readonly RuleMeta[] = [
     "detail": "Error stacks or internal details returned in API responses or rendered on error pages.",
     "level": "justify",
     "check": "static"
+  },
+  {
+    "id": "SEC-22",
+    "title": "Regex that can hang",
+    "detail": "A group with a quantifier inside that is itself repeated, like `(a+)+`, `(\\w+\\s?)*` or `(.*)*`, in a pattern that reads user input, uploaded files or request data. One crafted string can keep a single match busy for minutes. Write the pattern so each character can be matched only one way, cap the input length, or use a linear engine such as RE2.",
+    "level": "justify",
+    "check": "heuristic"
+  },
+  {
+    "id": "SEC-23",
+    "title": "HTML cleaned with a regex",
+    "detail": "Stripping tags with `.replace(/<[^>]*>/g, '')` or `/<script.*?<\\/script>/` before the result is shown or stored. Regexes miss `</script >`, tags split across lines, broken markup and comments that end in `--!>`. Use DOMPurify or sanitize-html for HTML you render, and `textContent` or a real parser when you only need the text.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEC-24",
+    "title": "Escaping by hand",
+    "detail": "`new RegExp()` built from a variable that was never escaped, or a quote, backslash or `<` escaped with `.replace('\"', …)`, which only changes the first one. Use `RegExp.escape()` (Node 24 and current browsers) or a full escape helper, `replaceAll`, and the encoder that belongs to the output: `encodeURIComponent`, `JSON.stringify` or your template engine.",
+    "level": "justify",
+    "check": "heuristic"
+  },
+  {
+    "id": "SEC-25",
+    "title": "Third-party script without integrity",
+    "detail": "A `<script>` or stylesheet from another host loaded without `integrity`, so whoever controls that CDN controls your page. Pin the version and add the hash with `crossorigin`, or serve the file yourself. Tags that change by design and publish no hash (Google tag, Stripe.js, Turnstile, Cloudflare Web Analytics) are skipped.",
+    "level": "justify",
+    "check": "static"
   }
 ]

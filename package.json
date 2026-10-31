@@ -1,6 +1,6 @@
 {
   "name": "antislopdev",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Rules and a checker that catch generic AI output in UI, copy, code, SEO and security.",
   "license": "MIT",
   "author": "Hafidz Nc",

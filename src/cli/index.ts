@@ -207,9 +207,6 @@ async function main(argv: string[]): Promise<number> {
 }
 
 main(process.argv.slice(2)).then(
-  (code) => process.exit(code),
-  (e: unknown) => {
-    process.stderr.write(`antislopdev: ${e instanceof Error ? e.message : String(e)}\n`)
-    process.exit(2)
-  },
+  (code) => process.stdout.write('', () => process.exit(code)),
+  (e: unknown) => process.stderr.write(`antislopdev: ${e instanceof Error ? e.message : String(e)}\n`, () => process.exit(2)),
 )

@@ -216,7 +216,7 @@ Rules for pages that should be found, quoted by AI answer engines (GEO, AEO) and
 
 ## SEC: security
 
-Defaults an agent ships when it is in a hurry, based on the OWASP Top 10 and updated as new patterns show up. A rule keeps its ID when its wording changes. To check a deployed site's TLS, headers, DNS and exposed services, run a passive scan of a domain you own with [wowHacker](https://aconymous.com/tools/wowhacker).
+Defaults an agent ships when it is in a hurry, drawn from the OWASP Top 10 and from what code scanners such as CodeQL keep finding in generated code. The list grows as new patterns show up. A rule keeps its ID when its wording changes. To check a deployed site's TLS, headers, DNS and exposed services, run a passive scan of a domain you own with [wowHacker](https://aconymous.com/tools/wowhacker).
 
 | ID | Rule | Level | Check |
 |---|---|---|---|
@@ -241,6 +241,10 @@ Defaults an agent ships when it is in a hurry, based on the OWASP Top 10 and upd
 | SEC-19 | **Missing security headers.** No Content-Security-Policy, HSTS, `X-Content-Type-Options: nosniff`, `Referrer-Policy` or `frame-ancestors`. | justify | review |
 | SEC-20 | **Auth cookie without flags.** Session, token or JWT cookies set without `httpOnly` (and `secure`, `sameSite`), or written from client code with `document.cookie`. | block | heuristic |
 | SEC-21 | **Stack traces sent to users.** Error stacks or internal details returned in API responses or rendered on error pages. | justify | static |
+| SEC-22 | **Regex that can hang.** A group with a quantifier inside that is itself repeated, like `(a+)+`, `(\w+\s?)*` or `(.*)*`, in a pattern that reads user input, uploaded files or request data. One crafted string can keep a single match busy for minutes. Write the pattern so each character can be matched only one way, cap the input length, or use a linear engine such as RE2. | justify | heuristic |
+| SEC-23 | **HTML cleaned with a regex.** Stripping tags with `.replace(/<[^>]*>/g, '')` or `/<script.*?<\/script>/` before the result is shown or stored. Regexes miss `</script >`, tags split across lines, broken markup and comments that end in `--!>`. Use DOMPurify or sanitize-html for HTML you render, and `textContent` or a real parser when you only need the text. | justify | static |
+| SEC-24 | **Escaping by hand.** `new RegExp()` built from a variable that was never escaped, or a quote, backslash or `<` escaped with `.replace('"', …)`, which only changes the first one. Use `RegExp.escape()` (Node 24 and current browsers) or a full escape helper, `replaceAll`, and the encoder that belongs to the output: `encodeURIComponent`, `JSON.stringify` or your template engine. | justify | heuristic |
+| SEC-25 | **Third-party script without integrity.** A `<script>` or stylesheet from another host loaded without `integrity`, so whoever controls that CDN controls your page. Pin the version and add the hash with `crossorigin`, or serve the file yourself. Tags that change by design and publish no hash (Google tag, Stripe.js, Turnstile, Cloudflare Web Analytics) are skipped. | justify | static |
 
 ---
 

@@ -1,7 +1,7 @@
 import type { Hit } from '../types.js'
 import type { Source, Tag } from '../source.js'
 import { markup, styled, type ProjectHit, type ProjectRule, type Rule } from '../rule.js'
-import { contrast, cssRules, quote, rgb, scan } from '../util.js'
+import { contrast, cssRules, escapeRegExp, quote, rgb, scan } from '../util.js'
 
 function textOf(html: string): string {
   return html.replace(/<[^>]*>/g, ' ').replace(/\{[^{}]*\}/g, ' ').replace(/&[a-z]+;/g, ' ').replace(/\s+/g, ' ').trim()
@@ -83,7 +83,7 @@ export const a11y: Rule[] = [
         if (t.name === 'img' && !/\balt\s*=/.test(t.attrs)) hits.push({ index: t.start, length: t.end - t.start, note: '<img> without alt' })
         if (/^(button|Button|a|Link)$/.test(t.name) && !/\baria-label(ledby)?\s*=|\btitle\s*=|aria-hidden|\{\s*\.\.\./.test(t.attrs) && !/\/>\s*$/.test(src.text.slice(t.start, t.end))) {
           const inner = src.inner(t)
-          if (/<(svg|[A-Z]\w*)\b/.test(inner) && !textOf(inner) && !/\{[^}]+\}/.test(inner.replace(/<[^>]*>/g, '')) && !/sr-only|visually-hidden|aria-label/.test(inner)) hits.push({ index: t.start, length: t.end - t.start, note: `icon-only <${t.name}> without a name` })
+          if (/<(svg|[A-Z]\w*)\b/.test(inner) && !textOf(inner) && !/\{[^}]+\}/.test(inner.split(/<[^<>]*>/).join('')) && !/sr-only|visually-hidden|aria-label/.test(inner)) hits.push({ index: t.start, length: t.end - t.start, note: `icon-only <${t.name}> without a name` })
         }
         if (/^(input|textarea|select)$/.test(t.name) && !/\btype\s*=\s*["'](hidden|submit|button|reset|image)["']|(^|\s)hidden(\s|$|=\{true\})/.test(t.attrs) && !/\b(aria-label(ledby)?|id|title)\s*=|\{\s*\.\.\./.test(t.attrs)) {
           const before = src.text.slice(Math.max(0, t.start - 400), t.start)
@@ -190,7 +190,7 @@ export const project: ProjectRule[] = [
         for (const lib of libs) {
           const at = deps[1]!.indexOf(`"${lib}"`)
           if (at === -1) continue
-          const re = new RegExp(`from\\s+['"]${lib.replace(/[/.]/g, '\\$&')}(/[\\w-]+)?['"]|require\\(['"]${lib.replace(/[/.]/g, '\\$&')}['"]\\)`, 'g')
+          const re = new RegExp(`from\\s+['"]${escapeRegExp(lib)}(/[\\w-]+)?['"]|require\\(['"]${escapeRegExp(lib)}['"]\\)`, 'g')
           const uses = sources.reduce((n, s) => n + (s.text.match(re) ?? []).length, 0)
           if (uses <= 1) out.push({ source: manifest, hit: { index: (deps.index ?? 0) + deps[0].indexOf(deps[1]!) + at, note: `${lib} imported ${uses === 0 ? 'nowhere' : 'once'}` } })
         }

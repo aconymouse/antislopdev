@@ -51,7 +51,7 @@ function headings(src: Source): { index: number; text: string }[] {
   }
   for (const t of src.tags) {
     if (/^(h[1-6]|title)$/.test(t.name)) {
-      const text = src.inner(t).replace(/<[^>]*>/g, ' ').replace(/\{[^{}]*\}/g, ' ').replace(/\s+/g, ' ').trim()
+      const text = src.inner(t).split(/<[^<>]*>/).join(' ').replace(/\{[^{}]*\}/g, ' ').replace(/\s+/g, ' ').trim()
       if (text) out.push({ index: t.start, text })
     }
   }
@@ -66,7 +66,7 @@ function controls(src: Source): { index: number; text: string }[] {
     if (text) out.push({ index: t.start, text })
   }
   if (src.kind === 'prose') {
-    for (const m of src.text.matchAll(/(?<!!)\[([^\]\n]+)\]\([^)\s]+\)/g)) out.push({ index: m.index, text: m[1]! })
+    for (const m of src.text.matchAll(/(?<!!)\[([^[\]\n]+)\]\([^()\s]+\)/g)) out.push({ index: m.index, text: m[1]! })
   }
   return out
 }

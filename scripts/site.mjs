@@ -106,8 +106,8 @@ const nextStamps = {}
 const now = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
 const stamp = (path, body) => {
   const text = body
-    .replace(/<script[\s\S]*?<\/script>/g, ' ')
-    .replace(/<[^>]+>/g, ' ')
+    .replace(/<script\b[^<>]*>[\s\S]*?<\/script\b[^<>]*>/gi, ' ')
+    .replace(/<[^<>]+>/g, ' ')
     .replace(/&[a-z#0-9]+;/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim()

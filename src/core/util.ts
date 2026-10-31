@@ -13,6 +13,39 @@ function escape(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ /g, '\\s+').replace(/'/g, "['’]")
 }
 
+export function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\/-]/g, '\\$&')
+}
+
+export interface Block {
+  start: number
+  end: number
+  body: number
+  bodyEnd: number
+}
+
+export function blocks(text: string, open: RegExp, close: RegExp): Block[] {
+  const out: Block[] = []
+  const o = new RegExp(open.source, open.flags.replace('g', '') + 'g')
+  const c = new RegExp(close.source, close.flags.replace('g', '') + 'g')
+  let at = 0
+  while (at < text.length) {
+    o.lastIndex = at
+    const m = o.exec(text)
+    if (!m) break
+    const body = m.index + m[0].length
+    c.lastIndex = body
+    const e = c.exec(text)
+    if (!e) {
+      out.push({ start: m.index, end: text.length, body, bodyEnd: text.length })
+      break
+    }
+    out.push({ start: m.index, end: e.index + e[0].length, body, bodyEnd: e.index })
+    at = Math.max(e.index + e[0].length, m.index + 1)
+  }
+  return out
+}
+
 export function words(list: readonly string[], flags = 'giu'): RegExp {
   return new RegExp(`(?<![\\p{L}\\d])(?:${list.map(escape).join('|')})(?![\\p{L}\\d])`, flags)
 }
@@ -86,9 +119,28 @@ export interface CssRule {
 
 export function cssRules(text: string): CssRule[] {
   const out: CssRule[] = []
-  const clean = text.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
-  for (const m of clean.matchAll(/([^{}@;]+)\{([^{}]*)\}/g)) {
-    out.push({ selector: m[1]!.trim(), body: m[2]!, start: m.index + (m[1]!.length - m[1]!.trimStart().length), bodyStart: m.index + m[1]!.length + 1 })
+  const chars = text.split('')
+  for (const b of blocks(text, /\/\*/, /\*\//)) for (let i = b.start; i < b.end; i++) if (chars[i] !== '\n') chars[i] = ' '
+  const clean = chars.join('')
+  let run = 0
+  let from = 0
+  let open = -1
+  for (let i = 0; i < clean.length; i++) {
+    const c = clean[i]
+    if (c === '{') {
+      open = i > run ? i : -1
+      from = run
+      run = i + 1
+    } else if (c === '}') {
+      if (open !== -1) {
+        const raw = clean.slice(from, open)
+        out.push({ selector: raw.trim(), body: clean.slice(open + 1, i), start: from + (raw.length - raw.trimStart().length), bodyStart: open + 1 })
+      }
+      open = -1
+      run = i + 1
+    } else if (c === '@' || c === ';') {
+      run = i + 1
+    }
   }
   return out
 }
