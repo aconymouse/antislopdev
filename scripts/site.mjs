@@ -283,7 +283,7 @@ ${extraHead}<script type="module" src="/${app}"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TCBSNMBT5C"></script>
 <script>${gtag}</script>
 <script type="application/ld+json">${jsonld}</script>
-${data ? `<script type="application/json" id="page-data">${json(data)}</script>\n` : ''}</head>
+${data ? `<script>window.__page=${json(data)}</script>\n` : ''}</head>
 <body>
 <div id="root" data-page="${page}" data-stories="${count(lang)}">${body}</div>
 </body>

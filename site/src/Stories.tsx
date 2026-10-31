@@ -1,7 +1,7 @@
 import { Footer, Header } from './Chrome'
 import { copies, href, type Lang } from './copy'
 import { Article } from './Article'
-import { dateText, type PageData } from './story-data'
+import { dateText, type PageData, safePath } from './story-data'
 
 const Arrow = () => (
   <svg className="arrow" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
@@ -20,7 +20,7 @@ function Index({ lang, data }: { lang: Lang; data: PageData }) {
       <ol className="story-list">
         {(data.cards ?? []).map((c) => (
           <li key={c.id}>
-            <a href={c.href}>
+            <a href={safePath(c.href) ?? href(lang, 'stories')}>
               <time dateTime={c.date}>{dateText(lang, c.date)}</time>
               <span className="story-card">
                 <h2>{c.title}</h2>

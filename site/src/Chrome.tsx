@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { asset } from './asset'
 import { copies, href, langs, type Lang, type Page } from './copy'
 import { marks } from './marks'
-import { hasStories } from './story-data'
+import { hasStories, safePath } from './story-data'
 import { track } from './track'
 
 export const repo = 'https://github.com/aconymouse/antislopdev'
@@ -113,7 +113,7 @@ function LangPick({ lang, page, label, up = false, alt }: { lang: Lang; page: Pa
           {langs.map((l) => (
             <li key={l.code}>
               <a
-                href={alt?.[l.code] ?? href(l.code, page)}
+                href={safePath(alt?.[l.code]) ?? href(l.code, page)}
                 hrefLang={l.code}
                 lang={l.code}
                 aria-current={l.code === lang ? 'true' : undefined}

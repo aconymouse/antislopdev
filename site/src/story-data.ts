@@ -12,6 +12,10 @@ export type View = { title: string; date: string; modified: string; minutes: num
 
 export type PageData = { count: number; cards?: Card[] | undefined; story?: View | undefined; alt?: Partial<Record<Lang, string>> | undefined }
 
+const ownPath = /^\/(?:id\/)?stories\/(?:[a-z0-9]+(?:-[a-z0-9]+)*\/)?$/
+
+export const safePath = (path: string | null | undefined): string | undefined => (path && ownPath.test(path) ? path : undefined)
+
 export const storyHref = (lang: Lang, slug: string) => `${lang === 'en' ? '/' : '/id/'}stories/${slug}/`
 
 const counts: Partial<Record<Lang, number>> = {}

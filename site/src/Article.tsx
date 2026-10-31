@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { copies, href, type Lang } from './copy'
-import { dateText, type PageData } from './story-data'
+import { dateText, type PageData, safePath } from './story-data'
 import { track } from './track'
 
 function useCopyButtons(lang: Lang) {
@@ -51,18 +51,18 @@ export function Article({ lang, data }: { lang: Lang; data: PageData }) {
               Hafidz Nc
             </a>{' '}
             · <time dateTime={s.date}>{dateText(lang, s.date)}</time> · {s.minutes} {t.minutes}
-            {s.other ? (
+            {safePath(s.other) ? (
               <>
                 {' '}
                 ·{' '}
-                <a href={s.other} hrefLang={lang === 'en' ? 'id' : 'en'} lang={lang === 'en' ? 'id' : 'en'}>
+                <a href={safePath(s.other)} hrefLang={lang === 'en' ? 'id' : 'en'} lang={lang === 'en' ? 'id' : 'en'}>
                   {t.other}
                 </a>
               </>
             ) : null}
           </p>
         </header>
-        {s.cover ? (
+        {s.cover && /^https?:\/\//.test(s.cover.url) ? (
           <figure className="story-cover">
             <img src={s.cover.url} alt={s.cover.alt} width={s.cover.width ?? undefined} height={s.cover.height ?? undefined} fetchPriority="high" decoding="async" />
           </figure>
