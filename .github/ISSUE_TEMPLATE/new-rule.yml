@@ -1,0 +1,54 @@
+name: New rule
+description: A rule already agreed in Rule proposals, ready to be written.
+labels: [new-rule]
+body:
+  - type: input
+    id: discussion
+    attributes:
+      label: Discussion
+      placeholder: https://github.com/aconymouse/antislopdev/discussions/
+    validations:
+      required: true
+  - type: dropdown
+    id: group
+    attributes:
+      label: Group
+      options: [UI, TX, ID, CD, DOC, GIT, TR, AX, PF, SEO, SEC]
+    validations:
+      required: true
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      placeholder: Gradient text on every heading.
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Level
+      options: [block, justify, warn]
+    validations:
+      required: true
+  - type: dropdown
+    id: check
+    attributes:
+      label: Check
+      options: [static, heuristic, review]
+    validations:
+      required: true
+  - type: textarea
+    id: fails
+    attributes:
+      label: Must be caught
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: passes
+    attributes:
+      label: Must be left alone
+      description: The closest lookalike that is fine.
+      render: text
+    validations:
+      required: true

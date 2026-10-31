@@ -1,0 +1,40 @@
+name: False positive
+description: A rule flagged something that was fine.
+title: "fp: "
+labels: [false-positive]
+body:
+  - type: input
+    id: rule
+    attributes:
+      label: Rule
+      placeholder: UI-04
+    validations:
+      required: true
+  - type: textarea
+    id: snippet
+    attributes:
+      label: Smallest input that triggers it
+      description: Trim it down until removing anything more makes the finding go away.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: kind
+    attributes:
+      label: File name or type
+      placeholder: Button.tsx
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it is fine here
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: antislopdev --version
+    validations:
+      required: true

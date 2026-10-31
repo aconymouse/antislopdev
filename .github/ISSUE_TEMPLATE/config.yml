@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Propose a rule
+    url: https://github.com/aconymouse/antislopdev/discussions/categories/rule-proposals
+    about: New habits start as a discussion, so the wording and the level can be argued before anyone writes code.
+  - name: Ask a question
+    url: https://github.com/aconymouse/antislopdev/discussions/categories/q-a
+    about: Setup, config, or whether a rule fits your project.
+  - name: Report a vulnerability
+    url: https://github.com/aconymouse/antislopdev/security/advisories/new
+    about: Privately, never as a public issue.

@@ -1,5 +1,7 @@
 # antiSlopdev
 
+[![npm](https://img.shields.io/npm/v/antislopdev)](https://www.npmjs.com/package/antislopdev) [![ci](https://github.com/aconymouse/antislopdev/actions/workflows/ci.yml/badge.svg)](https://github.com/aconymouse/antislopdev/actions/workflows/ci.yml) [![licence](https://img.shields.io/npm/l/antislopdev)](LICENSE)
+
 Rules and a checker that catch generic AI output in UI, copy, docs, commits and code.
 
 Slop is what gets shipped when nobody decided anything: the eyebrow label over every heading, the sparkle icon on every "smart" button, "Unlock the power of", a hero with three cards, a README full of rockets. antiSlopdev names 163 of those defaults, from interface and copy to SEO and security, gives each one a stable ID, and checks 137 of them automatically.
@@ -109,6 +111,10 @@ The same engine runs in the browser playground on the site.
 | SEC | 21 | secrets, injection, TLS, CORS, cookies, redirects, dependencies |
 
 To audit a live page against the SEO group, try [sarangSEO](https://aconymous.com/tools/sarangseo). For a passive security scan of a domain you own, try [wowHacker](https://aconymous.com/tools/wowhacker).
+
+## Contributing
+
+False positives are the most useful report: open one with the smallest snippet that triggers the rule. New rules start in [Rule proposals](https://github.com/aconymouse/antislopdev/discussions/categories/rule-proposals). How a rule goes from idea to check is in [CONTRIBUTING.md](CONTRIBUTING.md), and what is planned next is in [ROADMAP.md](ROADMAP.md). Changes per release are in [CHANGELOG.md](CHANGELOG.md).
 
 ## Prior art
 

@@ -1,0 +1,41 @@
+name: Bug
+description: The CLI, the skill or the site does something wrong.
+labels: [bug]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      options:
+        - CLI or engine
+        - Agent skill or plugin
+        - Site
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What you ran
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: Paste the output or the error as text.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Version, Node.js and OS
+      placeholder: 0.1.0, Node 24, macOS 26
+    validations:
+      required: true
