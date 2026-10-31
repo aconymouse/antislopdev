@@ -1,5 +1,6 @@
-export { check, checkSources, toSources, rules, projectRules, implemented } from './engine.js'
+export { check, checkSources, toSources, rules, projectRules, implemented, resolveMeta } from './engine.js'
+export { compileCustom } from './custom.js'
 export { catalog } from './catalog.js'
 export { Source, kindOf } from './source.js'
 export { links } from './rules/truth.js'
-export type { CheckOptions, Finding, FileKind, Level, Report, RuleMeta, SourceInput } from './types.js'
+export type { CheckOptions, CustomRule, Finding, FileKind, Level, Report, RuleMeta, SourceInput } from './types.js'

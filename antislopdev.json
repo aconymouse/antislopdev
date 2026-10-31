@@ -1,7 +1,7 @@
 {
   "ignore": [
     "RULES.md",
-    "skills/antislopdev/RULES.md",
+    "skills/antislopdev/rules",
     "src/core/catalog.ts",
     "src/core/rules",
     "test/fixtures",

@@ -1,6 +1,6 @@
 {
   "name": "antislopdev",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "167 rules and a checker that catch generic AI output in UI, copy, docs, commits, code, SEO and security.",
   "author": { "name": "Hafidz Nc" },
   "homepage": "https://antislopdev.aconymous.com",

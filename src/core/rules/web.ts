@@ -78,7 +78,7 @@ function pumpable(alt: Atom[]): boolean {
   return open > 0 && needed <= 1 && alt.every((a) => a.min === 0 || a.max === Infinity || a.pump)
 }
 
-function backtracks(p: string): number {
+export function backtracks(p: string): number {
   const stack: { start: number; alts: Atom[][] }[] = [{ start: 0, alts: [[]] }]
   let i = 0
   while (i < p.length) {

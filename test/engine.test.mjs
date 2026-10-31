@@ -152,3 +152,60 @@ test('the CLI exits 1 on slop, 0 on clean, and prints JSON', () => {
   assert.equal(commit.status, 1)
   assert.match(commit.stdout, /GIT-01/)
 })
+
+test('custom rules from config find their words and patterns', () => {
+  const rules = [
+    { id: 'ACME-01', title: 'Say workspace, not dashboard', words: ['dashboard', 'dasbor'] },
+    { id: 'ACME-02', title: 'No console.log in shipped code', level: 'block', in: 'code', pattern: 'console\\.log\\(' },
+  ]
+  const r = check(
+    [
+      { path: 'README.md', text: '# Acme\n\nOpen the dashboard to see your team.\n\n```js\nconst dashboard = 1\n```\n' },
+      { path: 'Nav.tsx', text: 'export const Nav = () => <a href="/dashboard">Buka dasbor</a>\n' },
+      { path: 'x.ts', text: 'export function x(): void {\n  console.log("hi")\n}\n' },
+    ],
+    { rules },
+  )
+  const got = r.findings.filter((f) => f.rule.startsWith('ACME')).map((f) => `${f.path}:${f.line} ${f.rule} ${f.level}`)
+  assert.deepEqual(got, ['Nav.tsx:1 ACME-01 warn', 'README.md:3 ACME-01 warn', 'x.ts:2 ACME-02 block'])
+  assert.equal(r.failed, true)
+  const only = check([{ path: 'README.md', text: 'Open the dashboard.\n' }], { rules, only: ['ACME'] })
+  assert.deepEqual(only.findings.map((f) => f.rule), ['ACME-01'])
+  const kept = check([{ path: 'x.ts', text: 'export function x(): void {\n  // antislopdev-allow ACME-02: the CLI prints on purpose\n  console.log("hi")\n}\n' }], { rules })
+  assert.equal(kept.findings.find((f) => f.rule === 'ACME-02')?.level, 'block')
+  assert.equal(kept.failed, true)
+})
+
+test('levels in config change how strict a rule is', () => {
+  const text = 'Our seamless platform helps you ship.\n'
+  assert.equal(check([{ path: 'a.md', text }]).findings.find((f) => f.rule === 'TX-04')?.level, 'warn')
+  const strict = check([{ path: 'a.md', text }], { levels: { 'TX-04': 'justify' } })
+  assert.equal(strict.findings.find((f) => f.rule === 'TX-04')?.level, 'justify')
+  assert.equal(strict.failed, true)
+  const custom = check([{ path: 'a.md', text: 'Open the dashboard.\n' }], { rules: [{ id: 'ACME-01', title: 'Say workspace', words: ['dashboard'] }], levels: { 'acme-01': 'justify' } })
+  assert.equal(custom.findings[0]?.level, 'justify')
+})
+
+test('bad custom rules are refused with a reason', () => {
+  const bad = [
+    [{ id: 'UI-99', title: 'x', words: ['a'] }, /built-in group/],
+    [{ id: 'acme', title: 'x', words: ['a'] }, /look like ACME-01/],
+    [{ id: 'ACME-01', title: 'x' }, /words or a pattern/],
+    [{ id: 'ACME-01', title: 'x', pattern: '(a+)+$' }, /backtrack/],
+    [{ id: 'ACME-01', title: 'x', pattern: '(' }, /does not compile/],
+    [{ id: 'ACME-01', title: '', words: ['a'] }, /needs a title/],
+    [{ id: 'ACME-01', title: 'x', words: ['a'], level: 'error' }, /level must be/],
+  ]
+  for (const [rule, why] of bad) assert.throws(() => check([{ path: 'a.md', text: 'a\n' }], { rules: [rule] }), why)
+  assert.throws(() => check([{ path: 'a.md', text: 'a\n' }], { levels: { 'XX-01': 'warn' } }), /not a rule/)
+})
+
+test('the skill ships one rules file per group', () => {
+  const dir = fileURLToPath(new URL('../skills/antislopdev/rules/', import.meta.url))
+  const files = readdirSync(dir).sort()
+  assert.deepEqual(files, ['ax.md', 'cd.md', 'doc.md', 'git.md', 'id.md', 'pf.md', 'sec.md', 'seo.md', 'tr.md', 'tx.md', 'ui.md'])
+  const all = files.map((f) => readFileSync(dir + f, 'utf8')).join('\n')
+  for (const r of catalog) assert.ok(all.includes(`| ${r.id} |`), r.id)
+  const skill = readFileSync(fileURLToPath(new URL('../skills/antislopdev/SKILL.md', import.meta.url)), 'utf8')
+  for (const f of files) assert.ok(skill.includes(`rules/${f}`), f)
+})

@@ -141,8 +141,25 @@ function sections(lang: Lang): Section[] {
           <p>{en ? 'Put antislopdev.json in the folder you run it from:' : 'Taruh antislopdev.json di folder tempat kamu menjalankannya:'}</p>
           <Code>{`{
   "ignore": ["docs/legacy", "src/fixtures"],
-  "disable": ["CD-11"]
+  "disable": ["CD-11"],
+  "levels": { "TX-04": "justify", "UI-01": "warn" },
+  "rules": [
+    {
+      "id": "ACME-01",
+      "title": "Say workspace, not dashboard",
+      "level": "warn",
+      "words": ["dashboard", "dasbor"]
+    },
+    {
+      "id": "ACME-02",
+      "title": "No console.log in shipped code",
+      "level": "block",
+      "in": "code",
+      "pattern": "console\\\\.log\\\\("
+    }
+  ]
 }`}</Code>
+          <p>{en ? 'levels makes a rule stricter or looser for this project. rules adds your own: words for a list of words or phrases, pattern for a regular expression, in for where to look (copy for visible text, the default, code, commit or all). Pick your own prefix; UI, TX and the other built-in prefixes are taken. A pattern that can backtrack forever is refused (SEC-22). Your rules show up in antislopdev rules, work with --only and --disable, and accept antislopdev-allow like any other.' : 'levels bikin aturan lebih ketat atau lebih longgar buat project ini. rules nambah aturan sendiri: words untuk daftar kata atau frasa, pattern untuk regular expression, in untuk tempat dicari (copy untuk teks yang terlihat, ini default, code, commit, atau all). Pakai prefix sendiri; UI, TX, dan prefix bawaan lain sudah terpakai. Pattern yang bisa backtrack tanpa ujung ditolak (SEC-22). Aturanmu muncul di antislopdev rules, ikut --only dan --disable, dan bisa dipertahankan pakai antislopdev-allow seperti aturan lain.'}</p>
         </>
       ),
     },

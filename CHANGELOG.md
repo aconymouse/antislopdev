@@ -2,6 +2,23 @@
 
 Each release lists what changed for someone using the rules or the checker. Versions follow semver: a new rule or check is a minor release, a changed level or a check that flags more is called out under Changed.
 
+## 0.3.0 · 31 October 2026
+
+### Config
+
+- Your own rules in `antislopdev.json` under `rules`: a list of `words` or a `pattern`, where to look (`copy`, `code`, `commit` or `all`) and a level. Each one needs its own prefix, like `ACME-01`. They show up in `antislopdev rules` and `explain`, work with `--only` and `--disable`, and take `antislopdev-allow` like the built-in rules.
+- `levels` makes any rule stricter or looser for one project, for example `{ "TX-04": "justify" }`.
+- A bad entry stops the run with the reason: a taken prefix, a missing title, a pattern that does not compile or one that can backtrack forever (the same test as SEC-22).
+
+### Agent skill
+
+- The rules now ship as one file per group under `skills/antislopdev/rules/`, and `SKILL.md` tells the agent to read only the groups that match the work. The biggest group is about 6 KB, the whole list was 30 KB.
+
+### Checker
+
+- Allow comments that end in `--!>` are read correctly.
+- Rule IDs longer than six characters no longer push the title out of line.
+
 ## 0.2.0 · 31 October 2026
 
 ### Rules

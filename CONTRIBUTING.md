@@ -27,7 +27,7 @@ npm run site
 ## How a rule is made
 
 1. Add a row to `RULES.md` in the right group: ID, a short bold title ending in a full stop, one or two sentences of detail, a level (`block`, `justify` or `warn`) and a check (`static`, `heuristic` or `review`). IDs are never reused. A retired rule keeps its number and says so.
-2. Run `npm run catalog`. It regenerates `src/core/catalog.ts` and copies `RULES.md` into the skill.
+2. Run `npm run catalog`. It regenerates `src/core/catalog.ts` and splits `RULES.md` into one file per group under `skills/antislopdev/rules/`, which is what the skill reads.
 3. If the check is `static` or `heuristic`, add it to the matching file in `src/core/rules/`. A check returns hits with an index into the source and a short note that quotes what matched.
 4. Prove it both ways in `test/engine.test.mjs`: one input the rule must catch, and one close lookalike it must leave alone. False positives cost more trust than misses.
 5. Run `npm test`, then `node dist/cli/index.js check .` on the repository itself.

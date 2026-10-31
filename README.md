@@ -64,8 +64,18 @@ Options:
 Config lives in `antislopdev.json`:
 
 ```json
-{ "ignore": ["docs/legacy"], "disable": ["CD-11"] }
+{
+  "ignore": ["docs/legacy"],
+  "disable": ["CD-11"],
+  "levels": { "TX-04": "justify" },
+  "rules": [
+    { "id": "ACME-01", "title": "Say workspace, not dashboard", "words": ["dashboard", "dasbor"] },
+    { "id": "ACME-02", "title": "No console.log in shipped code", "level": "block", "in": "code", "pattern": "console\\.log\\(" }
+  ]
+}
 ```
+
+`levels` makes a built-in rule stricter or looser for this project. `rules` adds your own: `words` for a list of words or phrases, `pattern` for a regular expression, `in` for where to look (`copy` for visible text by default, `code`, `commit` or `all`), and a `level` (`warn` by default). Use your own prefix; the built-in ones are taken. A pattern that can backtrack forever is refused. Custom rules show up in `antislopdev rules`, work with `--only` and `--disable`, and accept `antislopdev-allow` like any other rule.
 
 It reads `.tsx`, `.jsx`, `.html`, `.vue`, `.svelte`, `.astro`, `.css`, `.js`, `.ts`, `.py` and friends, Markdown, `package.json`, and translation files under `messages/`, `locales/` or `i18n/`. Copy is checked in English and Indonesian.
 

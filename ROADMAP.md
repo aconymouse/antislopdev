@@ -1,6 +1,6 @@
 # Roadmap
 
-Last updated 31 October 2026, at version 0.1.0.
+Last updated 31 October 2026, at version 0.3.0.
 
 antiSlopdev started as a rule list an agent reads. Where it goes next is enforcement: the same rules running wherever code gets written and reviewed, without anyone having to remember to run them. Plugins for more editors matter too, but they come after the checker can sit in a pipeline and say no.
 

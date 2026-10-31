@@ -2,8 +2,8 @@
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { join, relative, resolve, sep } from 'node:path'
 import { parseArgs } from 'node:util'
-import { catalog, checkSources, implemented, kindOf, links, toSources } from '../core/index.js'
-import type { Finding, Report, SourceInput } from '../core/index.js'
+import { catalog, checkSources, compileCustom, implemented, kindOf, links, resolveMeta, toSources } from '../core/index.js'
+import type { CustomRule, Finding, Level, Report, RuleMeta, SourceInput } from '../core/index.js'
 
 const version = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version as string
 
@@ -28,7 +28,13 @@ Options
   -h, --help
 
 Config
-  antislopdev.json in the working directory: { "ignore": ["docs/legacy"], "disable": ["CD-11"] }
+  antislopdev.json in the working directory:
+  {
+    "ignore": ["docs/legacy"],
+    "disable": ["CD-11"],
+    "levels": { "TX-04": "justify" },
+    "rules": [{ "id": "ACME-01", "title": "Say workspace, not dashboard", "words": ["dashboard"] }]
+  }
 
 Exit code is 1 when a block finding exists, or a justify finding has no
 "antislopdev-allow <ID>: reason" next to it.`
@@ -36,16 +42,22 @@ Exit code is 1 when a block finding exists, or a justify finding has no
 interface Config {
   ignore?: string[]
   disable?: string[]
+  levels?: Record<string, Level>
+  rules?: CustomRule[]
 }
 
 function readConfig(cwd: string): Config {
   const file = join(cwd, 'antislopdev.json')
   if (!existsSync(file)) return {}
+  let config: Config
   try {
-    return JSON.parse(readFileSync(file, 'utf8')) as Config
+    config = JSON.parse(readFileSync(file, 'utf8')) as Config
   } catch {
     throw new Error('antislopdev.json is not valid JSON')
   }
+  if (config.rules !== undefined && !Array.isArray(config.rules)) throw new Error('antislopdev.json: rules must be a list')
+  if (config.levels !== undefined && (typeof config.levels !== 'object' || config.levels === null || Array.isArray(config.levels))) throw new Error('antislopdev.json: levels must map rule IDs to block, justify or warn')
+  return config
 }
 
 function gitignored(cwd: string): string[] {
@@ -126,6 +138,7 @@ const green = paint('32')
 function print(report: Report, quiet: boolean): void {
   let current = ''
   const shown = report.findings.filter((f) => !(quiet && f.level === 'warn' && !f.allowed))
+  const width = Math.max(6, ...shown.map((f) => f.rule.length))
   for (const f of shown) {
     if (f.path !== current) {
       current = f.path
@@ -133,7 +146,7 @@ function print(report: Report, quiet: boolean): void {
     }
     const level = f.allowed ? green('allowed') : f.level === 'block' ? red('block  ') : f.level === 'justify' ? yellow('justify') : cyan('warn   ')
     const where = dim(`${f.line}:${f.column}`.padEnd(8))
-    process.stdout.write(`  ${where} ${level}  ${bold(f.rule.padEnd(6))} ${f.title}${f.note ? dim(' · ' + f.note) : ''}${f.escalated ? dim(' · repeated 3+ times in this file') : ''}\n`)
+    process.stdout.write(`  ${where} ${level}  ${bold(f.rule.padEnd(width))} ${f.title}${f.note ? dim(' · ' + f.note) : ''}${f.escalated ? dim(' · repeated 3+ times in this file') : ''}\n`)
     if (f.allowed) process.stdout.write(`  ${' '.repeat(8)} ${dim('reason: ' + f.allowed)}\n`)
   }
   const { block, justify, warn } = report.counts
@@ -168,18 +181,24 @@ async function main(argv: string[]): Promise<number> {
     process.stdout.write(help + '\n')
     return 0
   }
-  if (command === 'rules') {
-    for (const r of catalog) process.stdout.write(`${r.id.padEnd(7)} ${r.level.padEnd(8)} ${(implemented.includes(r.id) ? r.check : 'review').padEnd(10)} ${r.title}\n`)
-    process.stdout.write(dim(`\n${catalog.length} rules · ${implemented.length} checked automatically · the rest are for review\n`))
-    return 0
-  }
-  if (command === 'explain') {
-    const r = catalog.find((x) => x.id === rest[0]?.toUpperCase())
+  if (command === 'rules' || command === 'explain') {
+    const config = readConfig(process.cwd())
+    const custom = compileCustom(config.rules)
+    const lookup = resolveMeta(custom.meta, config.levels)
+    const own = new Set(custom.meta.map((m) => m.id))
+    const checked = (r: RuleMeta) => implemented.includes(r.id) || own.has(r.id)
+    const all = [...catalog, ...custom.meta].map((r) => lookup.get(r.id)!)
+    if (command === 'rules') {
+      for (const r of all) process.stdout.write(`${r.id.padEnd(9)} ${r.level.padEnd(8)} ${(checked(r) ? (own.has(r.id) ? 'custom' : r.check) : 'review').padEnd(10)} ${r.title}\n`)
+      process.stdout.write(dim(`\n${catalog.length} rules · ${implemented.length} checked automatically · the rest are for review${own.size ? ` · ${own.size} custom from antislopdev.json` : ''}\n`))
+      return 0
+    }
+    const r = all.find((x) => x.id === rest[0]?.toUpperCase())
     if (!r) {
       process.stderr.write(`unknown rule ${rest[0] ?? ''}\n`)
       return 2
     }
-    process.stdout.write(`${bold(r.id)} ${r.title}\n${r.detail}\n\nlevel ${r.level} · ${implemented.includes(r.id) ? `checked (${r.check})` : 'review by eye'}\n`)
+    process.stdout.write(`${bold(r.id)} ${r.title}\n${r.detail ? r.detail + '\n' : ''}\nlevel ${r.level} · ${own.has(r.id) ? 'custom rule from antislopdev.json' : checked(r) ? `checked (${r.check})` : 'review by eye'}\n`)
     return 0
   }
   if (command !== 'check') {
@@ -200,7 +219,8 @@ async function main(argv: string[]): Promise<number> {
   const only = list(values.only)
   const disable = [...(config.disable ?? []), ...(list(values.disable) ?? [])]
   const extra = values.links ? await deadLinks(inputs) : []
-  const report = checkSources(toSources(inputs), only ? { only, disable } : { disable }, extra)
+  const options = { disable, ...(only ? { only } : {}), ...(config.levels ? { levels: config.levels } : {}), ...(config.rules ? { rules: config.rules } : {}) }
+  const report = checkSources(toSources(inputs), options, extra)
   if (values.json) process.stdout.write(JSON.stringify({ version, ...report }, null, 2) + '\n')
   else print(report, Boolean(values.quiet))
   return report.failed ? 1 : 0

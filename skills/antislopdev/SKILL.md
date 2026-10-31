@@ -7,7 +7,17 @@ description: Catch generic AI output before it ships. Use when building or revie
 
 Slop is what gets shipped when nobody decided anything: the safe default, repeated until every product looks, reads and compiles the same. This skill gives you 167 named defaults to avoid and a checker that finds most of them for you.
 
-The full list with IDs, levels and examples is in `RULES.md` next to this file. Read the group that matches the work before you start: `UI` for interfaces, `TX` for English copy, `ID` for Indonesian copy, `CD` for code, `DOC` for READMEs and docs, `GIT` for commits and pull requests, `TR` for claims and numbers, `AX` for accessibility, `PF` for performance, `SEO` for pages that should be found, quoted by answer engines and shared, `SEC` for anything that touches secrets, input, auth, cookies or the network.
+The rules live in `rules/` next to this file, one file per group. Read only the groups that match the work, not all of them:
+
+- `rules/ui.md` for interfaces
+- `rules/tx.md` for English copy, `rules/id.md` for Indonesian copy
+- `rules/cd.md` for code, `rules/doc.md` for READMEs and docs, `rules/git.md` for commits and pull requests
+- `rules/tr.md` for claims and numbers
+- `rules/ax.md` for accessibility, `rules/pf.md` for performance
+- `rules/seo.md` for pages that should be found, quoted by answer engines and shared
+- `rules/sec.md` for anything that touches secrets, input, auth, cookies or the network
+
+A project can add its own rules or change a level in `antislopdev.json`. Run `npx antislopdev rules` to see the list that applies here.
 
 ## While you work
 

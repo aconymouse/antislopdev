@@ -46,7 +46,20 @@ export interface Report {
   allowed: number
 }
 
+export interface CustomRule {
+  id: string
+  title: string
+  detail?: string
+  level?: Level
+  in?: 'copy' | 'code' | 'commit' | 'all'
+  words?: readonly string[]
+  pattern?: string
+  flags?: string
+}
+
 export interface CheckOptions {
   disable?: readonly string[]
   only?: readonly string[]
+  levels?: Readonly<Record<string, Level>>
+  rules?: readonly CustomRule[]
 }

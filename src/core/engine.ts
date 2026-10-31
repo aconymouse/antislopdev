@@ -1,4 +1,5 @@
 import { catalog } from './catalog.js'
+import { compileCustom } from './custom.js'
 import { Source, kindOf } from './source.js'
 import type { ProjectRule, Rule } from './rule.js'
 import type { CheckOptions, Finding, Hit, Level, Report, RuleMeta, SourceInput } from './types.js'
@@ -50,14 +51,29 @@ function nextFilled(src: Source, line: number): number {
   return n
 }
 
-function finding(src: Source, rule: string, hit: Hit): Finding {
-  const m = meta.get(rule)!
+function finding(src: Source, rule: string, hit: Hit, lookup: ReadonlyMap<string, RuleMeta>): Finding {
+  const m = lookup.get(rule)!
   const offset = Math.min(hit.index, Math.max(0, src.text.length - 1))
   const { line, column } = src.position(offset)
   const length = hit.length ?? Math.max(1, src.lineLength(line) - column + 1)
   const f: Finding = { rule, level: m.level, title: m.title, path: src.path, line, column, offset, length, excerpt: src.excerpt(line) }
   if (hit.note !== undefined) f.note = hit.note
   return f
+}
+
+const levelNames = new Set<Level>(['block', 'justify', 'warn'])
+
+export function resolveMeta(custom: readonly RuleMeta[] = [], levels: Readonly<Record<string, Level>> = {}): Map<string, RuleMeta> {
+  const lookup = new Map(meta)
+  for (const m of custom) lookup.set(m.id, m)
+  for (const [raw, level] of Object.entries(levels)) {
+    const id = raw.trim().toUpperCase()
+    const m = lookup.get(id)
+    if (!m) throw new Error(`levels: ${raw} is not a rule`)
+    if (!levelNames.has(level)) throw new Error(`levels: ${raw} must be block, justify or warn`)
+    lookup.set(id, { ...m, level })
+  }
+  return lookup
 }
 
 export function toSources(inputs: readonly SourceInput[]): Source[] {
@@ -74,19 +90,21 @@ export function check(inputs: readonly SourceInput[], options: CheckOptions = {}
 }
 
 export function checkSources(sources: readonly Source[], options: CheckOptions = {}, extra: readonly Finding[] = []): Report {
+  const custom = compileCustom(options.rules)
+  const lookup = resolveMeta(custom.meta, options.levels)
   const enabled = (id: string) => !options.disable?.includes(id) && (!options.only || options.only.some((o) => id === o || id.startsWith(o + '-')))
-  const found: Finding[] = [...extra]
+  const found: Finding[] = [...extra].map((f) => ({ ...f, level: lookup.get(f.rule)?.level ?? f.level }))
   const bySource = new Map<string, Source>()
   for (const src of sources) {
     bySource.set(src.path, src)
-    for (const rule of rules) {
+    for (const rule of [...rules, ...custom.rules]) {
       if (!enabled(rule.id) || !rule.on.includes(src.kind)) continue
-      for (const hit of rule.run(src)) found.push(finding(src, rule.id, hit))
+      for (const hit of rule.run(src)) found.push(finding(src, rule.id, hit, lookup))
     }
   }
   for (const rule of projectRules) {
     if (!enabled(rule.id)) continue
-    for (const { source, hit } of rule.run(sources)) found.push(finding(source, rule.id, hit))
+    for (const { source, hit } of rule.run(sources)) found.push(finding(source, rule.id, hit, lookup))
   }
 
   const seen = new Set<string>()
