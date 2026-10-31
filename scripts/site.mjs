@@ -59,7 +59,7 @@ const sheet = `style-${createHash('sha256').update(css).digest('hex').slice(0, 1
 writeFileSync(out + sheet, css)
 cpSync(root + 'site/public', out, { recursive: true })
 
-const theme = `try{var t=localStorage.getItem('asd:theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){document.documentElement.dataset.theme='dark'}`
+const theme = `document.documentElement.classList.add('js');try{var t=localStorage.getItem('asd:theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){document.documentElement.dataset.theme='dark'}`
 const gtag = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-TCBSNMBT5C');`
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
 
@@ -99,7 +99,7 @@ ${alternates}
 <meta property="og:url" content="${origin}${path}">
 <meta property="og:title" content="${esc(meta.title)}">
 <meta property="og:description" content="${esc(meta.description)}">
-<meta property="og:image" content="${origin}/og.png">
+<meta property="og:image" content="${origin}/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="${lang === 'id' ? 'id_ID' : 'en_US'}">
@@ -109,6 +109,7 @@ ${alternates}
 <script>${theme}</script>
 <link rel="stylesheet" href="/${sheet}">
 <link rel="modulepreload" href="/${app}">
+${page === 'home' ? ['peak', 'bg'].map((n) => `<link rel="preload" as="image" type="image/webp" imagesrcset="/hero/${n}-1280.webp 1280w, /hero/${n}-2400.webp 2400w" imagesizes="100vw" fetchpriority="high">`).join('\n') : ''}
 <script type="module" src="/${app}"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TCBSNMBT5C"></script>
 <script>${gtag}</script>

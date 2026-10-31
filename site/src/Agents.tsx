@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Copy } from './copy'
 import { marks } from './marks'
 import { still } from './track'
+import { Words } from './theater'
 
 type Level = 'block' | 'justify' | 'warn'
 
@@ -89,7 +90,9 @@ export function Agents({ t }: { t: Copy['agents'] }) {
   return (
     <section className="split agents" aria-labelledby="agents-title">
       <div className="split-copy">
-        <h2 id="agents-title">{t.title}</h2>
+        <h2 id="agents-title" data-words>
+          <Words text={t.title} />
+        </h2>
         <p>{t.p1}</p>
         <p>{t.p2}</p>
         <ul className="agent-list">

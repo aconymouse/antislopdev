@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { catalog } from '../../src/core/index.js'
 import type { Copy } from './copy'
 import { track } from './track'
+import { Words } from './theater'
 
 const parts: string[][] = [['UI-12'], ['UI-02', 'UI-04'], ['UI-11', 'TX-09'], ['TX-05'], ['TX-08', 'UI-16'], ['TR-01', 'UI-21'], ['UI-20'], ['UI-01'], ['UI-06', 'UI-32', 'UI-05'], ['TR-02']]
 const total = new Set(parts.flat()).size
@@ -44,7 +45,9 @@ export function Xray({ t }: { t: Copy['xray'] }) {
   return (
     <section className="split xray flip" aria-labelledby="xray-title">
       <div className="split-copy">
-        <h2 id="xray-title">{t.title}</h2>
+        <h2 id="xray-title" data-words>
+          <Words text={t.title} />
+        </h2>
         <p>{t.p1}</p>
         <p>{t.p2}</p>
         <button

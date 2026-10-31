@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Copy } from './copy'
 import { still } from './track'
+import { Words } from './theater'
 
 type Line = { kind: 'cmd' | 'file' | 'hit' | 'sum' | 'gap' | 'dim'; text: string; level?: 'block' | 'justify' | 'warn' }
 
@@ -67,7 +68,9 @@ export function Terminal({ t }: { t: Copy['terminal'] }) {
   return (
     <section className="split terminal-section" aria-labelledby="terminal-title">
       <div className="split-copy">
-        <h2 id="terminal-title">{t.title}</h2>
+        <h2 id="terminal-title" data-words>
+          <Words text={t.title} />
+        </h2>
         <p>{t.p1}</p>
         <p>{t.p2}</p>
         <pre className="snippet">

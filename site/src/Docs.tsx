@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { catalog, implemented } from '../../src/core/index.js'
 import { Footer, Header, repo } from './Chrome'
 import { copies, href, type Lang } from './copy'
+import { useTheater, Words } from './theater'
 
 type Section = { id: string; title: string; body: ReactNode }
 
@@ -212,6 +213,7 @@ npm test`}</Code>
 export function Docs({ lang }: { lang: Lang }) {
   const t = copies[lang]
   const list = sections(lang)
+  useTheater()
   const [active, setActive] = useState(list[0]!.id)
 
   useEffect(() => {
@@ -250,10 +252,14 @@ export function Docs({ lang }: { lang: Lang }) {
           </ol>
         </nav>
         <article className="doc">
-          <h1>{t.docs.title}</h1>
+          <h1 data-words>
+            <Words text={t.docs.title} />
+          </h1>
           {list.map((s) => (
             <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`}>
-              <h2 id={`${s.id}-h`}>{s.title}</h2>
+              <h2 id={`${s.id}-h`} data-words>
+                <Words text={s.title} />
+              </h2>
               {s.body}
             </section>
           ))}

@@ -3,6 +3,7 @@ import { check } from '../../src/core/index.js'
 import type { Copy } from './copy'
 import { marked } from './Playground'
 import { still, track } from './track'
+import { Words } from './theater'
 
 const before = `export function Wordmark() {
   return (
@@ -36,7 +37,9 @@ export function Allow({ t }: { t: Copy['allow'] }) {
   return (
     <section className="split allow" aria-labelledby="allow-title">
       <div className="split-copy">
-        <h2 id="allow-title">{t.title}</h2>
+        <h2 id="allow-title" data-words>
+          <Words text={t.title} />
+        </h2>
         <p>{t.p1}</p>
         <button
           type="button"

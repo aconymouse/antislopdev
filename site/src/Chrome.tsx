@@ -5,12 +5,12 @@ import { track } from './track'
 
 export const repo = 'https://github.com/aconymouse/antislopdev'
 
-export function Mark({ size = 22 }: { size?: number }) {
+export function Logo() {
   return (
-    <svg className="mark" width={size} height={size} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="7" />
-      <path d="M5 17.5c1.4-3.2 4.1-3.2 5.5 0s4.1 3.2 5.5 0 4.1-3.2 5.5 0 4.1 3.2 5.5 0" />
-    </svg>
+    <>
+      <img className="logo logo-light" src="/logo.svg" alt="" width={126} height={30} />
+      <img className="logo logo-ink" src="/logo-ink.svg" alt="" width={126} height={30} />
+    </>
   )
 }
 
@@ -112,8 +112,7 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
       <div className="site-bar">
         <div className="site-bar-in">
           <a className="brand" href={href(lang, 'home')} aria-label="antiSlopdev">
-            <Mark />
-            <span>antiSlopdev</span>
+            <Logo />
           </a>
           <nav className="site-nav" aria-label={t.menu}>
             {links.map(([key, label, url]) => (
@@ -140,9 +139,8 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
       </div>
       <dialog className="site-menu" ref={menu} onClose={() => setOpen(false)} aria-label={t.menu}>
         <div className="site-menu-top">
-          <a className="brand" href={href(lang, 'home')}>
-            <Mark />
-            <span>antiSlopdev</span>
+          <a className="brand" href={href(lang, 'home')} aria-label="antiSlopdev">
+            <Logo />
           </a>
           <ThemeButton label={t.theme} />
           <button type="button" className="burger is-open" aria-label={t.close} onClick={() => toggle(false)}>
@@ -172,22 +170,6 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
 
 export function Footer({ lang }: { lang: Lang }) {
   const t = copies[lang]
-  const [self, setSelf] = useState('')
-  useEffect(() => {
-    const run = async () => {
-      const { check } = await import('../../src/core/index.js')
-      const sheet = document.querySelector<HTMLLinkElement>('link[rel="stylesheet"]')?.href
-      const page = await (await fetch(location.pathname, { cache: 'no-store' })).text()
-      const doc = new DOMParser().parseFromString(page, 'text/html')
-      for (const demo of doc.querySelectorAll('[data-demo], pre, code')) demo.replaceWith(doc.createComment('example'))
-      const files = [{ path: 'index.html', text: '<!doctype html>\n' + doc.documentElement.outerHTML }]
-      if (sheet) files.push({ path: 'style.css', text: await (await fetch(sheet)).text() })
-      const r = check(files)
-      setSelf(t.foot.self(r.counts.block, r.counts.justify, r.counts.warn))
-    }
-    const idle = window.requestIdleCallback ?? ((fn: () => void) => window.setTimeout(fn, 800))
-    idle(() => void run().catch(() => setSelf('')))
-  }, [t])
   return (
     <footer className="site-foot">
       <div className="site-foot-in">
@@ -203,9 +185,6 @@ export function Footer({ lang }: { lang: Lang }) {
           <a href={`${repo}/blob/main/LICENSE`}>MIT</a>
         </nav>
       </div>
-      <p className="self" aria-live="polite">
-        {self}
-      </p>
     </footer>
   )
 }

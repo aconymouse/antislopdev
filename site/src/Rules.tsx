@@ -3,6 +3,7 @@ import { catalog, implemented } from '../../src/core/index.js'
 import type { RuleMeta } from '../../src/core/index.js'
 import { Footer, Header } from './Chrome'
 import { copies, type Lang } from './copy'
+import { useTheater, Words } from './theater'
 
 const prefixes = [...new Set(catalog.map((r) => r.id.split('-')[0]!))]
 
@@ -16,6 +17,7 @@ function Detail({ text }: { text: string }) {
 
 export function Rules({ lang }: { lang: Lang }) {
   const t = copies[lang]
+  useTheater()
   const [group, setGroup] = useState('')
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState('')
@@ -60,7 +62,9 @@ export function Rules({ lang }: { lang: Lang }) {
       <Header lang={lang} page="rules" />
       <main id="content" className="wrap page">
         <header className="page-head">
-          <h1>{t.rules.title}</h1>
+          <h1 data-words>
+            <Words text={t.rules.title} />
+          </h1>
           <p className="lead">{t.rules.lead}</p>
         </header>
         <div className="rules-bar">

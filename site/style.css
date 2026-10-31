@@ -10,7 +10,9 @@
   --faint: #74747b;
   --line: #26262b;
   --line-strong: #36363c;
-  --accent: #ff6b5b;
+  --accent: #e5ff11;
+  --accent-ink: #e5ff11;
+  --on-accent: #121214;
   --block: #ff6b5b;
   --justify: #f2b34b;
   --warn: #a3a3a9;
@@ -29,7 +31,9 @@
   --faint: #8a8a91;
   --line: #e2e2de;
   --line-strong: #cfcfca;
-  --accent: #d6392b;
+  --accent: #e5ff11;
+  --accent-ink: #586200;
+  --on-accent: #121214;
   --block: #d0362b;
   --justify: #9a6100;
   --warn: #5d5d64;
@@ -69,7 +73,8 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--ink);
 }
 
 a {
@@ -108,7 +113,7 @@ pre {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-ink);
   outline-offset: 2px;
 }
 
@@ -173,21 +178,17 @@ pre {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
 }
 
-.mark rect {
-  fill: var(--ink);
+.logo {
+  display: block;
+  width: auto;
+  height: 30px;
 }
 
-.mark path {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 2.8;
-  stroke-linecap: round;
+:root[data-theme='dark'] .logo-ink,
+:root[data-theme='light'] .logo-light {
+  display: none;
 }
 
 .site-nav {
@@ -308,7 +309,7 @@ pre {
 
 .top-cta:hover {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .burger {
@@ -438,7 +439,7 @@ pre {
   height: 10px;
   margin-left: auto;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-ink);
 }
 
 .site-menu-foot {
@@ -483,7 +484,7 @@ pre {
 .button.solid:hover {
   border-color: var(--accent);
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .button.bare {
@@ -496,8 +497,8 @@ pre {
 }
 
 .button[aria-pressed='true']:not(.solid) {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--accent-ink);
+  color: var(--accent-ink);
 }
 
 .button code {
@@ -515,24 +516,167 @@ pre {
   opacity: 0.75;
 }
 
-.hero {
-  padding: 104px 0 56px;
+html.js [data-words] .w {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(12px);
+  transform: translateY(0.28em);
+  transition: opacity 0.7s var(--ease), filter 0.7s var(--ease), transform 0.8s var(--ease);
+  transition-delay: calc(var(--i) * 55ms);
 }
 
-.hero h1 {
-  font-size: clamp(30px, 7.4vw, 86px);
+html.js [data-words].is-shown .w {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
+.hz {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-height: 680px;
+  height: 100svh;
+  margin-top: calc(var(--head-h) * -1);
+  padding-top: var(--head-h);
+  overflow: hidden;
+  background: #1c1d23;
+  color: #f4f2ee;
+  --s: 0;
+  --px: 0;
+  --py: 0;
+}
+
+.hz-scene {
+  position: absolute;
+  inset: 0;
+}
+
+.hz-layer {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  top: 19%;
+  width: 104%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 100%;
+  will-change: transform;
+}
+
+.hz-bg {
+  transform: translate3d(calc(var(--px) * -10px), calc(var(--s) * 0.32px + var(--py) * -6px), 0) scale(1.02);
+}
+
+.hz-clouds {
+  transform: translate3d(calc(var(--px) * -18px), calc(var(--s) * 0.2px + var(--py) * -9px), 0) scale(1.02);
+}
+
+.hz-peak {
+  transform: translate3d(calc(var(--px) * -30px), calc(var(--s) * 0.06px + var(--py) * -12px), 0) scale(1.02);
+}
+
+.hz:not(.is-ready) .hz-layer {
+  opacity: 0;
+}
+
+.hz.is-ready .hz-layer {
+  animation: hz-in 1.6s var(--ease) both;
+}
+
+.hz.is-ready .hz-clouds {
+  animation-delay: 0.08s;
+}
+
+.hz.is-ready .hz-peak {
+  animation-delay: 0.16s;
+}
+
+@keyframes hz-in {
+  from {
+    opacity: 0;
+    filter: blur(14px);
+  }
+}
+
+.hz-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #1c1d23 0%, #1c1d23 19%, rgb(28 29 35 / 0.7) 30%, rgb(28 29 35 / 0.15) 50%, transparent 62%),
+    linear-gradient(0deg, var(--paper) 0%, transparent 16%);
+}
+
+.hz-copy {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding-top: clamp(64px, 12vh, 132px);
+  transform: translate3d(0, calc(var(--s) * 0.35px), 0);
+  opacity: calc(1 - var(--s) / 520);
+}
+
+.hz h1 {
+  font-size: clamp(30px, 6.2vw, 78px);
   line-height: 1.02;
   letter-spacing: -0.045em;
   font-weight: 760;
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.35);
 }
 
-.hero h1 span {
+.hz h1 > span {
   display: block;
   white-space: nowrap;
 }
 
-.hero h1 span:last-child {
-  color: var(--muted);
+.hz h1 > span:last-child {
+  color: rgb(244 242 238 / 0.62);
+}
+
+.hz .lead {
+  max-width: 600px;
+  margin-top: 22px;
+  color: rgb(244 242 238 / 0.78);
+  font-size: 18px;
+}
+
+.hz .fine {
+  color: rgb(244 242 238 / 0.55);
+}
+
+.hz .actions {
+  margin-top: 28px;
+}
+
+.hz .button {
+  border-color: rgb(244 242 238 / 0.32);
+  color: #f4f2ee;
+  backdrop-filter: blur(6px);
+}
+
+.hz .button:hover {
+  border-color: #f4f2ee;
+}
+
+.hz .button.solid {
+  border-color: #f4f2ee;
+  background: #f4f2ee;
+  color: #121214;
+}
+
+.hz .button.solid:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.hz .button.bare {
+  border-color: transparent;
+  color: rgb(244 242 238 / 0.75);
+  backdrop-filter: none;
+}
+
+.showcase {
+  padding-top: 24px;
 }
 
 .lead {
@@ -623,7 +767,7 @@ pre {
 }
 
 .play-switch button[aria-pressed='true'] {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .play-body {
@@ -662,7 +806,7 @@ pre {
   resize: none;
   background: transparent;
   color: var(--code);
-  caret-color: var(--accent);
+  caret-color: var(--accent-ink);
 }
 
 .play-input:focus {
@@ -670,7 +814,7 @@ pre {
 }
 
 .play-editor:focus-within {
-  box-shadow: inset 0 0 0 1px var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent-ink);
 }
 
 mark {
@@ -972,7 +1116,7 @@ b.warn {
   height: 1.05em;
   margin-left: 2px;
   vertical-align: -0.15em;
-  background: var(--accent);
+  background: var(--accent-ink);
   animation: blink 1s steps(1) infinite;
 }
 
@@ -1121,8 +1265,8 @@ b.warn {
 .part:hover,
 .part.on,
 .part:focus-visible {
-  outline: 1.5px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  outline: 1.5px solid #ff6b5b;
+  background: color-mix(in srgb, #ff6b5b 8%, transparent);
 }
 
 .fx:hover .part:not(:hover):not(.on) {
@@ -1745,7 +1889,7 @@ b.warn {
 }
 
 .group-grid a:hover {
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
 }
 
 .group-top {
@@ -1793,7 +1937,7 @@ b.warn {
 .group-bar i {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: var(--accent-ink);
 }
 
 .faq {
@@ -1978,7 +2122,7 @@ b.warn {
 }
 
 .chips button[aria-pressed='true'] {
-  border-color: var(--accent);
+  border-color: var(--accent-ink);
   color: var(--ink);
 }
 
@@ -2036,7 +2180,7 @@ b.warn {
 }
 
 .rules-list summary:hover .t {
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 .rules-list .id {
@@ -2136,8 +2280,8 @@ b.warn {
   height: 12px;
   left: -25px;
   top: 11px;
-  background: var(--accent);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent);
+  background: var(--accent-ink);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .toc a:hover {
@@ -2172,7 +2316,7 @@ b.warn {
 }
 
 .doc a:hover {
-  text-decoration-color: var(--accent);
+  text-decoration-color: var(--accent-ink);
 }
 
 .doc .snippet {
@@ -2278,17 +2422,45 @@ b.warn {
     display: grid;
   }
 
-  .hero {
-    padding: 56px 0 36px;
+  .hz {
+    height: auto;
+    min-height: calc(100svh - var(--head-h));
+    padding-bottom: 80vw;
   }
 
-  .hero h1 {
+  .hz-layer {
+    top: auto;
+    bottom: -2%;
+    left: -33%;
+    width: 165%;
+    height: auto;
+    aspect-ratio: 1672 / 941;
+    object-position: 50% 100%;
+  }
+
+  .hz-shade {
+    background:
+      linear-gradient(180deg, #1c1d23 0%, #1c1d23 42%, rgb(28 29 35 / 0.4) 58%, transparent 70%),
+      linear-gradient(0deg, var(--paper) 0%, transparent 10%);
+  }
+
+  .hz-copy {
+    padding-top: 40px;
+    transform: none;
+    opacity: 1;
+  }
+
+  .hz h1 {
     font-size: clamp(38px, 11vw, 56px);
     line-height: 1.04;
   }
 
-  .hero h1 span {
+  .hz h1 > span {
     white-space: normal;
+  }
+
+  .hz .lead {
+    font-size: 17px;
   }
 
   .lead {
@@ -2297,6 +2469,10 @@ b.warn {
 
   .actions .button {
     width: 100%;
+  }
+
+  .hz .button.bare {
+    display: none;
   }
 
   .actions .button.install {

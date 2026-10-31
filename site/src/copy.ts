@@ -111,7 +111,7 @@ const en = {
     title: 'Docs',
     toc: 'On this page',
   },
-  foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ', self: (b: number, j: number, w: number) => `This page, checked by itself when you opened it: ${b} block · ${j} justify · ${w} warn.` },
+  foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ' },
 }
 
 export type Copy = typeof en
@@ -219,7 +219,7 @@ const id: Copy = {
     title: 'Dokumentasi',
     toc: 'Di halaman ini',
   },
-  foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ', self: (b: number, j: number, w: number) => `Halaman ini dicek dirinya sendiri saat kamu buka: ${b} block · ${j} justify · ${w} warn.` },
+  foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ' },
 }
 
 export const copies: Record<Lang, Copy> = { en, id }

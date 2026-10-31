@@ -1,6 +1,7 @@
 import { check } from '../../src/core/index.js'
 import type { Copy } from './copy'
 import { marked } from './Playground'
+import { Words } from './theater'
 
 const sample = `Di era digital saat ini, bisnis Anda butuh solusi terbaik yang revolusioner.
 
@@ -16,7 +17,9 @@ export function Indo({ t }: { t: Copy['indo'] }) {
   return (
     <section className="split indo flip" aria-labelledby="indo-title">
       <div className="split-copy">
-        <h2 id="indo-title">{t.title}</h2>
+        <h2 id="indo-title" data-words>
+          <Words text={t.title} />
+        </h2>
         <p>{t.p1}</p>
         <p className="fine">{t.p2}</p>
       </div>
