@@ -4,7 +4,7 @@
 
 Rules and a checker that catch generic AI output in UI, copy, docs, commits and code.
 
-Slop is what gets shipped when nobody decided anything: the eyebrow label over every heading, the sparkle icon on every "smart" button, "Unlock the power of", a hero with three cards, a README full of rockets. antiSlopdev names 167 of those defaults, from interface and copy to SEO and security, gives each one a stable ID, and checks 141 of them automatically.
+Slop is what gets shipped when nobody decided anything: the eyebrow label over every heading, the sparkle icon on every "smart" button, "Unlock the power of", a hero with three cards, a README full of rockets. antiSlopdev names 168 of those defaults, from interface and copy to SEO and security, gives each one a stable ID, and checks 142 of them automatically.
 
 It is not a style guide. Gradients, dark themes, monospace and motion are fine when someone chose them. The rules only ask that the choice was made.
 

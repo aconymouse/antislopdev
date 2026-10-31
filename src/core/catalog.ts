@@ -1169,5 +1169,12 @@ export const catalog: readonly RuleMeta[] = [
     "detail": "A `<script>` or stylesheet from another host loaded without `integrity`, so whoever controls that CDN controls your page. Pin the version and add the hash with `crossorigin`, or serve the file yourself. Tags that change by design and publish no hash (Google tag, Stripe.js, Turnstile, Cloudflare Web Analytics) are skipped.",
     "level": "justify",
     "check": "static"
+  },
+  {
+    "id": "SEC-26",
+    "title": "Page text used as HTML or a link",
+    "detail": "Text read back from the page (`textContent`, `innerText`, `dataset`, `getAttribute`, `location.hash`, `location.search`, `document.referrer`) written into `innerHTML`, `dangerouslySetInnerHTML`, `document.write`, an `href`, a `src` or `location` without a check, directly or through a variable. Whatever ends up in that text, a `javascript:` URL included, runs on your page. Pass data as a script value or a fetched response, check URLs against your own paths or allowed protocols, and write text with `textContent`.",
+    "level": "justify",
+    "check": "heuristic"
   }
 ]

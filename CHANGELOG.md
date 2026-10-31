@@ -2,6 +2,13 @@
 
 Each release lists what changed for someone using the rules or the checker. Versions follow semver: a new rule or check is a minor release, a changed level or a check that flags more is called out under Changed.
 
+## 0.4.0 · 31 October 2026
+
+### Rules
+
+- SEC-26 page text used as HTML or a link: text read back from the page (`textContent`, `innerText`, `dataset`, `getAttribute`, `location.hash`, `location.search`, `document.referrer`) written into `innerHTML`, `dangerouslySetInnerHTML`, `document.write`, an `href`, a `src` or `location` without a check, directly or through a variable in the same file. Taken from CodeQL's "DOM text reinterpreted as HTML", which found it on this site. That makes 168 rules, 142 of them checked by the CLI.
+- Values that pass through a sanitizer, `encodeURIComponent`, a number cast, a `.test()` or `startsWith()` check, or a validating function are left alone, and so is a link that starts with a fixed path. Checked against seven real projects with no false positives.
+
 ## 0.3.0 · 31 October 2026
 
 ### Config

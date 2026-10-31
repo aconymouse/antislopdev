@@ -61,6 +61,53 @@ const placeholder = /your|example|xxx|changeme|placeholder|dummy|sample|test|red
 const sql = /\b(select\b[\s\S]{1,2000}?\bfrom|insert\s+into|update\s+[\w."`[\]]+\s+set|delete\s+from)\b/i
 
 
+const domText = /\.(?:textContent|innerText|outerText)\b|\.dataset\b|\.getAttribute\s*\(|\blocation\.(?:hash|search)\b|\bdocument\.(?:referrer|URL|documentURI)\b|\bwindow\.name\b|\bsearchParams\.get\s*\(/
+const htmlSink = /\.(?:innerHTML|outerHTML)\s*\+?=(?!=)|\.insertAdjacentHTML\s*\(|\bdocument\.write(?:ln)?\s*\(|\bdangerouslySetInnerHTML\s*=\s*\{\s*\{\s*__html\s*:|\.(?:href|src|action|formAction)\s*=(?!=)|(?<![\w$.-])(?:href|src|action|formAction)\s*=\s*\{|\blocation(?:\.href)?\s*=(?!=)|\blocation\.(?:assign|replace)\s*\(|\bwindow\.open\s*\(|\.setAttribute\s*\(\s*["'](?:href|src|action|formaction)["']\s*,/g
+const cleaned = /DOMPurify|sanitiz|escape|encodeURI|safe[A-Z][\w$]*\s*\(|allowed|Number\s*\(|parseInt|parseFloat|Boolean\s*\(|\.test\s*\(|startsWith\s*\(/i
+
+function sinkValue(text: string, from: number, sink: string): string {
+  const open = sink.trim().endsWith('{') || sink.endsWith(':') ? '{' : sink.trim().endsWith('(') || sink.trim().endsWith(',') ? '(' : ''
+  const limit = Math.min(text.length, from + 400)
+  if (!open) {
+    let i = from
+    while (i < limit && text[i] !== ';' && text[i] !== '\n') i++
+    return text.slice(from, i)
+  }
+  const close = open === '{' ? '}' : ')'
+  let depth = 1
+  let i = from
+  for (; i < limit && depth > 0; i++) {
+    if (text[i] === open) depth++
+    else if (text[i] === close) depth--
+  }
+  return text.slice(from, depth === 0 ? i - 1 : i)
+}
+
+const passthrough = new Set(['String', 'parse', 'decodeURIComponent', 'decodeURI', 'atob', 'URLSearchParams', 'unescape', 'trim', 'get'])
+
+function wrapped(rhs: string): boolean {
+  const at = rhs.search(domText)
+  if (at < 0) return false
+  const call = rhs.slice(0, at).match(/([\w$]+)\s*\(\s*[\w$.?[\]]*$/)
+  return Boolean(call && !passthrough.has(call[1]!))
+}
+
+function tainted(src: Source): { name: string; at: number }[] {
+  const out: { name: string; at: number }[] = []
+  const decls = [...src.text.matchAll(/\b(?:const|let|var)\s+([\w$]+)(?:\s*:\s*[\w$<>[\],.| ]{1,60})?\s*=\s*([^;\n]{1,240})/g)].filter((m) => inCode(src, m.index))
+  const named = (rhs: string) => out.some((t) => new RegExp(`(?<![\\w$.])${escapeRegExp(t.name)}(?![\\w$])`).test(rhs))
+  for (let pass = 0; pass < 3; pass++) {
+    const before = out.length
+    for (const m of decls) {
+      const rhs = m[2]!
+      if (out.some((t) => t.at === m.index) || cleaned.test(rhs) || wrapped(rhs)) continue
+      if (domText.test(rhs) || named(rhs)) out.push({ name: m[1]!, at: m.index })
+    }
+    if (out.length === before) break
+  }
+  return out
+}
+
 interface Atom {
   start: number
   min: number
@@ -571,6 +618,25 @@ const rules: Rule[] = [
         const url = /^script$/i.test(t.name) ? attr(t, 'src') : t.name === 'link' && /\b(stylesheet|modulepreload)\b/i.test(attr(t, 'rel') ?? '') ? attr(t, 'href') : undefined
         if (!url || !/^(?:https?:)?\/\//i.test(url) || unpinnable.test(url) || local.test(url.replace(/^(?:https?:)?\/\//i, ''))) continue
         if (!has(t, 'integrity')) hits.push({ index: t.start, note: quote(url) })
+      }
+      return hits
+    },
+  },
+  {
+    id: 'SEC-26',
+    on: ['script', 'jsx', 'markup'],
+    run(src) {
+      if (!domText.test(src.text)) return []
+      const names = tainted(src)
+      const hits: Hit[] = []
+      for (const m of src.text.matchAll(htmlSink)) {
+        if (!inCode(src, m.index)) continue
+        const rest = sinkValue(src.text, m.index + m[0].length, m[0])
+        if (!rest || cleaned.test(rest)) continue
+        if (!/HTML|write|__html/.test(m[0]) && /^\s*(["'`])(?:\/|#|https?:|mailto:|tel:)/.test(rest)) continue
+        const near = names.filter((t) => t.at < m.index && m.index - t.at < 4000).map((t) => t.name)
+        const used = near.find((n) => new RegExp(`(?<![\\w$.])${escapeRegExp(n)}(?![\\w$])`).test(rest))
+        if (used || (domText.test(rest) && !wrapped(rest))) hits.push({ index: m.index, note: quote(`${m[0].trim()} ${used ?? rest.trim()}`) })
       }
       return hits
     },

@@ -10,7 +10,7 @@ const fixtures = (dir) => readdirSync(here + 'fixtures/' + dir).map((name) => ({
 const ids = (report) => new Set(report.findings.map((f) => f.rule))
 
 test('catalog matches RULES.md and every checked rule exists', () => {
-  assert.equal(catalog.length, 167)
+  assert.equal(catalog.length, 168)
   const known = new Set(catalog.map((r) => r.id))
   for (const id of implemented) assert.ok(known.has(id), id)
   assert.ok(implemented.length >= 100)
@@ -208,4 +208,26 @@ test('the skill ships one rules file per group', () => {
   for (const r of catalog) assert.ok(all.includes(`| ${r.id} |`), r.id)
   const skill = readFileSync(fileURLToPath(new URL('../skills/antislopdev/SKILL.md', import.meta.url)), 'utf8')
   for (const f of files) assert.ok(skill.includes(`rules/${f}`), f)
+})
+
+test('page text written back as HTML or a link is caught, checked values are not', () => {
+  const bad = [
+    "export function show(el: HTMLElement, out: HTMLElement): void {\n  const name = el.textContent\n  out.innerHTML = '<b>' + name + '</b>'\n}\n",
+    "const raw = document.getElementById('d')?.textContent ?? '{}'\nconst data = JSON.parse(raw)\nconst a = document.createElement('a')\na.href = data.url\n",
+    "const next = new URLSearchParams(location.search).get('next')\nif (next) location.href = next\n",
+    "export function Box({ el }: { el: HTMLElement }) {\n  const html = el.innerText\n  return <div dangerouslySetInnerHTML={{ __html: html }} />\n}\n",
+    "export const A = ({ el }: { el: HTMLElement }) => <a href={el.dataset.link}>go</a>\n",
+  ]
+  for (const text of bad) assert.ok(ids(check([{ path: 'a.tsx', text }])).has('SEC-26'), text)
+  const good = [
+    "export function copy(el: HTMLElement, out: HTMLElement): void {\n  out.textContent = el.textContent\n}\n",
+    "import DOMPurify from 'dompurify'\nexport function show(el: HTMLElement, out: HTMLElement): void {\n  const t = el.textContent ?? ''\n  out.innerHTML = DOMPurify.sanitize(t)\n}\n",
+    "export function link(el: HTMLElement, a: HTMLAnchorElement): void {\n  const slug = el.dataset.slug ?? ''\n  a.href = '/stories/' + encodeURIComponent(slug)\n}\n",
+    "export function go(path: string): void {\n  const safe = path.startsWith('/') ? path : '/'\n  location.href = safe\n}\n",
+    "export function Img({ el, url }: { el: HTMLElement; url: string }) {\n  const target = el.dataset.to\n  return <a href={url} target=\"_blank\" rel=\"noopener\">{target}</a>\n}\n",
+    "export function more(a: HTMLAnchorElement): void {\n  a.href = '/docs/' + location.hash\n}\n",
+    "export function copyLink(el: Element, a: Element): void {\n  const href = checkedUrl(el.getAttribute('href'))\n  if (href) a.setAttribute('href', href)\n}\n",
+    "const open = (href: string) => window.open(href, '_blank', 'noopener')\nexport function later(a: Element): string | null {\n  const href = a.getAttribute('href')\n  return href\n}\nexport { open }\n",
+  ]
+  for (const text of good) assert.ok(!ids(check([{ path: 'a.tsx', text }])).has('SEC-26'), text)
 })

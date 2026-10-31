@@ -119,6 +119,7 @@ function LangPick({ lang, page, label, up = false, alt }: { lang: Lang; page: Pa
                 aria-current={l.code === lang ? 'true' : undefined}
                 onClick={(e) => {
                   track('lang_switch', { to: l.code })
+                  // antislopdev-allow SEC-26: the hash goes after a path that href() builds, so it cannot change the scheme
                   if (!alt) e.currentTarget.href = href(l.code, page, location.hash)
                 }}
               >

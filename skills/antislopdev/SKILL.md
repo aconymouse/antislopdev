@@ -5,7 +5,7 @@ description: Catch generic AI output before it ships. Use when building or revie
 
 # antiSlopdev
 
-Slop is what gets shipped when nobody decided anything: the safe default, repeated until every product looks, reads and compiles the same. This skill gives you 167 named defaults to avoid and a checker that finds most of them for you.
+Slop is what gets shipped when nobody decided anything: the safe default, repeated until every product looks, reads and compiles the same. This skill gives you 168 named defaults to avoid and a checker that finds most of them for you.
 
 The rules live in `rules/` next to this file, one file per group. Read only the groups that match the work, not all of them:
 
