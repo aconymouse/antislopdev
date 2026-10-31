@@ -4,7 +4,7 @@ const total = catalog.length
 const auto = implemented.length
 
 export type Lang = 'en' | 'id'
-export type Page = 'home' | 'docs' | 'rules' | 'support'
+export type Page = 'home' | 'docs' | 'rules' | 'support' | 'stories'
 
 export const langs: { code: Lang; name: string; base: string }[] = [
   { code: 'en', name: 'English', base: '/' },
@@ -19,8 +19,9 @@ const en = {
     docs: { title: 'Docs · antiSlopdev', description: 'Install the antiSlopdev skill, run the checker in CI or on commit messages, and keep deliberate choices with a written reason.' },
     rules: { title: 'Rules · antiSlopdev', description: `All ${total} antiSlopdev rules for UI, English and Indonesian copy, code, docs, commits, claims, accessibility, performance, SEO and security.` },
     support: { title: 'Support · antiSlopdev', description: 'Report a false positive, propose a rule, see what is planned next, or chip in to keep antiSlopdev free and open source.' },
+    stories: { title: 'Stories · antiSlopdev', description: 'Notes from building antiSlopdev: new rules, false positives, releases and the habits AI coding agents keep repeating.' },
   },
-  nav: { playground: 'Playground', docs: 'Docs', rules: 'Rules', support: 'Support', github: 'GitHub', star: 'Star', cta: 'Try it', menu: 'Menu', close: 'Close', theme: 'Theme', light: 'Light', dark: 'Dark', language: 'Language', skip: 'Skip to content' },
+  nav: { playground: 'Playground', docs: 'Docs', rules: 'Rules', support: 'Support', stories: 'Stories', github: 'GitHub', star: 'Star', cta: 'Try it', menu: 'Menu', close: 'Close', theme: 'Theme', light: 'Light', dark: 'Dark', language: 'Language', skip: 'Skip to content' },
   hero: {
     line1: 'The anti AI slop',
     line2: 'gatekeeper.',
@@ -141,6 +142,7 @@ const en = {
     paypal: 'Cards or PayPal, from anywhere',
   },
   foot: { rights: '© 2026', made: 'Made with love by', creator: 'creator of antiSlopdev', faq: 'FAQ' },
+  stories: { title: 'Stories', lead: 'Notes from building antiSlopdev: new rules, false positives, releases and the habits AI coding agents keep repeating.', minutes: 'min read', back: 'All stories', by: 'By', other: 'Baca dalam Bahasa Indonesia', feed: 'RSS feed', copy: 'Copy', copied: 'Copied' },
 }
 
 export type Copy = typeof en
@@ -151,8 +153,9 @@ const id: Copy = {
     docs: { title: 'Docs · antiSlopdev', description: 'Pasang skill antiSlopdev, jalankan checker-nya di CI atau di pesan commit, dan pertahankan pilihan yang disengaja lewat alasan tertulis.' },
     rules: { title: 'Aturan · antiSlopdev', description: `Semua ${total} aturan antiSlopdev untuk UI, copy Inggris dan Indonesia, kode, dokumentasi, commit, klaim, aksesibilitas, performa, SEO, dan keamanan.` },
     support: { title: 'Dukung · antiSlopdev', description: 'Lapor false positive, usulin aturan, lihat rencana berikutnya, atau ikut patungan biar antiSlopdev tetap gratis dan open source.' },
+    stories: { title: 'Cerita · antiSlopdev', description: 'Catatan dari bikin antiSlopdev: aturan baru, false positive, rilis, dan kebiasaan agent AI yang terus berulang.' },
   },
-  nav: { playground: 'Playground', docs: 'Docs', rules: 'Aturan', support: 'Dukung', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
+  nav: { playground: 'Playground', docs: 'Docs', rules: 'Aturan', support: 'Dukung', stories: 'Cerita', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
   hero: {
     line1: 'Palang pintu',
     line2: 'anti AI Slop.',
@@ -273,6 +276,7 @@ const id: Copy = {
     paypal: 'Kartu atau PayPal, dari mana saja',
   },
   foot: { rights: '© 2026', made: 'Dibuat dengan cinta oleh', creator: 'creator antiSlopdev', faq: 'FAQ' },
+  stories: { title: 'Cerita', lead: 'Catatan dari bikin antiSlopdev: aturan baru, false positive, rilis, dan kebiasaan agent AI yang terus berulang.', minutes: 'menit baca', back: 'Semua cerita', by: 'Oleh', other: 'Read in English', feed: 'Feed RSS', copy: 'Salin', copied: 'Tersalin' },
 }
 
 export const copies: Record<Lang, Copy> = { en, id }

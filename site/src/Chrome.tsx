@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { asset } from './asset'
 import { copies, href, langs, type Lang, type Page } from './copy'
 import { marks } from './marks'
+import { hasStories } from './story-data'
 import { track } from './track'
 
 export const repo = 'https://github.com/aconymouse/antislopdev'
@@ -78,7 +79,7 @@ function ThemeButton({ label, onPick }: { label: string; onPick?: () => void }) 
   )
 }
 
-function LangPick({ lang, page, label, up = false }: { lang: Lang; page: Page; label: string; up?: boolean }) {
+function LangPick({ lang, page, label, up = false, alt }: { lang: Lang; page: Page; label: string; up?: boolean; alt?: Partial<Record<Lang, string>> | undefined }) {
   const [open, setOpen] = useState(false)
   const box = useRef<HTMLDivElement>(null)
   const now = langs.find((l) => l.code === lang) ?? langs[0]!
@@ -112,13 +113,13 @@ function LangPick({ lang, page, label, up = false }: { lang: Lang; page: Page; l
           {langs.map((l) => (
             <li key={l.code}>
               <a
-                href={href(l.code, page)}
+                href={alt?.[l.code] ?? href(l.code, page)}
                 hrefLang={l.code}
                 lang={l.code}
                 aria-current={l.code === lang ? 'true' : undefined}
                 onClick={(e) => {
                   track('lang_switch', { to: l.code })
-                  e.currentTarget.href = href(l.code, page, location.hash)
+                  if (!alt) e.currentTarget.href = href(l.code, page, location.hash)
                 }}
               >
                 {l.name}
@@ -131,7 +132,7 @@ function LangPick({ lang, page, label, up = false }: { lang: Lang; page: Page; l
   )
 }
 
-export function Header({ lang, page }: { lang: Lang; page: Page }) {
+export function Header({ lang, page, alt }: { lang: Lang; page: Page; alt?: Partial<Record<Lang, string>> | undefined }) {
   const t = copies[lang].nav
   const menu = useRef<HTMLDialogElement>(null)
   const [open, setOpen] = useState(false)
@@ -140,6 +141,7 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
     ['docs', t.docs, href(lang, 'docs')],
     ['rules', t.rules, href(lang, 'rules')],
     ['support', t.support, href(lang, 'support')],
+    ...(hasStories(lang) ? [['stories', t.stories, href(lang, 'stories')] as [Page, string, string]] : []),
   ]
   const toggle = (next: boolean) => {
     const d = menu.current
@@ -167,7 +169,7 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
           </nav>
           <div className="site-bar-end">
             <ThemeButton label={t.theme} />
-            <LangPick lang={lang} page={page} label={t.language} />
+            <LangPick lang={lang} page={page} label={t.language} alt={alt} />
             <Star label={t.star} place="header" />
             <a className="top-cta" href={href(lang, 'home', '#playground')}>
               {t.cta}
@@ -204,7 +206,7 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
           ))}
         </ol>
         <div className="site-menu-foot">
-          <LangPick lang={lang} page={page} label={t.language} up />
+          <LangPick lang={lang} page={page} label={t.language} up alt={alt} />
           <Star label={t.star} place="menu" />
         </div>
       </dialog>
@@ -228,6 +230,7 @@ export function Footer({ lang }: { lang: Lang }) {
           <a href={href(lang, 'docs')}>{t.nav.docs}</a>
           <a href={href(lang, 'rules')}>{t.nav.rules}</a>
           <a href={href(lang, 'support')}>{t.nav.support}</a>
+          {hasStories(lang) ? <a href={href(lang, 'stories')}>{t.nav.stories}</a> : null}
           <a href={href(lang, 'home', '#faq')}>{t.foot.faq}</a>
           <a href={repo} onClick={() => track('github_click', { place: 'footer' })}>
             GitHub

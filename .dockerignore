@@ -3,3 +3,4 @@ dist
 site/dist
 .git
 *.tgz
+site/stories.json

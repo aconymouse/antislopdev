@@ -74,7 +74,7 @@ const client = await build({
   logLevel: 'error',
 })
 
-const { render, copies, href, langs, catalog, implemented } = await import(pathToFileURL(staging + 'render.mjs').href)
+const { render, copies, href, langs, catalog, implemented, storyHref } = await import(pathToFileURL(staging + 'render.mjs').href)
 const app = Object.entries(client.metafile.outputs).find(([, o]) => o.entryPoint?.endsWith('client.tsx'))[0].split('/').pop()
 const css = readFileSync(root + 'site/style.css')
 const sheet = `style-${createHash('sha256').update(css).digest('hex').slice(0, 10)}.css`
@@ -230,63 +230,222 @@ const graph = (lang, page, modified) => {
   return json({ '@context': 'https://schema.org', '@graph': nodes })
 }
 
-const urls = []
-for (const page of ['home', 'docs', 'rules', 'support']) {
-  for (const { code: lang } of langs) {
-    const meta = copies[lang].meta[page]
-    const path = href(lang, page)
-    const body = render(lang, page)
-    const modified = stamp(path, body)
-    urls.push({ page, lang, path, modified })
-    const alternates = langs.map((l) => `<link rel="alternate" hreflang="${l.code}" href="${origin}${href(l.code, page)}">`).join('\n') + `\n<link rel="alternate" hreflang="x-default" href="${origin}${href('en', page)}">`
-    const html = `<!doctype html>
+const storiesFile = root + 'site/stories.json'
+const slugOk = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const validEntry = (e) => e && slugOk.test(e.slug) && typeof e.title === 'string' && e.title && typeof e.html === 'string'
+const loadStories = async () => {
+  if (existsSync(storiesFile)) return JSON.parse(readFileSync(storiesFile, 'utf8')).stories ?? []
+  if (!process.env.STORIES_URL) return []
+  const res = await fetch(process.env.STORIES_URL)
+  if (!res.ok) throw new Error(`site: stories feed answered ${res.status}`)
+  return (await res.json()).stories ?? []
+}
+const stories = (await loadStories())
+  .filter((st) => st && Number.isInteger(st.id) && st.locales && typeof st.publishedAt === 'string')
+  .map((st) => ({ ...st, locales: Object.fromEntries(Object.entries(st.locales).filter(([code, e]) => langs.some((l) => l.code === code) && validEntry(e))) }))
+  .filter((st) => Object.keys(st.locales).length)
+  .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+const storiesIn = (lang) => stories.filter((st) => st.locales[lang])
+const count = (lang) => storiesIn(lang).length
+const storyLangs = langs.filter((l) => count(l.code))
+
+const doc = ({ lang, page, path, title, description, alternates, type = 'website', image = ogImage(), imageSize = [1200, 630], extraHead = '', jsonld, body, data }) => {
+  const links = alternates.map(([code, url]) => `<link rel="alternate" hreflang="${code}" href="${origin}${url}">`)
+  const fallback = alternates.find(([code]) => code === 'en') ?? alternates[0]
+  if (fallback) links.push(`<link rel="alternate" hreflang="x-default" href="${origin}${fallback[1]}">`)
+  return `<!doctype html>
 <html lang="${lang}" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${esc(meta.title)}</title>
-<meta name="description" content="${esc(meta.description)}">
+<title>${esc(title)}</title>
+<meta name="description" content="${esc(description)}">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <link rel="canonical" href="${origin}${path}">
-${alternates}
-<meta property="og:type" content="website">
+${links.join('\n')}
+<meta property="og:type" content="${type}">
 <meta property="og:site_name" content="antiSlopdev">
 <meta property="og:url" content="${origin}${path}">
-<meta property="og:title" content="${esc(meta.title)}">
-<meta property="og:description" content="${esc(meta.description)}">
-<meta property="og:image" content="${ogImage()}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="${lang === 'id' ? 'id_ID' : 'en_US'}">
-<meta property="og:locale:alternate" content="${lang === 'id' ? 'en_US' : 'id_ID'}">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(description)}">
+<meta property="og:image" content="${esc(image)}">
+${imageSize[0] ? `<meta property="og:image:width" content="${imageSize[0]}">\n` : ''}${imageSize[1] ? `<meta property="og:image:height" content="${imageSize[1]}">\n` : ''}<meta property="og:locale" content="${lang === 'id' ? 'id_ID' : 'en_US'}">
+${alternates.filter(([code]) => code !== lang).map(([code]) => `<meta property="og:locale:alternate" content="${code === 'id' ? 'id_ID' : 'en_US'}">`).join('\n')}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0d0d0f">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="${asset('/favicon.svg')}" type="image/svg+xml">
 <link rel="apple-touch-icon" href="${asset('/apple-touch-icon.png')}">
-<script>${theme}</script>
+${count(lang) ? `<link rel="alternate" type="application/rss+xml" title="${esc(copies[lang].meta.stories.title)}" href="${origin}${href(lang, 'stories')}feed.xml">\n` : ''}<script>${theme}</script>
 <link rel="stylesheet" href="/${sheet}">
 <link rel="modulepreload" href="/${app}">
-${page === 'home' ? ['peak', 'bg'].map((n) => `<link rel="preload" as="image" type="image/webp" imagesrcset="${asset(`/hero/${n}-1280.webp`)} 1280w, ${asset(`/hero/${n}-2400.webp`)} 2400w" imagesizes="100vw" fetchpriority="high">`).join('\n') : ''}
-<script type="module" src="/${app}"></script>
+${extraHead}<script type="module" src="/${app}"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TCBSNMBT5C"></script>
 <script>${gtag}</script>
-<script type="application/ld+json">${graph(lang, page, modified)}</script>
-</head>
+<script type="application/ld+json">${jsonld}</script>
+${data ? `<script type="application/json" id="page-data">${json(data)}</script>\n` : ''}</head>
 <body>
-<div id="root" data-page="${page}">${body}</div>
+<div id="root" data-page="${page}" data-stories="${count(lang)}">${body}</div>
 </body>
 </html>
 `
-    const dir = out + path.slice(1)
-    mkdirSync(dir, { recursive: true })
-    const loose = [...html.matchAll(/(?:src|href|content|imagesrcset|srcset)="([^"]+)"/g)]
-      .flatMap((m) => m[1].split(',').map((x) => x.trim().split(' ')[0]))
-      .map((u) => u.replace(origin, ''))
-      .filter((u) => u.startsWith('/') && /\.(svg|png|jpe?g|webp|avif|ico|css|js)$/.test(u) && !stable.has(u) && !/-[0-9a-zA-Z]{8,}\.[a-z0-9]+$/.test(u))
-    if (loose.length) throw new Error(`site: ${path} points at unhashed files, browsers would keep stale copies: ${[...new Set(loose)].join(', ')}`)
-    writeFileSync(dir + 'index.html', html)
+}
+
+const write = (path, html) => {
+  const dir = out + path.slice(1)
+  mkdirSync(dir, { recursive: true })
+  const loose = [...html.matchAll(/(?:src|href|content|imagesrcset|srcset)="([^"]+)"/g)]
+    .flatMap((m) => m[1].split(',').map((x) => x.trim().split(' ')[0]))
+    .map((u) => u.replace(origin, ''))
+    .filter((u) => u.startsWith('/') && /\.(svg|png|jpe?g|webp|avif|ico|css|js)$/.test(u) && !stable.has(u) && !/-[0-9a-zA-Z]{8,}\.[a-z0-9]+$/.test(u))
+  if (loose.length) throw new Error(`site: ${path} points at unhashed files, browsers would keep stale copies: ${[...new Set(loose)].join(', ')}`)
+  writeFileSync(dir + 'index.html', html)
+}
+
+const images = (page) => [ogImage(), ...(page === 'home' ? ['bg', 'clouds', 'peak'].map((n) => origin + asset(`/hero/${n}-2400.webp`)) : [])]
+
+const urls = []
+for (const page of ['home', 'docs', 'rules', 'support']) {
+  for (const { code: lang } of langs) {
+    const meta = copies[lang].meta[page]
+    const path = href(lang, page)
+    const body = render(lang, page, { count: count(lang) })
+    const modified = stamp(path, count(lang) ? render(lang, page, { count: 0 }) : body)
+    urls.push({ path, modified, alternates: langs.map((l) => [l.code, href(l.code, page)]), images: images(page) })
+    const extraHead = page === 'home' ? ['peak', 'bg'].map((n) => `<link rel="preload" as="image" type="image/webp" imagesrcset="${asset(`/hero/${n}-1280.webp`)} 1280w, ${asset(`/hero/${n}-2400.webp`)} 2400w" imagesizes="100vw" fetchpriority="high">`).join('\n') + '\n' : ''
+    write(path, doc({ lang, page, path, title: meta.title, description: meta.description, alternates: langs.map((l) => [l.code, href(l.code, page)]), extraHead, jsonld: graph(lang, page, modified), body }))
   }
+}
+
+const storyGraph = (lang, entry, st, path) => {
+  const url = origin + path
+  return json({
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebSite', '@id': ids.site, url: origin + '/', name: 'antiSlopdev', publisher: { '@id': ids.org } },
+      { '@type': 'Person', '@id': ids.person, name: 'Hafidz Nc', url: 'https://aconymous.com' },
+      { '@type': 'Organization', '@id': ids.org, name: 'Aconymous', url: 'https://aconymous.com', founder: { '@id': ids.person } },
+      {
+        '@type': st.kind === 'tutorial' ? 'TechArticle' : st.kind === 'news' ? 'NewsArticle' : 'BlogPosting',
+        '@id': url + '#article',
+        headline: entry.title,
+        description: entry.seoDescription || entry.excerpt,
+        url,
+        mainEntityOfPage: url,
+        inLanguage: lang,
+        image: entry.cover ? [entry.cover.url] : [ogImage()],
+        datePublished: st.publishedAt,
+        dateModified: st.modifiedAt || st.publishedAt,
+        timeRequired: `PT${entry.readingMinutes}M`,
+        keywords: entry.tags.length ? entry.tags.join(', ') : undefined,
+        author: { '@id': ids.person },
+        publisher: { '@id': ids.org },
+        isPartOf: { '@id': ids.site },
+        about: { '@id': ids.app },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'antiSlopdev', item: origin + href(lang, 'home') },
+          { '@type': 'ListItem', position: 2, name: copies[lang].nav.stories, item: origin + href(lang, 'stories') },
+          { '@type': 'ListItem', position: 3, name: entry.title, item: url },
+        ],
+      },
+    ],
+  })
+}
+
+for (const { code: lang } of storyLangs) {
+  const list = storiesIn(lang)
+  const path = href(lang, 'stories')
+  const cards = list.map((st) => ({ id: st.id, href: storyHref(lang, st.locales[lang].slug), title: st.locales[lang].title, excerpt: st.locales[lang].excerpt, date: st.publishedAt, minutes: st.locales[lang].readingMinutes }))
+  const data = { count: list.length, cards }
+  const modified = list.map((st) => st.modifiedAt || st.publishedAt).sort().at(-1)
+  const meta = copies[lang].meta.stories
+  const alternates = storyLangs.map((l) => [l.code, href(l.code, 'stories')])
+  urls.push({ path, modified, alternates, images: [ogImage()] })
+  const jsonld = json({
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebSite', '@id': ids.site, url: origin + '/', name: 'antiSlopdev', publisher: { '@id': ids.org } },
+      { '@type': 'Organization', '@id': ids.org, name: 'Aconymous', url: 'https://aconymous.com' },
+      {
+        '@type': 'Blog',
+        '@id': origin + path + '#blog',
+        name: meta.title,
+        description: meta.description,
+        url: origin + path,
+        inLanguage: lang,
+        dateModified: modified,
+        isPartOf: { '@id': ids.site },
+        publisher: { '@id': ids.org },
+        blogPost: cards.map((c) => ({ '@type': 'BlogPosting', headline: c.title, url: origin + c.href, datePublished: c.date })),
+      },
+      crumbs(lang, 'stories'),
+    ],
+  })
+  write(path, doc({ lang, page: 'stories', path, title: meta.title, description: meta.description, alternates, jsonld, body: render(lang, 'stories', data), data }))
+
+  for (const st of list) {
+    const entry = st.locales[lang]
+    const own = storyHref(lang, entry.slug)
+    const alt = Object.fromEntries(langs.map((l) => [l.code, st.locales[l.code] ? storyHref(l.code, st.locales[l.code].slug) : href(l.code, 'stories')]))
+    const otherLang = lang === 'en' ? 'id' : 'en'
+    const view = { title: entry.title, date: st.publishedAt, modified: st.modifiedAt || st.publishedAt, minutes: entry.readingMinutes, cover: entry.cover, tags: entry.tags, html: entry.html, other: st.locales[otherLang] ? storyHref(otherLang, st.locales[otherLang].slug) : null }
+    const pageData = { count: list.length, story: view, alt }
+    const alternates = langs.filter((l) => st.locales[l.code]).map((l) => [l.code, storyHref(l.code, st.locales[l.code].slug)])
+    urls.push({ path: own, modified: view.modified, alternates, images: entry.cover ? [entry.cover.url] : [] })
+    const extraHead = `<meta property="article:published_time" content="${st.publishedAt}">\n<meta property="article:modified_time" content="${view.modified}">\n<meta property="article:author" content="https://aconymous.com">\n${entry.tags.map((t) => `<meta property="article:tag" content="${esc(t)}">`).join('\n')}${entry.tags.length ? '\n' : ''}`
+    write(
+      own,
+      doc({
+        lang,
+        page: 'stories',
+        path: own,
+        title: entry.seoTitle || entry.title,
+        description: entry.seoDescription || entry.excerpt,
+        alternates,
+        type: 'article',
+        image: entry.cover?.url ?? ogImage(),
+        imageSize: entry.cover ? [entry.cover.width, entry.cover.height] : [1200, 630],
+        extraHead,
+        jsonld: storyGraph(lang, entry, st, own),
+        body: render(lang, 'stories', pageData),
+        data: { ...pageData, story: { ...view, html: '' } },
+      }),
+    )
+  }
+
+  const xml = (v) => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+  const feed = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>${xml(meta.title)}</title>
+<link>${origin}${path}</link>
+<description>${xml(meta.description)}</description>
+<language>${lang === 'id' ? 'id-ID' : 'en-US'}</language>
+<lastBuildDate>${new Date(modified).toUTCString()}</lastBuildDate>
+<atom:link href="${origin}${path}feed.xml" rel="self" type="application/rss+xml"/>
+${list
+  .map((st) => {
+    const e = st.locales[lang]
+    const link = origin + storyHref(lang, e.slug)
+    return `<item>
+<title>${xml(e.title)}</title>
+<link>${link}</link>
+<guid isPermaLink="true">${link}</guid>
+<pubDate>${new Date(st.publishedAt).toUTCString()}</pubDate>
+<dc:creator>Hafidz Nc</dc:creator>
+${e.tags.map((t) => `<category>${xml(t)}</category>`).join('\n')}
+<description>${xml(e.excerpt)}</description>
+<content:encoded><![CDATA[${e.html.replace(/]]>/g, ']]]]><![CDATA[>')}]]></content:encoded>
+</item>`
+  })
+  .join('\n')}
+</channel>
+</rss>
+`
+  writeFileSync(out + path.slice(1) + 'feed.xml', feed)
 }
 
 const stampText = JSON.stringify(nextStamps, null, 2) + '\n'
@@ -296,7 +455,6 @@ if (!existsSync(stampFile) || readFileSync(stampFile, 'utf8') !== stampText) {
   if (moved.length) console.log(`site: lastmod moved for ${moved.join(' ')}, commit site/lastmod.json`)
 }
 
-const images = (page) => [ogImage(), ...(page === 'home' ? ['bg', 'clouds', 'peak'].map((n) => origin + asset(`/hero/${n}-2400.webp`)) : [])]
 writeFileSync(
   out + 'sitemap.xml',
   `<?xml version="1.0" encoding="UTF-8"?>
@@ -306,9 +464,9 @@ ${urls
     (u) => `<url>
 <loc>${origin}${u.path}</loc>
 <lastmod>${u.modified}</lastmod>
-${langs.map((l) => `<xhtml:link rel="alternate" hreflang="${l.code}" href="${origin}${href(l.code, u.page)}"/>`).join('\n')}
-<xhtml:link rel="alternate" hreflang="x-default" href="${origin}${href('en', u.page)}"/>
-${images(u.page).map((i) => `<image:image><image:loc>${i}</image:loc></image:image>`).join('\n')}
+${u.alternates.map(([code, url]) => `<xhtml:link rel="alternate" hreflang="${code}" href="${origin}${url}"/>`).join('\n')}
+<xhtml:link rel="alternate" hreflang="x-default" href="${origin}${(u.alternates.find(([code]) => code === 'en') ?? u.alternates[0])[1]}"/>
+${u.images.map((i) => `<image:image><image:loc>${i.replace(/&/g, '&amp;')}</image:loc></image:image>`).join('\n')}
 </url>`,
   )
   .join('\n')}
@@ -338,7 +496,21 @@ Install the agent skill with \`npx skills add aconymouse/antislopdev\`, or run t
 - [ROADMAP.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/ROADMAP.md): what is planned now, next and later
 - [CHANGELOG.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/CHANGELOG.md): what changed in each release
 
-## Code
+${
+  storyLangs.length
+    ? `## Stories
+
+${stories
+  .map((st) => {
+    const code = st.locales.en ? 'en' : 'id'
+    const e = st.locales[code]
+    return `- [${e.title}](${origin}${storyHref(code, e.slug)}): ${e.excerpt}`
+  })
+  .join('\n')}
+
+`
+    : ''
+}## Code
 
 - [GitHub](${repoUrl}): source, issues and pull requests
 - [npm](${npmUrl}): the antislopdev package with the CLI and the JavaScript API
@@ -351,4 +523,4 @@ Install the agent skill with \`npx skills add aconymouse/antislopdev\`, or run t
 `,
 )
 rmSync(staging, { recursive: true, force: true })
-console.log(`site: ${urls.length} pages, ${catalog.length} rules, ${implemented.length} checked`)
+console.log(`site: ${urls.length} pages, ${stories.length} stories, ${catalog.length} rules, ${implemented.length} checked`)

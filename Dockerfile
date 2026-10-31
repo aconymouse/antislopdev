@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
+ARG STORIES_URL=https://aconymous.com/api/stories/antislopdev
+ADD ${STORIES_URL} site/stories.json
 RUN npm run site
 
 FROM nginx:1.29-alpine
