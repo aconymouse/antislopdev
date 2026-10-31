@@ -230,6 +230,7 @@ export function Footer({ lang }: { lang: Lang }) {
         <nav aria-label="Footer">
           <a href={href(lang, 'docs')}>{t.nav.docs}</a>
           <a href={href(lang, 'rules')}>{t.nav.rules}</a>
+          <a href={href(lang, 'features')}>{t.nav.features}</a>
           <a href={href(lang, 'support')}>{t.nav.support}</a>
           {hasStories(lang) ? <a href={href(lang, 'stories')}>{t.nav.stories}</a> : null}
           <a href={href(lang, 'home', '#faq')}>{t.foot.faq}</a>

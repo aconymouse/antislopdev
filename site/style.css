@@ -3742,3 +3742,401 @@ html.js .typing.is-idle .typing-ghost,
     font-size: 19px;
   }
 }
+
+.fit {
+  padding-top: 140px;
+}
+
+.fit-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 40px;
+  margin: 44px 0 32px;
+}
+
+.fit-thread {
+  position: absolute;
+  inset: -24px -12px;
+  width: calc(100% + 24px);
+  height: calc(100% + 48px);
+  overflow: visible;
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.fit-thread path {
+  vector-effect: non-scaling-stroke;
+}
+
+.fit-card {
+  position: relative;
+  view-timeline: --card block;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 0 0 22px;
+}
+
+.fit-card h3 {
+  margin: 20px 22px 0;
+  font-size: 18px;
+  letter-spacing: -0.015em;
+}
+
+.fit-card > p {
+  margin: 8px 22px 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.fit-stage {
+  display: flex;
+  align-items: center;
+  min-height: 168px;
+  padding: 24px 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.fv {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  font-size: 13px;
+}
+
+.fv code {
+  font-size: 12.5px;
+  color: var(--code);
+}
+
+.fv-json {
+  justify-self: start;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.fv-json span {
+  color: var(--muted);
+}
+
+.fv-copy {
+  font-size: 15px;
+}
+
+.fv-copy mark {
+  position: relative;
+  background: none;
+  color: inherit;
+}
+
+.fv-copy mark::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -3px;
+  height: 2px;
+  background: var(--justify);
+  transform-origin: left;
+}
+
+.fv-chip {
+  justify-self: start;
+  padding: 3px 8px;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.fv-rule {
+  font-size: 14px;
+}
+
+.fv-rule i {
+  margin-right: 6px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.fv-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 12px;
+  text-align: center;
+}
+
+.fv-track span {
+  padding: 7px 0;
+  color: var(--muted);
+}
+
+.fv-track span + span {
+  border-left: 1px solid var(--line);
+}
+
+.fv-knob {
+  position: absolute;
+  inset: -1px auto -1px 33.333%;
+  width: 33.334%;
+  border: 1.5px solid var(--justify);
+}
+
+.fv-files {
+  display: flex;
+  gap: 6px;
+  height: 46px;
+}
+
+.fv-files span {
+  display: flex;
+  flex-basis: 0;
+  align-items: flex-end;
+  min-width: 0;
+  padding: 0 0 5px 6px;
+  border: 1px solid var(--line-strong);
+  background: var(--paper);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  overflow: hidden;
+  opacity: 0.4;
+}
+
+.fv-files span:nth-child(n + 8) {
+  color: transparent;
+}
+
+.fv-files .is-read {
+  border-color: var(--accent-ink);
+  color: var(--ink);
+  opacity: 1;
+}
+
+.fv-size {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.fv-size b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.fv-scan {
+  gap: 0;
+}
+
+.fv-scan code {
+  justify-self: start;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.fv-scan code span {
+  color: var(--block);
+}
+
+.fv-link {
+  width: 1px;
+  height: 22px;
+  margin-left: 22px;
+  background: var(--block);
+  transform-origin: top;
+}
+
+.fv-scan .fv-chip {
+  margin-top: 12px;
+}
+
+@supports (animation-timeline: view()) {
+  .fit-thread path {
+    stroke-dasharray: 1;
+    animation: fit-draw linear both;
+    animation-timeline: view();
+    animation-range: entry 10% exit 20%;
+  }
+
+  .fit-thread {
+    animation: none;
+  }
+
+  .fv-copy mark::after,
+  .fv-link {
+    animation: fit-grow linear both;
+    animation-timeline: --card;
+    animation-range: entry 40% cover 45%;
+  }
+
+  .fv-link {
+    animation-name: fit-drop;
+  }
+
+  .fv-chip {
+    animation: fit-slide linear both;
+    animation-timeline: --card;
+    animation-range: entry 70% cover 55%;
+  }
+
+  .fv-knob {
+    animation: fit-knob linear both;
+    animation-timeline: --card;
+    animation-range: entry 40% cover 50%;
+  }
+
+  .fv-files {
+    animation: fit-split linear both;
+    animation-timeline: --card;
+    animation-range: entry 30% cover 50%;
+  }
+
+  .fv-files span:not(.is-read) {
+    animation: fit-dim linear both;
+    animation-timeline: --card;
+    animation-range: entry 30% cover 50%;
+  }
+
+  .fv-json {
+    animation: fit-rise linear both;
+    animation-timeline: --card;
+    animation-range: entry 20% cover 40%;
+  }
+}
+
+@keyframes fit-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fit-grow {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes fit-drop {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes fit-slide {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+@keyframes fit-knob {
+  from {
+    transform: translateX(-100%);
+    border-color: var(--line-strong);
+  }
+}
+
+@keyframes fit-split {
+  from {
+    gap: 0;
+  }
+}
+
+@keyframes fit-dim {
+  from {
+    opacity: 1;
+  }
+}
+
+@keyframes fit-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fit-thread path,
+  .fit .fv * {
+    animation: none !important;
+  }
+
+  .fit-thread path {
+    stroke-dasharray: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .fit {
+    padding-top: 96px;
+  }
+
+  .fit-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .fit-thread {
+    display: none;
+  }
+
+  .fit-stage {
+    min-height: 148px;
+    padding: 20px 18px;
+  }
+
+  .fit-card h3,
+  .fit-card > p {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+
+  .fv-files span:nth-child(n + 5) {
+    color: transparent;
+  }
+}
+
+.feature-group {
+  padding-top: 64px;
+}
+
+.feature-group h2 {
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+.feature-group .ways {
+  margin-top: 18px;
+}
+
+.feature-group .arrow {
+  align-self: center;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
+  transition: transform 0.2s var(--ease);
+}
+
+.feature-group .ways a:hover .arrow {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 760px) {
+  .feature-group {
+    padding-top: 48px;
+  }
+}

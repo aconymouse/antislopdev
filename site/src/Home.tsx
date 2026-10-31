@@ -2,6 +2,7 @@ import { catalog, implemented } from '../../src/core/index.js'
 import { Agents } from './Agents'
 import { Allow } from './Allow'
 import { Footer, Go, Header, repo, Star } from './Chrome'
+import { Fit } from './Fit'
 import { Hero } from './Hero'
 import { Typed } from './Typed'
 import { copies, href, type Lang } from './copy'
@@ -30,6 +31,7 @@ export function Home({ lang }: { lang: Lang }) {
         <Xray t={t.xray} />
         <Terminal t={t.terminal} />
         <Allow t={t.allow} />
+        <Fit t={t.fit} lang={lang} />
         {lang === 'id' ? null : <Indo t={t.indo} />}
 
         <section className="groups" aria-labelledby="groups-title">

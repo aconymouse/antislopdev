@@ -211,6 +211,26 @@ const graph = (lang, page, modified) => {
       crumbs(lang, 'rules'),
     )
   }
+  if (page === 'features') {
+    nodes.push(
+      {
+        '@type': 'WebPage',
+        '@id': url + '#page',
+        name: t.meta.features.title,
+        description: t.meta.features.description,
+        url,
+        inLanguage: lang,
+        dateModified: modified,
+        isPartOf: { '@id': ids.site },
+        about: { '@id': ids.app },
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: t.features.groups.flatMap((g) => g.items).map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.title, description: item.body })),
+        },
+      },
+      crumbs(lang, 'features'),
+    )
+  }
   if (page === 'support') {
     nodes.push(
       {
@@ -305,7 +325,7 @@ const write = (path, html) => {
 const images = (page) => [ogImage(), ...(page === 'home' ? ['bg', 'clouds', 'peak'].map((n) => origin + asset(`/hero/${n}-2400.webp`)) : [])]
 
 const urls = []
-for (const page of ['home', 'docs', 'rules', 'support']) {
+for (const page of ['home', 'docs', 'rules', 'support', 'features']) {
   for (const { code: lang } of langs) {
     const meta = copies[lang].meta[page]
     const path = href(lang, page)
@@ -492,6 +512,7 @@ Install the agent skill with \`npx skills add aconymouse/antislopdev\`, or run t
 - [Rules](${origin}${href('en', 'rules')}): all ${catalog.length} rules with IDs, levels and how each one is checked
 - [RULES.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/RULES.md): the full rule list as Markdown, the single source of truth
 - [SKILL.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/skills/antislopdev/SKILL.md): the instructions an agent follows when the skill is installed
+- [Features](${origin}${href('en', 'features')}): everything antiSlopdev does, from the rules and the checker to custom rules, levels, the agent skill and CI
 - [Support](${origin}${href('en', 'support')}): how to contribute, the roadmap and donations
 - [ROADMAP.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/ROADMAP.md): what is planned now, next and later
 - [CHANGELOG.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/CHANGELOG.md): what changed in each release
