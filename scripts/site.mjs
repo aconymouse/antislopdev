@@ -106,7 +106,7 @@ ${alternates}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0d0d0f">
 <link rel="icon" href="/favicon.ico?v=2" sizes="32x32">
-<link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
+<link rel="icon" href="/icon-anti.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2">
 <script>${theme}</script>
 <link rel="stylesheet" href="/${sheet}">
