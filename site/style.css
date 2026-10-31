@@ -2280,6 +2280,7 @@ html.js .typing.is-idle .typing-ghost,
 }
 
 .rules-bar {
+  --gut: 24px;
   position: sticky;
   top: var(--head-h);
   z-index: 5;
@@ -2910,17 +2911,19 @@ html.js .typing.is-idle .typing-ghost,
   }
 
   .rules-bar {
-    position: static;
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
+    gap: 8px;
+    margin-left: calc(var(--gut) * -1);
+    margin-right: calc(var(--gut) * -1);
+    padding: 12px var(--gut) 12px;
   }
 
   .chips {
     flex: none;
     gap: 18px;
-    margin: 0 -16px;
-    padding: 0 16px;
+    margin: 0 calc(var(--gut) * -1);
+    padding: 0 var(--gut);
   }
 
   .chips button {
@@ -2959,6 +2962,10 @@ html.js .typing.is-idle .typing-ghost,
   .site-foot {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .rules-bar {
+    --gut: 16px;
   }
 
   .chat-body {

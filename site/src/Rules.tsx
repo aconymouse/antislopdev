@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { catalog, implemented } from '../../src/core/index.js'
 import type { RuleMeta } from '../../src/core/index.js'
 import { Footer, Go, Header } from './Chrome'
@@ -22,6 +22,15 @@ export function Rules({ lang }: { lang: Lang }) {
   const [group, setGroup] = useState('')
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState('')
+  const chips = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const box = chips.current
+    const on = box?.querySelector<HTMLElement>('[aria-pressed="true"]')
+    if (!box || !on) return
+    const left = on.offsetLeft - box.offsetLeft
+    if (left < box.scrollLeft || left + on.offsetWidth > box.scrollLeft + box.clientWidth) box.scrollTo({ left: Math.max(0, left - 24), behavior: 'smooth' })
+  }, [group])
 
   useEffect(() => {
     const read = () => {
@@ -69,7 +78,7 @@ export function Rules({ lang }: { lang: Lang }) {
           <p className="lead">{t.rules.lead}</p>
         </header>
         <div className="rules-bar">
-          <div className="chips" role="group" aria-label={t.rules.filter}>
+          <div className="chips" ref={chips} role="group" aria-label={t.rules.filter}>
             <button type="button" aria-pressed={group === ''} onClick={() => setGroup('')}>
               {t.rules.all} <span>{catalog.length}</span>
             </button>
