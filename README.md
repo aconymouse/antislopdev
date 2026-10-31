@@ -2,7 +2,7 @@
 
 Rules and a checker that catch generic AI output in UI, copy, docs, commits and code.
 
-Slop is what gets shipped when nobody decided anything: the eyebrow label over every heading, the sparkle icon on every "smart" button, "Unlock the power of", a hero with three cards, a README full of rockets. antiSlopdev names 122 of those defaults, gives each one a stable ID, and checks 105 of them automatically.
+Slop is what gets shipped when nobody decided anything: the eyebrow label over every heading, the sparkle icon on every "smart" button, "Unlock the power of", a hero with three cards, a README full of rockets. antiSlopdev names 163 of those defaults, from interface and copy to SEO and security, gives each one a stable ID, and checks 137 of them automatically.
 
 It is not a style guide. Gradients, dark themes, monospace and motion are fine when someone chose them. The rules only ask that the choice was made.
 
@@ -105,6 +105,10 @@ The same engine runs in the browser playground on the site.
 | TR | 8 | invented numbers, people and claims |
 | AX | 7 | accessibility |
 | PF | 6 | performance |
+| SEO | 20 | titles, canonical, Open Graph, structured data, image formats, answer-first writing |
+| SEC | 21 | secrets, injection, TLS, CORS, cookies, redirects, dependencies |
+
+To audit a live page against the SEO group, try [sarangSEO](https://aconymous.com/tools/sarangseo). For a passive security scan of a domain you own, try [wowHacker](https://aconymous.com/tools/wowhacker).
 
 ## Prior art
 

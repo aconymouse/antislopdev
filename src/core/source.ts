@@ -36,6 +36,7 @@ export function kindOf(path: string): FileKind | undefined {
   const name = path.split(/[\\/]/).pop() ?? path
   if (name === 'package.json') return 'manifest'
   if (name === 'COMMIT_EDITMSG' || name.endsWith('.commit')) return 'commit'
+  if (/^\.env(\.[\w.-]+)?$/i.test(name)) return 'config'
   const ext = name.includes('.') ? name.split('.').pop()!.toLowerCase() : ''
   return extKinds[ext]
 }

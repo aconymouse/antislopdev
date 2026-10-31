@@ -854,5 +854,292 @@ export const catalog: readonly RuleMeta[] = [
     "detail": "Transitions on `width`, `height`, `top`, `left`, `margin` or `padding` where `transform` and `opacity` would do.",
     "level": "warn",
     "check": "static"
+  },
+  {
+    "id": "SEO-01",
+    "title": "Page without a title or description",
+    "detail": "A document head with no `<title>` or no `<meta name=\"description\">`. In a framework, a route that ships without metadata.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEO-02",
+    "title": "Title or description that gets cut",
+    "detail": "A `<title>` over 60 characters or a meta description over 160, so the search result ends in an ellipsis.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEO-03",
+    "title": "No canonical URL",
+    "detail": "A page head without `<link rel=\"canonical\">`, so copies with tracking parameters or trailing slashes split the ranking.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEO-04",
+    "title": "More than one h1",
+    "detail": "Several `h1` elements on one page, or none at all, so neither readers nor crawlers know what the page is about.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEO-05",
+    "title": "Document without a language",
+    "detail": "`<html>` with no `lang`, which hurts search, translation, hyphenation and screen readers.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEO-06",
+    "title": "Link preview left to chance",
+    "detail": "No `og:title`, `og:description`, `og:image` or `twitter:card`, so a shared link shows a bare URL or a random image.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEO-07",
+    "title": "Relative og:image",
+    "detail": "`og:image` or `twitter:image` pointing at a relative path. Crawlers need an absolute URL, ideally 1200 px wide.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEO-08",
+    "title": "Broken structured data",
+    "detail": "A JSON-LD block that is not valid JSON, has no `@context`, or has items without `@type`. Rich results silently disappear.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEO-09",
+    "title": "Structured data for things that are not on the page",
+    "detail": "FAQ, Review, Rating, Product or Event markup describing questions, stars, prices or dates the visitor cannot see. Search engines treat it as spam.",
+    "level": "block",
+    "check": "review"
+  },
+  {
+    "id": "SEO-10",
+    "title": "Noindex left in",
+    "detail": "`<meta name=\"robots\" content=\"noindex\">`, `robots: { index: false }` or an `X-Robots-Tag: noindex` on a page that is supposed to rank.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEO-11",
+    "title": "Photos as PNG or JPEG",
+    "detail": "Photographs and realistic renders served as `.png` or `.jpg` when WebP or AVIF would be a fraction of the size. Screenshots of an interface may stay PNG.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEO-12",
+    "title": "Vector art as a bitmap",
+    "detail": "Logos, icons, wordmarks and diagrams shipped as PNG, JPEG or WebP instead of SVG, so they blur on sharp screens and weigh more.",
+    "level": "warn",
+    "check": "heuristic"
+  },
+  {
+    "id": "SEO-13",
+    "title": "No ICO favicon",
+    "detail": "Only PNG or SVG favicons, with no `.ico` for crawlers, search results and older clients that still ask for `/favicon.ico`.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEO-14",
+    "title": "Links crawlers cannot follow",
+    "detail": "`<a>` without an `href`, `href=\"#\"` or `javascript:` links, and navigation done only with a click handler.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEO-15",
+    "title": "Answer buried under the question",
+    "detail": "A heading phrased as a question whose first sentence does not answer it. Answer engines and featured snippets quote the first sentence.",
+    "level": "warn",
+    "check": "review"
+  },
+  {
+    "id": "SEO-16",
+    "title": "Facts without a date or a source",
+    "detail": "Prices, versions, rankings and statistics with no \"as of\" date and no link to where they came from. Generative engines cite content they can attribute.",
+    "level": "justify",
+    "check": "review"
+  },
+  {
+    "id": "SEO-17",
+    "title": "Content that only exists after JavaScript",
+    "detail": "Main text, links or metadata injected on the client, so crawlers and AI bots that do not run scripts see an empty page.",
+    "level": "justify",
+    "check": "review"
+  },
+  {
+    "id": "SEO-18",
+    "title": "Translations that do not point at each other",
+    "detail": "Language versions without `hreflang` links to every version and an `x-default`.",
+    "level": "justify",
+    "check": "review"
+  },
+  {
+    "id": "SEO-19",
+    "title": "Camera file names and alt that repeats them",
+    "detail": "`IMG_2041.jpg`, `image-1.png`, `Screenshot.png`, or alt text that is just the file name.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEO-20",
+    "title": "Small previews only",
+    "detail": "A robots meta without `max-image-preview:large`, so Discover and rich results can only show a thumbnail.",
+    "level": "warn",
+    "check": "static"
+  },
+  {
+    "id": "SEC-01",
+    "title": "Secret in the source",
+    "detail": "API keys, tokens, private keys or passwords written into code, config or docs (`sk-…`, `ghp_…`, `AKIA…`, `-----BEGIN PRIVATE KEY-----`). Rotate the key, then move it to the environment.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-02",
+    "title": "Env file in the tree",
+    "detail": "A `.env` or `.env.local` that is not ignored by git. Only `.env.example` with empty values belongs in the repo.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-03",
+    "title": "Server secret exposed to the browser",
+    "detail": "A secret, private key, password or database URL behind a public prefix (`NEXT_PUBLIC_`, `VITE_`, `PUBLIC_`, `EXPO_PUBLIC_`, `REACT_APP_`), which bundles it into client code.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-04",
+    "title": "eval and friends",
+    "detail": "`eval`, `new Function`, or `setTimeout` and `setInterval` given a string.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-05",
+    "title": "Raw HTML from a variable",
+    "detail": "`dangerouslySetInnerHTML`, `v-html`, `{@html}`, `innerHTML` or `insertAdjacentHTML` fed with anything that was not sanitised.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEC-06",
+    "title": "SQL built from strings",
+    "detail": "Queries assembled with `${}` or `+` around values instead of parameters or a tagged `sql` template.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-07",
+    "title": "Shell command built from input",
+    "detail": "`exec` or `execSync` with an interpolated or concatenated string. Use `execFile` or `spawn` with an argument array.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-08",
+    "title": "TLS checks turned off",
+    "detail": "`rejectUnauthorized: false`, `NODE_TLS_REJECT_UNAUTHORIZED=0`, `verify=False`, `InsecureSkipVerify: true`.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-09",
+    "title": "Plain http for resources",
+    "detail": "Scripts, styles, images, iframes or API calls over `http://`, outside local hosts.",
+    "level": "block",
+    "check": "static"
+  },
+  {
+    "id": "SEC-10",
+    "title": "CORS open to everyone",
+    "detail": "`Access-Control-Allow-Origin: *`, `origin: '*'` or a bare `cors()` on an API that reads cookies or tokens.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEC-11",
+    "title": "Weak hash for secrets",
+    "detail": "MD5 or SHA-1 used for passwords, tokens or signatures. Passwords need argon2, scrypt or bcrypt.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEC-12",
+    "title": "Math.random for anything secret",
+    "detail": "Tokens, session IDs, OTPs, reset codes or salts from `Math.random()` instead of `crypto.getRandomValues` or `crypto.randomUUID`.",
+    "level": "block",
+    "check": "heuristic"
+  },
+  {
+    "id": "SEC-13",
+    "title": "Secrets in logs",
+    "detail": "Logging passwords, tokens, cookies, authorization headers or whole request bodies.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEC-14",
+    "title": "Open redirect",
+    "detail": "Redirecting to a URL taken straight from the query string or body without checking that it stays on your own host.",
+    "level": "block",
+    "check": "heuristic"
+  },
+  {
+    "id": "SEC-15",
+    "title": "Floating dependency versions",
+    "detail": "`\"*\"`, `\"latest\"` or a git branch as a version in `package.json`, so a compromised release lands on the next install.",
+    "level": "justify",
+    "check": "static"
+  },
+  {
+    "id": "SEC-16",
+    "title": "Authorisation only in the browser",
+    "detail": "Hiding a button or a route on the client while the API route or server action behind it does not check the session and the role.",
+    "level": "block",
+    "check": "review"
+  },
+  {
+    "id": "SEC-17",
+    "title": "Input trusted without validation",
+    "detail": "API routes, server actions and webhooks that use the body without a schema, or accept webhooks without verifying the signature.",
+    "level": "block",
+    "check": "review"
+  },
+  {
+    "id": "SEC-18",
+    "title": "No rate limit on sensitive routes",
+    "detail": "Login, sign-up, password reset, OTP and paid API proxies with no limit per IP or per account.",
+    "level": "justify",
+    "check": "review"
+  },
+  {
+    "id": "SEC-19",
+    "title": "Missing security headers",
+    "detail": "No Content-Security-Policy, HSTS, `X-Content-Type-Options: nosniff`, `Referrer-Policy` or `frame-ancestors`.",
+    "level": "justify",
+    "check": "review"
+  },
+  {
+    "id": "SEC-20",
+    "title": "Auth cookie without flags",
+    "detail": "Session, token or JWT cookies set without `httpOnly` (and `secure`, `sameSite`), or written from client code with `document.cookie`.",
+    "level": "block",
+    "check": "heuristic"
+  },
+  {
+    "id": "SEC-21",
+    "title": "Stack traces sent to users",
+    "detail": "Error stacks or internal details returned in API responses or rendered on error pages.",
+    "level": "justify",
+    "check": "static"
   }
 ]

@@ -10,7 +10,7 @@ const fixtures = (dir) => readdirSync(here + 'fixtures/' + dir).map((name) => ({
 const ids = (report) => new Set(report.findings.map((f) => f.rule))
 
 test('catalog matches RULES.md and every checked rule exists', () => {
-  assert.equal(catalog.length, 122)
+  assert.equal(catalog.length, 163)
   const known = new Set(catalog.map((r) => r.id))
   for (const id of implemented) assert.ok(known.has(id), id)
   assert.ok(implemented.length >= 100)
@@ -50,6 +50,38 @@ test('three warns of one rule in one file become justify', () => {
   assert.equal(two.failed, false)
 })
 
+test('seo and security rules catch what they are named for', () => {
+  const key = ['gh', 'p_', 'R8x2', 'Lm4q'.repeat(8)].join('')
+  const sources = [
+    { path: 'auth.ts', text: [
+      `const github = '${key}'`,
+      'const stripe = process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY',
+      'export const run = (code: string) => eval(code)',
+      'export const html = (el: HTMLElement, v: string) => { el.innerHTML = v }',
+      'export const find = (db: any, id: string) => db.query(`SELECT * FROM users WHERE id = ${id}`)',
+      "export const zip = (exec: any, name: string) => exec(`zip -r ${name}.zip .`)",
+      'export const agent = { rejectUnauthorized: false }',
+      "export const load = () => fetch('http://api.generic.app/v1/users')",
+      "export const headers = { 'Access-Control-Allow-Origin': '*' }",
+      "export const weak = (c: any, p: string) => c.createHash('md5').update(p)",
+      'export const resetToken = () => Math.random().toString(36).slice(2)',
+      'export const trace = (password: string) => console.log(password)',
+      "export const back = (res: any, req: any) => res.redirect(req.query.next)",
+      "export const login = (res: any, jwt: string) => res.cookie('session', jwt)",
+      'export const fail = (res: any, err: Error) => res.json({ error: err.stack })',
+    ].join('\n') },
+    { path: '.env.local', text: 'DATABASE_URL=postgres://u:p@db:5432/app\n' },
+    { path: 'package.json', text: '{ "dependencies": { "left-pad": "latest", "ui": "*" } }\n' },
+  ]
+  const found = ids(check(sources))
+  const expected = ['SEC-01', 'SEC-02', 'SEC-03', 'SEC-04', 'SEC-05', 'SEC-06', 'SEC-07', 'SEC-08', 'SEC-09', 'SEC-10', 'SEC-11', 'SEC-12', 'SEC-13', 'SEC-14', 'SEC-15', 'SEC-20', 'SEC-21']
+  assert.deepEqual(expected.filter((id) => !found.has(id)), [])
+  assert.ok(ids(check(fixtures('slop').filter((f) => f.path === 'page.html'))).has('SEO-01'))
+  const seo = ids(check(fixtures('slop').filter((f) => f.path === 'seo.html')))
+  const want = ['SEO-02', 'SEO-03', 'SEO-04', 'SEO-05', 'SEO-06', 'SEO-07', 'SEO-08', 'SEO-11', 'SEO-12', 'SEO-13', 'SEO-14', 'SEO-19', 'SEO-20', 'SEC-09']
+  assert.deepEqual(want.filter((id) => !seo.has(id)), [])
+})
+
 test('false positives the checker must not raise', () => {
   const cases = [
     { path: 'a.tsx', text: "export const A = () => <p>Don't worry, it's fine.</p>\n// keeps the cache warm between renders because the API is slow\nconst x = 1\n" },
@@ -60,6 +92,8 @@ test('false positives the checker must not raise', () => {
     { path: 'f.tsx', text: '<Link href="/a"><div className="hover:-translate-y-1 rounded border p-4">Card</div></Link>\n' },
     { path: 'g.md', text: 'Mulai dari 10 ribu hingga 50 ribu per bulan.\n' },
     { path: 'i.tsx', text: 'export const Go = ({ to, children }: { to: string; children: string }) => <a href={to}>{children}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4" /></svg></a>\n' },
+    { path: 'j.ts', text: "import { sql } from 'drizzle-orm'\nexport const byId = (db: { execute(q: unknown): unknown }, id: string) => db.execute(sql`SELECT * FROM users WHERE id = ${id}`)\nexport const key = process.env.API_KEY\nexport const pick = () => crypto.randomUUID()\nexport const probe = (domain: string) => fetch(`http://${domain}`, { redirect: 'manual' })\n" },
+    { path: 'k.tsx', text: 'export const Ld = ({ data }: { data: object }) => <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />\n' },
     { path: 'h.ts', text: 'export function sum(values: number[]): number {\n  return values.reduce((a, b) => a + b, 0)\n}\n' },
   ]
   for (const c of cases) {

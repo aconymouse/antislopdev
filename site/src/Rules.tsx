@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { catalog, implemented } from '../../src/core/index.js'
 import type { RuleMeta } from '../../src/core/index.js'
-import { Footer, Header } from './Chrome'
+import { Footer, Go, Header } from './Chrome'
 import { copies, type Lang } from './copy'
 import { useTheater, Words } from './theater'
 
 const prefixes = [...new Set(catalog.map((r) => r.id.split('-')[0]!))]
+const promos: Record<string, string> = { SEO: 'https://aconymous.com/tools/sarangseo', SEC: 'https://aconymous.com/tools/wowhacker' }
 
 function Detail({ text }: { text: string }) {
   return (
@@ -99,6 +100,11 @@ export function Rules({ lang }: { lang: Lang }) {
           {sections.map((s) => (
             <section key={s.p} aria-labelledby={`g-${s.p}`}>
               <h2 id={`g-${s.p}`}>{t.groups.names[s.p]}</h2>
+              {promos[s.p] && t.rules.promo[s.p] ? (
+                <p className="rules-promo">
+                  <Go href={promos[s.p]!}>{t.rules.promo[s.p]!}</Go>
+                </p>
+              ) : null}
               {s.rules.map(row)}
             </section>
           ))}

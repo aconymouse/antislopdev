@@ -1,3 +1,8 @@
+import { catalog, implemented } from '../../src/core/index.js'
+
+const total = catalog.length
+const auto = implemented.length
+
 export type Lang = 'en' | 'id'
 export type Page = 'home' | 'docs' | 'rules'
 
@@ -10,15 +15,15 @@ export const href = (lang: Lang, page: Page, hash = '') => `${lang === 'en' ? '/
 
 const en = {
   meta: {
-    home: { title: 'antiSlopdev: the anti AI slop gatekeeper', description: '122 named habits of AI-generated UI, copy and code, and an open-source checker that finds 105 of them. Works as an agent skill and as a CLI.' },
+    home: { title: 'antiSlopdev: the anti AI slop gatekeeper', description: `${total} named habits of AI-generated UI, copy, code, SEO and security, and an open-source checker that finds ${auto} of them. Skill or CLI.` },
     docs: { title: 'Docs · antiSlopdev', description: 'Install the antiSlopdev skill, run the checker in CI or on commit messages, and keep deliberate choices with a written reason.' },
-    rules: { title: 'Rules · antiSlopdev', description: 'All 122 antiSlopdev rules for UI, English and Indonesian copy, code, docs, commits, claims, accessibility and performance.' },
+    rules: { title: 'Rules · antiSlopdev', description: `All ${total} antiSlopdev rules for UI, English and Indonesian copy, code, docs, commits, claims, accessibility, performance, SEO and security.` },
   },
   nav: { playground: 'Playground', docs: 'Docs', rules: 'Rules', github: 'GitHub', star: 'Star', cta: 'Try it', menu: 'Menu', close: 'Close', theme: 'Theme', light: 'Light', dark: 'Dark', language: 'Language', skip: 'Skip to content' },
   hero: {
     line1: 'The anti AI slop',
     line2: 'gatekeeper.',
-    lead: 'antiSlopdev names 122 habits of AI-generated UI, copy and code, and checks 105 of them on every change. Give it to your agent as a skill, or run it as a CLI.',
+    lead: `antiSlopdev names ${total} habits of AI-generated UI, copy, code, SEO and security, and checks ${auto} of them on every change. Give it to your agent as a skill, or run it as a CLI.`,
     plugin: 'Claude Code plugin',
     play: 'Open the playground',
     fine: 'Open source under MIT. Runs on your machine, nothing is uploaded.',
@@ -77,11 +82,11 @@ const en = {
     p2: 'Hover a squiggle to see which rule it is.',
   },
   groups: {
-    title: '122 rules. 105 checked by a script.',
+    title: `${total} rules. ${auto} checked by a script.`,
     p1: 'The rest need a person looking at the page, so the skill asks the agent to check them by eye and say so in the delivery note.',
     all: 'Read all the rules',
     auto: 'checked by script',
-    names: { UI: 'Interface', TX: 'English copy', ID: 'Indonesian copy', CD: 'Code', DOC: 'Docs', GIT: 'Commits', TR: 'Truth', AX: 'Accessibility', PF: 'Performance' } as Record<string, string>,
+    names: { UI: 'Interface', TX: 'English copy', ID: 'Indonesian copy', CD: 'Code', DOC: 'Docs', GIT: 'Commits', TR: 'Truth', AX: 'Accessibility', PF: 'Performance', SEO: 'SEO', SEC: 'Security' } as Record<string, string>,
   },
   faq: {
     title: 'Questions',
@@ -108,6 +113,7 @@ const en = {
     auto: 'Checked automatically',
     eye: 'Checked by eye during review',
     of: 'of',
+    promo: { SEO: 'Audit a live page with sarangSEO', SEC: 'Scan a domain you own with wowHacker' } as Record<string, string>,
   },
   docs: {
     title: 'Docs',
@@ -120,15 +126,15 @@ export type Copy = typeof en
 
 const id: Copy = {
   meta: {
-    home: { title: 'antiSlopdev: palang pintu anti AI slop', description: '122 kebiasaan AI di UI, copy, dan kode diberi nama, dan 105 di antaranya dicek otomatis. Bisa dipakai sebagai skill agent atau CLI, open source.' },
+    home: { title: 'antiSlopdev: palang pintu anti AI slop', description: `${total} kebiasaan AI di UI, copy, kode, SEO, dan keamanan diberi nama, dan ${auto} di antaranya dicek otomatis. Skill agent atau CLI, open source.` },
     docs: { title: 'Dokumentasi · antiSlopdev', description: 'Pasang skill antiSlopdev, jalankan pemeriksanya di CI atau di pesan commit, dan pertahankan pilihan yang disengaja lewat alasan tertulis.' },
-    rules: { title: 'Aturan · antiSlopdev', description: 'Semua 122 aturan antiSlopdev untuk UI, copy Inggris dan Indonesia, kode, dokumentasi, commit, klaim, aksesibilitas, dan performa.' },
+    rules: { title: 'Aturan · antiSlopdev', description: `Semua ${total} aturan antiSlopdev untuk UI, copy Inggris dan Indonesia, kode, dokumentasi, commit, klaim, aksesibilitas, performa, SEO, dan keamanan.` },
   },
   nav: { playground: 'Playground', docs: 'Dokumentasi', rules: 'Aturan', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
   hero: {
     line1: 'Palang pintu',
     line2: 'anti AI Slop.',
-    lead: 'antiSlopdev memberi nama 122 kebiasaan AI di UI, copy, dan kode, lalu mengecek 105 di antaranya setiap ada perubahan. Pasang sebagai skill di agent-mu, atau jalankan sebagai CLI.',
+    lead: `antiSlopdev memberi nama ${total} kebiasaan AI di UI, copy, kode, SEO, dan keamanan, lalu mengecek ${auto} di antaranya setiap ada perubahan. Pasang sebagai skill di agent-mu, atau jalankan sebagai CLI.`,
     plugin: 'Plugin Claude Code',
     play: 'Buka playground',
     fine: 'Open source, lisensi MIT. Jalan di komputermu, gak ada yang diunggah.',
@@ -187,11 +193,11 @@ const id: Copy = {
     p2: 'Arahkan kursor ke garis bergelombang buat lihat aturannya.',
   },
   groups: {
-    title: '122 aturan. 105 dicek otomatis.',
+    title: `${total} aturan. ${auto} dicek otomatis.`,
     p1: 'Sisanya butuh mata manusia, jadi skill-nya minta agent mengecek bagian itu sendiri dan menuliskannya di catatan serah.',
     all: 'Baca semua aturan',
     auto: 'dicek otomatis',
-    names: { UI: 'Antarmuka', TX: 'Copy Inggris', ID: 'Copy Indonesia', CD: 'Kode', DOC: 'Dokumentasi', GIT: 'Commit', TR: 'Kejujuran', AX: 'Aksesibilitas', PF: 'Performa' },
+    names: { UI: 'Antarmuka', TX: 'Copy Inggris', ID: 'Copy Indonesia', CD: 'Kode', DOC: 'Dokumentasi', GIT: 'Commit', TR: 'Kejujuran', AX: 'Aksesibilitas', PF: 'Performa', SEO: 'SEO', SEC: 'Keamanan' },
   },
   faq: {
     title: 'Pertanyaan',
@@ -218,6 +224,7 @@ const id: Copy = {
     auto: 'Dicek otomatis',
     eye: 'Dicek pakai mata saat review',
     of: 'dari',
+    promo: { SEO: 'Audit halaman live pakai sarangSEO', SEC: 'Pindai domain milikmu pakai wowHacker' },
   },
   docs: {
     title: 'Dokumentasi',

@@ -5,7 +5,7 @@
     {
       "name": "antislopdev",
       "source": "./",
-      "description": "122 rules and a checker that catch generic AI output in UI, copy, docs, commits and code."
+      "description": "163 rules and a checker that catch generic AI output in UI, copy, docs, commits, code, SEO and security."
     }
   ]
 }

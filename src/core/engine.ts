@@ -8,8 +8,9 @@ import { code } from './rules/code.js'
 import { docs } from './rules/docs.js'
 import { truth } from './rules/truth.js'
 import { a11y, project } from './rules/a11y.js'
+import { web } from './rules/web.js'
 
-export const rules: readonly Rule[] = [...ui, ...writing, ...code, ...docs, ...truth, ...a11y]
+export const rules: readonly Rule[] = [...ui, ...writing, ...code, ...docs, ...truth, ...a11y, ...web]
 export const projectRules: readonly ProjectRule[] = project
 
 const meta = new Map<string, RuleMeta>(catalog.map((r) => [r.id, r]))
