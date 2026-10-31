@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { asset } from './asset'
 import type { Copy } from './copy'
 import { Words } from './theater'
 import { still, track } from './track'
@@ -118,8 +119,8 @@ export function Hero({ t }: { t: Copy['hero'] }) {
           <img
             key={name}
             className={`hz-layer ${cls}`}
-            src={`/hero/${name}-1280.webp`}
-            srcSet={`/hero/${name}-1280.webp 1280w, /hero/${name}-2400.webp 2400w`}
+            src={asset(`/hero/${name}-1280.webp`)}
+            srcSet={`${asset(`/hero/${name}-1280.webp`)} 1280w, ${asset(`/hero/${name}-2400.webp`)} 2400w`}
             sizes="100vw"
             width={2400}
             height={1351}

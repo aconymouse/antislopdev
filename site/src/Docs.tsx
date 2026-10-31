@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { catalog, implemented } from '../../src/core/index.js'
+import { asset } from './asset'
 import { Footer, Header, repo } from './Chrome'
 import { copies, href, type Lang } from './copy'
 import { useTheater, Words } from './theater'
@@ -252,7 +253,7 @@ export function Docs({ lang }: { lang: Lang }) {
           <p>{t.docs.toc}</p>
           <div className="toc-track" ref={track}>
             <span className="toc-trail" style={{ clipPath: `inset(0 0 calc(100% - ${walker}px) 0)` }} aria-hidden="true" />
-            <img className="toc-walker" src="/icon-anti.svg" alt="" width={22} height={22} style={{ transform: `translateY(${walker - 11}px)` }} />
+            <img className="toc-walker" src={asset('/favicon.svg')} alt="" width={22} height={22} style={{ transform: `translateY(${walker - 11}px)` }} />
             <ol>
               {list.map((s, i) => (
                 <li key={s.id} className={i < at ? 'past' : i === at ? 'here' : ''}>

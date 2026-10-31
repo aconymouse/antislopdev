@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { asset } from './asset'
 import { copies, href, langs, type Lang, type Page } from './copy'
 import { marks } from './marks'
 import { track } from './track'
@@ -8,8 +9,8 @@ export const repo = 'https://github.com/aconymouse/antislopdev'
 export function Logo() {
   return (
     <>
-      <img className="logo logo-light" src="/logo.svg" alt="" width={126} height={30} />
-      <img className="logo logo-ink" src="/logo-ink.svg" alt="" width={126} height={30} />
+      <img className="logo logo-light" src={asset('/logo.svg')} alt="" width={126} height={30} />
+      <img className="logo logo-ink" src={asset('/logo-ink.svg')} alt="" width={126} height={30} />
     </>
   )
 }
