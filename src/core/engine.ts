@@ -37,7 +37,7 @@ interface Allow {
 function allowances(src: Source): Allow[] {
   const out: Allow[] = []
   for (const m of src.text.matchAll(/antislopdev-allow(-file)?[ \t]+([A-Z]+-\d+(?:[ \t]*,[ \t]*[A-Z]+-\d+)*)[ \t]*:([^\n]*)/g)) {
-    const reason = m[3]!.split(/\*\/|-->|\}/, 1)[0]!.trim()
+    const reason = m[3]!.split(/\*\/|--!?>|\}/, 1)[0]!.trim()
     if ((reason.match(/\p{L}/gu) ?? []).length < 3) continue
     out.push({ ids: m[2]!.split(',').map((s) => s.trim()), reason, file: Boolean(m[1]), line: src.position(m.index).line })
   }
