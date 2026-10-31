@@ -83,7 +83,7 @@ export const a11y: Rule[] = [
         if (t.name === 'img' && !/\balt\s*=/.test(t.attrs)) hits.push({ index: t.start, length: t.end - t.start, note: '<img> without alt' })
         if (/^(button|Button|a|Link)$/.test(t.name) && !/\baria-label(ledby)?\s*=|\btitle\s*=|aria-hidden|\{\s*\.\.\./.test(t.attrs) && !/\/>\s*$/.test(src.text.slice(t.start, t.end))) {
           const inner = src.inner(t)
-          if (/<(svg|[A-Z]\w*)\b/.test(inner) && !textOf(inner) && !/sr-only|visually-hidden|aria-label/.test(inner)) hits.push({ index: t.start, length: t.end - t.start, note: `icon-only <${t.name}> without a name` })
+          if (/<(svg|[A-Z]\w*)\b/.test(inner) && !textOf(inner) && !/\{[^}]+\}/.test(inner.replace(/<[^>]*>/g, '')) && !/sr-only|visually-hidden|aria-label/.test(inner)) hits.push({ index: t.start, length: t.end - t.start, note: `icon-only <${t.name}> without a name` })
         }
         if (/^(input|textarea|select)$/.test(t.name) && !/\btype\s*=\s*["'](hidden|submit|button|reset|image)["']|(^|\s)hidden(\s|$|=\{true\})/.test(t.attrs) && !/\b(aria-label(ledby)?|id|title)\s*=|\{\s*\.\.\./.test(t.attrs)) {
           const before = src.text.slice(Math.max(0, t.start - 400), t.start)

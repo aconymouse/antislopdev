@@ -79,6 +79,7 @@ const en = {
     title: '122 rules. 105 checked by a script.',
     p1: 'The rest need a person looking at the page, so the skill asks the agent to check them by eye and say so in the delivery note.',
     all: 'Read all the rules',
+    auto: 'checked by script',
     names: { UI: 'Interface', TX: 'English copy', ID: 'Indonesian copy', CD: 'Code', DOC: 'Docs', GIT: 'Commits', TR: 'Truth', AX: 'Accessibility', PF: 'Performance' } as Record<string, string>,
   },
   faq: {
@@ -187,6 +188,7 @@ const id: Copy = {
     title: '122 aturan. 105 dicek otomatis.',
     p1: 'Sisanya butuh mata manusia, jadi skill-nya minta agent mengecek bagian itu sendiri dan menuliskannya di catatan serah.',
     all: 'Baca semua aturan',
+    auto: 'dicek otomatis',
     names: { UI: 'Antarmuka', TX: 'Copy Inggris', ID: 'Copy Indonesia', CD: 'Kode', DOC: 'Dokumentasi', GIT: 'Commit', TR: 'Kejujuran', AX: 'Aksesibilitas', PF: 'Performa' },
   },
   faq: {

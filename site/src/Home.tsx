@@ -1,7 +1,7 @@
 import { catalog, implemented } from '../../src/core/index.js'
 import { Agents } from './Agents'
 import { Allow } from './Allow'
-import { Footer, Header, repo, Star } from './Chrome'
+import { Footer, Go, Header, repo, Star } from './Chrome'
 import { Hero } from './Hero'
 import { Typed } from './Typed'
 import { copies, href, type Lang } from './copy'
@@ -57,17 +57,15 @@ export function Home({ lang }: { lang: Lang }) {
                         </span>
                       ))}
                     </span>
-                    <span className="group-bar" aria-hidden="true">
-                      <i style={{ width: `${(auto / rules.length) * 100}%` }} />
+                    <span className="group-auto">
+                      {auto}/{rules.length} {t.groups.auto}
                     </span>
                   </a>
                 </li>
               )
             })}
           </ul>
-          <a className="button" href={href(lang, 'rules')}>
-            {t.groups.all}
-          </a>
+          <Go href={href(lang, 'rules')}>{t.groups.all}</Go>
         </section>
 
         {lang === 'id' ? <Indo t={t.indo} /> : null}
@@ -96,9 +94,9 @@ export function Home({ lang }: { lang: Lang }) {
             </h2>
             <p>{t.source.p1}</p>
             <div className="source-actions">
-              <a href={repo} className="button solid" onClick={() => track('github_click', { place: 'source' })}>
+              <Go href={repo} onClick={() => track('github_click', { place: 'source' })}>
                 {t.source.button}
-              </a>
+              </Go>
               <Star label={t.nav.star} large place="source" />
             </div>
           </div>

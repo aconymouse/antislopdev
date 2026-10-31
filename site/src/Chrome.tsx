@@ -15,6 +15,17 @@ export function Logo() {
   )
 }
 
+export function Go({ href, children, onClick }: { href: string; children: string; onClick?: () => void }) {
+  return (
+    <a className="go" href={href} onClick={onClick}>
+      {children}
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M4.5 11.5 11.5 4.5M5.5 4.5h6v6" />
+      </svg>
+    </a>
+  )
+}
+
 export function Star({ label, large = false, place }: { label: string; large?: boolean; place: string }) {
   const [count, setCount] = useState<number | null>(null)
   useEffect(() => {

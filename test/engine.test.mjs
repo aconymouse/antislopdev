@@ -59,6 +59,7 @@ test('false positives the checker must not raise', () => {
     { path: 'e.md', text: 'Studies show the effect, see [the paper](https://doi.org/10.1000/xyz).\n' },
     { path: 'f.tsx', text: '<Link href="/a"><div className="hover:-translate-y-1 rounded border p-4">Card</div></Link>\n' },
     { path: 'g.md', text: 'Mulai dari 10 ribu hingga 50 ribu per bulan.\n' },
+    { path: 'i.tsx', text: 'export const Go = ({ to, children }: { to: string; children: string }) => <a href={to}>{children}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4" /></svg></a>\n' },
     { path: 'h.ts', text: 'export function sum(values: number[]): number {\n  return values.reduce((a, b) => a + b, 0)\n}\n' },
   ]
   for (const c of cases) {
