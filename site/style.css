@@ -4140,3 +4140,15 @@ html.js .typing.is-idle .typing-ghost,
     padding-top: 48px;
   }
 }
+
+.theme-flip *,
+.theme-flip *::before,
+.theme-flip *::after {
+  transition: none !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: var(--ease);
+}

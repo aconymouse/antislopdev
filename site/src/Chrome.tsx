@@ -59,8 +59,15 @@ export function Star({ label, large = false, place }: { label: string; large?: b
 
 function ThemeButton({ label, onPick }: { label: string; onPick?: () => void }) {
   const flip = () => {
-    const now = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'
-    document.documentElement.dataset.theme = now
+    const root = document.documentElement
+    const now = root.dataset.theme === 'light' ? 'dark' : 'light'
+    const apply = () => {
+      root.classList.add('theme-flip')
+      root.dataset.theme = now
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-flip')))
+    }
+    if ('startViewTransition' in document && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(apply)
+    else apply()
     try {
       localStorage.setItem('asd:theme', now)
     } catch {}
