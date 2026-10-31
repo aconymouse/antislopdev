@@ -242,22 +242,75 @@ pre {
   display: none;
 }
 
-.lang-pick select {
-  height: 36px;
-  padding: 0 26px 0 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23888' stroke-width='1.4'/%3E%3C/svg%3E") right 10px center no-repeat;
-  color: var(--muted);
-  font-size: 13.5px;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
+.lang-pick {
+  position: relative;
 }
 
-.lang-pick select:hover {
-  color: var(--ink);
+.lang-pick > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--muted);
+  font-size: 13.5px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.lang-pick > button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  transition: transform 0.15s;
+}
+
+.lang-pick > button:hover,
+.lang-pick > button[aria-expanded='true'] {
   border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.lang-pick > button[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  min-width: 100%;
+  margin: 0;
+  padding: 4px 0;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  list-style: none;
+}
+
+.lang-pick.up .lang-menu {
+  top: auto;
+  right: auto;
+  bottom: calc(100% + 6px);
+  left: 0;
+}
+
+.lang-menu a {
+  display: block;
+  padding: 8px 14px;
+  color: var(--muted);
+  font-size: 13.5px;
+  white-space: nowrap;
+}
+
+.lang-menu a:hover {
+  color: var(--accent-ink);
+}
+
+.lang-menu a[aria-current='true'] {
+  color: var(--ink);
 }
 
 .star {
@@ -453,7 +506,7 @@ pre {
 }
 
 .site-menu-foot .star,
-.site-menu-foot select {
+.site-menu-foot .lang-pick > button {
   height: 44px;
 }
 

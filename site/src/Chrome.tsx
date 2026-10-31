@@ -78,25 +78,56 @@ function ThemeButton({ label, onPick }: { label: string; onPick?: () => void }) 
   )
 }
 
-function LangPick({ lang, page, label }: { lang: Lang; page: Page; label: string }) {
+function LangPick({ lang, page, label, up = false }: { lang: Lang; page: Page; label: string; up?: boolean }) {
+  const [open, setOpen] = useState(false)
+  const box = useRef<HTMLDivElement>(null)
+  const now = langs.find((l) => l.code === lang) ?? langs[0]!
+
+  useEffect(() => {
+    if (!open) return
+    const away = (e: PointerEvent) => {
+      if (!box.current?.contains(e.target as Node)) setOpen(false)
+    }
+    const key = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('pointerdown', away)
+    document.addEventListener('keydown', key)
+    return () => {
+      document.removeEventListener('pointerdown', away)
+      document.removeEventListener('keydown', key)
+    }
+  }, [open])
+
   return (
-    <label className="lang-pick">
-      <span className="visually-hidden">{label}</span>
-      <select
-        value={lang}
-        onChange={(e) => {
-          const next = e.target.value as Lang
-          track('lang_switch', { to: next })
-          location.href = href(next, page, location.hash)
-        }}
-      >
-        {langs.map((l) => (
-          <option key={l.code} value={l.code}>
-            {l.name}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div className={up ? 'lang-pick up' : 'lang-pick'} ref={box}>
+      <button type="button" aria-expanded={open} aria-label={`${label}: ${now.name}`} onClick={() => setOpen(!open)}>
+        {now.name}
+        <svg width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+          <path d="M1 1l4 4 4-4" />
+        </svg>
+      </button>
+      {open ? (
+        <ul className="lang-menu">
+          {langs.map((l) => (
+            <li key={l.code}>
+              <a
+                href={href(l.code, page)}
+                hrefLang={l.code}
+                lang={l.code}
+                aria-current={l.code === lang ? 'true' : undefined}
+                onClick={(e) => {
+                  track('lang_switch', { to: l.code })
+                  e.currentTarget.href = href(l.code, page, location.hash)
+                }}
+              >
+                {l.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
   )
 }
 
@@ -172,7 +203,7 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
           ))}
         </ol>
         <div className="site-menu-foot">
-          <LangPick lang={lang} page={page} label={t.language} />
+          <LangPick lang={lang} page={page} label={t.language} up />
           <Star label={t.star} place="menu" />
         </div>
       </dialog>
