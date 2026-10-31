@@ -25,13 +25,13 @@ jobs:
       - name: tag matches package.json
         run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
       - run: npm test
-      - name: publish to npm
+      - name: stage on npm
         run: |
           version="${GITHUB_REF_NAME#v}"
           if npm view "antislopdev@$version" version > /dev/null 2>&1; then
             echo "antislopdev@$version is already on npm"
           else
-            npm publish
+            npm stage publish
           fi
       - name: github release
         env:
