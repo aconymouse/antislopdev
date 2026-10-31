@@ -83,9 +83,9 @@ export function Xray({ t }: { t: Copy['xray'] }) {
             ))}
           </div>
           {fixed ? (
-            <svg key="result" className="scribble to-result" viewBox={`0 0 ${w} 56`} style={{ width: `${w}px` }} aria-hidden="true">
-              <path pathLength={1} d={`M${w} 3C${w - 4} 38 ${w * 0.55} 50 44 42C26 38 15 28 8 14`} />
-              <path className="head" pathLength={1} d="M6.2 25.9 8 14l10.5 5.7" />
+            <svg key="result" className="scribble to-result" viewBox={`0 0 ${w} 64`} style={{ width: `${w}px` }} aria-hidden="true">
+              <path pathLength={1} d={`M${w} 4C${w - 4} 30 ${w - 24} 46 ${w - 60} 50C${w - 110} 55 40 48 10 26`} />
+              <path className="head" pathLength={1} d="M14.9 38.0 10 26 23.0 27.1" />
             </svg>
           ) : (
             <svg key="button" className="scribble to-button" viewBox="0 0 96 64" aria-hidden="true">

@@ -1161,7 +1161,7 @@ b.warn {
 .scribble.to-result {
   top: calc(100% + 2px);
   left: -100px;
-  height: 56px;
+  height: 64px;
 }
 
 @keyframes scribble {
