@@ -50,21 +50,36 @@ export function Xray({ t }: { t: Copy['xray'] }) {
         </h2>
         <p>{t.p1}</p>
         <p>{t.p2}</p>
-        <button
-          type="button"
-          className="go"
-          aria-pressed={fixed}
-          onClick={() => {
-            setFixed(!fixed)
-            setActive(null)
-            track('xray_toggle', { to: fixed ? 'generated' : 'rewritten' })
-          }}
-        >
-          {fixed ? t.restore : t.rewrite}
-          <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
-            <path d="M2.5 5.5h10l-3-3M13.5 10.5h-10l3 3" />
+        <div className="xray-act">
+          <button
+            type="button"
+            className="go"
+            aria-pressed={fixed}
+            onClick={() => {
+              setFixed(!fixed)
+              setActive(null)
+              track('xray_toggle', { to: fixed ? 'generated' : 'rewritten' })
+            }}
+          >
+            {fixed ? t.restore : t.rewrite}
+            <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M2.5 5.5h10l-3-3M13.5 10.5h-10l3 3" />
+            </svg>
+          </button>
+          <svg key={fixed ? 'result' : 'button'} className={`scribble ${fixed ? 'to-result' : 'to-button'}`} viewBox={fixed ? '0 0 120 80' : '0 0 96 64'} aria-hidden="true">
+            {fixed ? (
+              <>
+                <path pathLength={1} d="M112 72c-14-30-38-52-70-58-12-2-22-1-31 1" />
+                <path className="head" pathLength={1} d="M22 4 10 15l13 7" />
+              </>
+            ) : (
+              <>
+                <path pathLength={1} d="M90 5c-3 22-24 38-50 41-9 1-18 1-25-1" />
+                <path className="head" pathLength={1} d="M26 35 14 45l13 6" />
+              </>
+            )}
           </svg>
-        </button>
+        </div>
       </div>
       <div className="split-stage" data-demo>
         <div className="browser">

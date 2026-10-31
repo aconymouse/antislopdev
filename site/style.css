@@ -1067,6 +1067,63 @@ b.warn {
   margin-top: 28px;
 }
 
+.xray .split-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.xray-act {
+  position: relative;
+  display: inline-block;
+  margin-top: 28px;
+}
+
+.xray-act .go {
+  margin-top: 0;
+}
+
+.scribble {
+  position: absolute;
+  overflow: visible;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.scribble path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: scribble 0.7s var(--ease) 0.1s forwards;
+}
+
+.scribble .head {
+  animation-delay: 0.7s;
+  animation-duration: 0.25s;
+}
+
+.scribble.to-button {
+  left: calc(100% - 2px);
+  bottom: -4px;
+  width: 96px;
+  height: 64px;
+}
+
+.scribble.to-result {
+  right: calc(100% + 4px);
+  bottom: 2px;
+  width: 120px;
+  height: 80px;
+}
+
+@keyframes scribble {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 button.go:hover svg {
   transform: rotate(180deg);
 }
@@ -1169,6 +1226,45 @@ button.go:hover svg {
   vertical-align: -0.15em;
   background: var(--accent-ink);
   animation: blink 1s steps(1) infinite;
+}
+
+.typing {
+  display: inline-grid;
+}
+
+.typing-ghost,
+.typing-live {
+  grid-area: 1 / 1;
+  white-space: pre;
+}
+
+.typing-live {
+  visibility: hidden;
+}
+
+html.js .typing.is-idle .typing-ghost,
+.typing.is-typing .typing-ghost,
+.typing.is-done .typing-ghost {
+  color: transparent;
+}
+
+.typing.is-typing .typing-live,
+.typing.is-done .typing-live {
+  visibility: visible;
+}
+
+.typing-caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.1em;
+  margin-right: -0.55em;
+  vertical-align: -0.2em;
+  background: currentColor;
+  animation: blink 1s steps(1) infinite;
+}
+
+.typing.is-done .typing-caret {
+  display: none;
 }
 
 @keyframes blink {
@@ -1384,6 +1480,8 @@ button.go:hover svg {
 }
 
 .fx-pill-btn {
+  flex: none;
+  white-space: nowrap;
   padding: 5px 12px;
   border-radius: 999px;
   background: linear-gradient(90deg, #6366f1, #a855f7);
@@ -2186,9 +2284,8 @@ button.go:hover svg {
   top: var(--head-h);
   z-index: 5;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 12px 24px;
+  gap: 12px 20px;
   margin-top: 40px;
   padding: 14px 0;
   background: var(--paper);
@@ -2197,23 +2294,32 @@ button.go:hover svg {
 
 .chips {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 20px;
+  flex: 1;
+  gap: 12px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chips::-webkit-scrollbar {
+  display: none;
 }
 
 .chips button {
-  height: 34px;
+  flex: none;
+  height: 32px;
   padding: 0;
+  white-space: nowrap;
   border-bottom: 1px solid transparent;
   color: var(--muted);
-  font-size: 13.5px;
+  font-size: 11.5px;
   transition: border-color 0.15s, color 0.15s;
 }
 
 .chips button span {
-  margin-left: 4px;
+  margin-left: 3px;
   color: var(--faint);
-  font: 11.5px var(--mono);
+  font: 10.5px var(--mono);
 }
 
 .chips button:hover {
@@ -2226,17 +2332,30 @@ button.go:hover svg {
 }
 
 .search {
-  margin-left: auto;
+  flex: none;
 }
 
 .search input {
-  width: 240px;
-  height: 34px;
-  padding: 0 12px;
+  width: 148px;
+  height: 32px;
+  padding: 0 10px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--panel);
-  font-size: 14px;
+  background: transparent;
+  font-size: 13px;
+}
+
+.search input:focus {
+  border-color: var(--ink);
+  outline: none;
+}
+
+.rules-promo {
+  margin: -2px 0 12px;
+  font-size: 13.5px;
+}
+
+.rules-promo .go {
+  font-size: 13.5px;
 }
 
 .rules-count {
@@ -2496,6 +2615,10 @@ button.go:hover svg {
 }
 
 @media (max-width: 960px) {
+  .scribble {
+    display: none;
+  }
+
   .split,
   .faq,
   .source {
@@ -2788,10 +2911,24 @@ button.go:hover svg {
 
   .rules-bar {
     position: static;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .chips {
+    flex: none;
+    gap: 18px;
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+
+  .chips button {
+    height: 36px;
+    font-size: 13px;
   }
 
   .search {
-    margin-left: 0;
     width: 100%;
   }
 
@@ -2835,6 +2972,14 @@ button.go:hover svg {
 
   .term-body {
     font-size: 11.5px;
+  }
+
+  .fx-nav {
+    gap: 12px;
+  }
+
+  .fx-nav span:nth-of-type(2) {
+    display: none;
   }
 
   .tl.hit {

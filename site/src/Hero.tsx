@@ -4,8 +4,40 @@ import type { Copy } from './copy'
 import { Words } from './theater'
 import { still, track } from './track'
 
-export function Copyable({ text, label, method, className, done }: { text: string; label?: string; method: string; className: string; done: string }) {
+type Beat = [string, number]
+
+function useTyping(beats: Beat[] | undefined, length: number) {
+  const [shown, setShown] = useState(length)
+  const [phase, setPhase] = useState<'idle' | 'typing' | 'done'>('idle')
+  useEffect(() => {
+    if (!beats) return
+    if (still()) {
+      setPhase('done')
+      return
+    }
+    setShown(0)
+    setPhase('typing')
+    const timers: number[] = []
+    let at = 900
+    let count = 0
+    for (const [chunk, ms] of beats) {
+      for (let i = 0; i < chunk.length; i++) {
+        at += ms * (0.75 + Math.random() * 0.5)
+        count++
+        const n = count
+        timers.push(window.setTimeout(() => setShown(n), at))
+      }
+      at += ms * 1.6
+    }
+    timers.push(window.setTimeout(() => setPhase('done'), at + 2600))
+    return () => timers.forEach((t) => window.clearTimeout(t))
+  }, [beats, length])
+  return { shown, phase }
+}
+
+export function Copyable({ text, label, method, className, done, beats }: { text: string; label?: string; method: string; className: string; done: string; beats?: Beat[] }) {
   const [copied, setCopied] = useState(false)
+  const { shown, phase } = useTyping(beats, text.length)
   return (
     <button
       type="button"
@@ -19,7 +51,19 @@ export function Copyable({ text, label, method, className, done }: { text: strin
         track('copy_install', { method })
       }}
     >
-      {label ? <span>{label}</span> : <code>{text}</code>}
+      {label ? (
+        <span>{label}</span>
+      ) : beats ? (
+        <code className={`typing is-${phase}`}>
+          <span className="typing-ghost">{text}</span>
+          <span className="typing-live" aria-hidden="true">
+            {text.slice(0, shown)}
+            <i className="typing-caret" />
+          </span>
+        </code>
+      ) : (
+        <code>{text}</code>
+      )}
       <span className="copy-mark" aria-hidden="true">
         {copied ? (
           <svg viewBox="0 0 16 16" width="15" height="15">
@@ -38,6 +82,14 @@ export function Copyable({ text, label, method, className, done }: { text: strin
     </button>
   )
 }
+
+const installBeats: Beat[] = [
+  ['npx ', 170],
+  ['skills ', 55],
+  ['add ', 190],
+  ['aconymouse/', 150],
+  ['antislopdev', 50],
+]
 
 const ratio = 1672 / 941
 const head = 384 / 941
@@ -142,7 +194,7 @@ export function Hero({ t }: { t: Copy['hero'] }) {
         </h1>
         <p className="lead">{t.lead}</p>
         <div className="actions">
-          <Copyable className="button solid install" text="npx skills add aconymouse/antislopdev" method="skills" done={t.copied} />
+          <Copyable className="button solid install" text="npx skills add aconymouse/antislopdev" beats={installBeats} method="skills" done={t.copied} />
           <Copyable className="button" text="/plugin marketplace add aconymouse/antislopdev" label={t.plugin} method="claude-code" done={t.copied} />
           <a className="button bare" href="#playground" onClick={() => track('hero_play')}>
             {t.play}
