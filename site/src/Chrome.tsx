@@ -139,6 +139,7 @@ export function Header({ lang, page }: { lang: Lang; page: Page }) {
     ['play', t.playground, href(lang, 'home', '#playground')],
     ['docs', t.docs, href(lang, 'docs')],
     ['rules', t.rules, href(lang, 'rules')],
+    ['support', t.support, href(lang, 'support')],
   ]
   const toggle = (next: boolean) => {
     const d = menu.current
@@ -216,10 +217,17 @@ export function Footer({ lang }: { lang: Lang }) {
   return (
     <footer className="site-foot">
       <div className="site-foot-in">
-        <p>{t.foot.rights}</p>
+        <p>
+          {t.foot.rights} · {t.foot.made}{' '}
+          <a className="credit" href="https://aconymous.com" onClick={() => track('creator_click', { place: 'footer' })}>
+            Hafidz Nc
+          </a>
+          , {t.foot.creator}
+        </p>
         <nav aria-label="Footer">
           <a href={href(lang, 'docs')}>{t.nav.docs}</a>
           <a href={href(lang, 'rules')}>{t.nav.rules}</a>
+          <a href={href(lang, 'support')}>{t.nav.support}</a>
           <a href={href(lang, 'home', '#faq')}>{t.foot.faq}</a>
           <a href={repo} onClick={() => track('github_click', { place: 'footer' })}>
             GitHub

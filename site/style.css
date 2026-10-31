@@ -2656,6 +2656,206 @@ html.js .typing.is-idle .typing-ghost,
   padding-top: 48px;
 }
 
+.support {
+  max-width: 960px;
+}
+
+.support-block {
+  padding-top: 72px;
+}
+
+.support-block h2 {
+  font-size: 26px;
+  letter-spacing: -0.025em;
+}
+
+.support-lead {
+  max-width: 620px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.support code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--raise);
+  color: var(--ink);
+  font-size: 0.86em;
+}
+
+.ways {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.ways a {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr) 14px;
+  align-items: baseline;
+  gap: 4px 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.way-label {
+  font-size: 15.5px;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.way-note {
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+.support .arrow {
+  align-self: center;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: square;
+  transition: transform 0.2s var(--ease);
+}
+
+.ways a:hover .way-label,
+.ways a:hover .arrow {
+  color: var(--accent-ink);
+}
+
+.ways a:hover .arrow,
+.gift:hover .arrow {
+  transform: translate(2px, -2px);
+}
+
+.roadmap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin: 26px 0 28px;
+}
+
+.stage h3 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.stage ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stage li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.stage h4,
+.stage p {
+  margin: 0;
+}
+
+.stage h4 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.stage p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.gifts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.gift {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px 48px 22px 22px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.gift strong {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+.gift span {
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.gift .arrow {
+  position: absolute;
+  top: 24px;
+  right: 20px;
+}
+
+.gift-mark {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: -34px;
+  width: auto;
+  height: 118%;
+  fill: currentColor;
+  opacity: 0.07;
+  rotate: -14deg;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.gift.is-paypal .gift-mark {
+  right: 22px;
+  height: 128%;
+}
+
+.gift:hover,
+.gift:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.gift:hover span,
+.gift:focus-visible span {
+  color: inherit;
+}
+
+.site-foot .credit {
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 3px;
+}
+
+.site-foot .credit:hover {
+  color: var(--accent-ink);
+  text-decoration-color: currentColor;
+}
+
 @media (max-width: 1080px) {
   .site-nav {
     display: none;
@@ -3088,5 +3288,33 @@ html.js .typing.is-idle .typing-ghost,
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .ways a {
+    grid-template-columns: minmax(0, 1fr) 14px;
+  }
+
+  .way-note {
+    grid-column: 1;
+  }
+
+  .ways .arrow {
+    grid-row: 1;
+    grid-column: 2;
+  }
+
+  .roadmap,
+  .gifts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .support-block {
+    padding-top: 56px;
+  }
+
+  .support-block h2 {
+    font-size: 22px;
   }
 }

@@ -131,6 +131,7 @@ test('false positives the checker must not raise', () => {
     { path: 'i.tsx', text: 'export const Go = ({ to, children }: { to: string; children: string }) => <a href={to}>{children}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4" /></svg></a>\n' },
     { path: 'j.ts', text: "import { sql } from 'drizzle-orm'\nexport const byId = (db: { execute(q: unknown): unknown }, id: string) => db.execute(sql`SELECT * FROM users WHERE id = ${id}`)\nexport const key = process.env.API_KEY\nexport const pick = () => crypto.randomUUID()\nexport const probe = (domain: string) => fetch(`http://${domain}`, { redirect: 'manual' })\n" },
     { path: 'k.tsx', text: 'export const Ld = ({ data }: { data: object }) => <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />\n' },
+    { path: 'l.html', text: '<a href="/"><img src="/logo.svg" alt width="126" height="30"/>Home</a>\n' },
     { path: 'h.ts', text: 'export function sum(values: number[]): number {\n  return values.reduce((a, b) => a + b, 0)\n}\n' },
   ]
   for (const c of cases) {

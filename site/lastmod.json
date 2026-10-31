@@ -1,26 +1,34 @@
 {
   "/": {
-    "hash": "054c2d1555f4cdee",
-    "modified": "2026-10-31T05:57:30Z"
+    "hash": "c64831703f13cb7e",
+    "modified": "2026-10-31T06:26:52Z"
   },
   "/id/": {
-    "hash": "0f7eaea2ccf97647",
-    "modified": "2026-10-31T05:57:30Z"
+    "hash": "3333dc892ac22728",
+    "modified": "2026-10-31T06:26:52Z"
   },
   "/docs/": {
-    "hash": "0dfc00ac137d8a2c",
-    "modified": "2026-10-31T05:45:53Z"
+    "hash": "b74a92d1581e66d4",
+    "modified": "2026-10-31T06:26:52Z"
   },
   "/id/docs/": {
-    "hash": "a2d5496368043bf1",
-    "modified": "2026-10-31T05:45:53Z"
+    "hash": "663bba2e130c5358",
+    "modified": "2026-10-31T06:26:52Z"
   },
   "/rules/": {
-    "hash": "aa3bc07ed7998256",
-    "modified": "2026-10-31T05:45:53Z"
+    "hash": "677d26f9f93abf8a",
+    "modified": "2026-10-31T06:26:52Z"
   },
   "/id/rules/": {
-    "hash": "783e42f6f5cc7861",
-    "modified": "2026-10-31T05:45:53Z"
+    "hash": "553dd5ed900db0ef",
+    "modified": "2026-10-31T06:26:52Z"
+  },
+  "/support/": {
+    "hash": "186c12802b4087e1",
+    "modified": "2026-10-31T06:26:52Z"
+  },
+  "/id/support/": {
+    "hash": "b280de85f486e751",
+    "modified": "2026-10-31T06:26:52Z"
   }
 }

@@ -47,6 +47,7 @@ await build({
   target: 'node20',
   jsx: 'automatic',
   alias,
+  loader: { '.md': 'text' },
   outfile: staging + 'render.mjs',
   banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" },
   define,
@@ -63,6 +64,7 @@ const client = await build({
   platform: 'browser',
   jsx: 'automatic',
   alias,
+  loader: { '.md': 'text' },
   outdir: out,
   entryNames: '[name]-[hash]',
   chunkNames: 'chunk-[hash]',
@@ -209,11 +211,27 @@ const graph = (lang, page, modified) => {
       crumbs(lang, 'rules'),
     )
   }
+  if (page === 'support') {
+    nodes.push(
+      {
+        '@type': 'WebPage',
+        '@id': url + '#page',
+        name: t.meta.support.title,
+        description: t.meta.support.description,
+        url,
+        inLanguage: lang,
+        dateModified: modified,
+        isPartOf: { '@id': ids.site },
+        about: { '@id': ids.app },
+      },
+      crumbs(lang, 'support'),
+    )
+  }
   return json({ '@context': 'https://schema.org', '@graph': nodes })
 }
 
 const urls = []
-for (const page of ['home', 'docs', 'rules']) {
+for (const page of ['home', 'docs', 'rules', 'support']) {
   for (const { code: lang } of langs) {
     const meta = copies[lang].meta[page]
     const path = href(lang, page)
@@ -316,6 +334,9 @@ Install the agent skill with \`npx skills add aconymouse/antislopdev\`, or run t
 - [Rules](${origin}${href('en', 'rules')}): all ${catalog.length} rules with IDs, levels and how each one is checked
 - [RULES.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/RULES.md): the full rule list as Markdown, the single source of truth
 - [SKILL.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/skills/antislopdev/SKILL.md): the instructions an agent follows when the skill is installed
+- [Support](${origin}${href('en', 'support')}): how to contribute, the roadmap and donations
+- [ROADMAP.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/ROADMAP.md): what is planned now, next and later
+- [CHANGELOG.md](https://raw.githubusercontent.com/aconymouse/antislopdev/main/CHANGELOG.md): what changed in each release
 
 ## Code
 

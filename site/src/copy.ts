@@ -4,7 +4,7 @@ const total = catalog.length
 const auto = implemented.length
 
 export type Lang = 'en' | 'id'
-export type Page = 'home' | 'docs' | 'rules'
+export type Page = 'home' | 'docs' | 'rules' | 'support'
 
 export const langs: { code: Lang; name: string; base: string }[] = [
   { code: 'en', name: 'English', base: '/' },
@@ -18,8 +18,9 @@ const en = {
     home: { title: 'antiSlopdev: the anti AI slop gatekeeper', description: `${total} named habits of AI-generated UI, copy, code, SEO and security, and an open-source checker that finds ${auto} of them. Skill or CLI.` },
     docs: { title: 'Docs · antiSlopdev', description: 'Install the antiSlopdev skill, run the checker in CI or on commit messages, and keep deliberate choices with a written reason.' },
     rules: { title: 'Rules · antiSlopdev', description: `All ${total} antiSlopdev rules for UI, English and Indonesian copy, code, docs, commits, claims, accessibility, performance, SEO and security.` },
+    support: { title: 'Support · antiSlopdev', description: 'Report a false positive, propose a rule, see what is planned next, or chip in to keep antiSlopdev free and open source.' },
   },
-  nav: { playground: 'Playground', docs: 'Docs', rules: 'Rules', github: 'GitHub', star: 'Star', cta: 'Try it', menu: 'Menu', close: 'Close', theme: 'Theme', light: 'Light', dark: 'Dark', language: 'Language', skip: 'Skip to content' },
+  nav: { playground: 'Playground', docs: 'Docs', rules: 'Rules', support: 'Support', github: 'GitHub', star: 'Star', cta: 'Try it', menu: 'Menu', close: 'Close', theme: 'Theme', light: 'Light', dark: 'Dark', language: 'Language', skip: 'Skip to content' },
   hero: {
     line1: 'The anti AI slop',
     line2: 'gatekeeper.',
@@ -120,7 +121,26 @@ const en = {
     title: 'Docs',
     toc: 'On this page',
   },
-  foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ' },
+  support: {
+    title: 'Support antiSlopdev',
+    lead: 'It is free and MIT-licensed, and it gets sharper every time someone reports a false positive, argues for a rule or sends a fix. If it saves you review time, you can chip in too.',
+    help: 'Contribute',
+    ways: [
+      { key: 'fp', label: 'Report a false positive', note: 'The smallest snippet that trips a rule it should not.' },
+      { key: 'rule', label: 'Propose a rule', note: 'A habit no rule covers yet, with one real example.' },
+      { key: 'setup', label: 'Show your setup', note: 'How you run antiSlopdev in your agent, CI or hooks.' },
+      { key: 'guide', label: 'Read the contributing guide', note: 'How a rule goes from idea to check, and how to run the tests.' },
+    ],
+    roadmap: 'Roadmap',
+    roadmapLead: 'What comes next, read straight from ROADMAP.md. An item moves to Now when someone starts on it.',
+    stages: { Now: 'Now', Next: 'Next', Later: 'Later' } as Record<string, string>,
+    source: 'ROADMAP.md on GitHub',
+    give: 'Donate',
+    giveLead: 'The payment happens on Saweria or PayPal. Nothing about it passes through this site.',
+    saweria: 'QRIS and e-wallets, for Indonesia',
+    paypal: 'Cards or PayPal, from anywhere',
+  },
+  foot: { rights: '© 2026', made: 'Made with love by', creator: 'creator of antiSlopdev', faq: 'FAQ' },
 }
 
 export type Copy = typeof en
@@ -130,8 +150,9 @@ const id: Copy = {
     home: { title: 'antiSlopdev: palang pintu anti AI slop', description: `${total} kebiasaan AI di UI, copy, kode, SEO, dan keamanan diberi nama, dan ${auto} di antaranya dicek otomatis. Skill agent atau CLI, open source.` },
     docs: { title: 'Docs · antiSlopdev', description: 'Pasang skill antiSlopdev, jalankan checker-nya di CI atau di pesan commit, dan pertahankan pilihan yang disengaja lewat alasan tertulis.' },
     rules: { title: 'Aturan · antiSlopdev', description: `Semua ${total} aturan antiSlopdev untuk UI, copy Inggris dan Indonesia, kode, dokumentasi, commit, klaim, aksesibilitas, performa, SEO, dan keamanan.` },
+    support: { title: 'Dukung · antiSlopdev', description: 'Lapor false positive, usulin aturan, lihat rencana berikutnya, atau ikut patungan biar antiSlopdev tetap gratis dan open source.' },
   },
-  nav: { playground: 'Playground', docs: 'Docs', rules: 'Aturan', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
+  nav: { playground: 'Playground', docs: 'Docs', rules: 'Aturan', support: 'Dukung', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
   hero: {
     line1: 'Palang pintu',
     line2: 'anti AI Slop.',
@@ -232,7 +253,26 @@ const id: Copy = {
     title: 'Docs',
     toc: 'Di halaman ini',
   },
-  foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ' },
+  support: {
+    title: 'Dukung antiSlopdev',
+    lead: 'antiSlopdev gratis dan berlisensi MIT. Dia makin tajam tiap ada yang lapor false positive, ngusulin aturan, atau kirim perbaikan. Kalau dia ngirit waktu review kamu, kamu juga bisa ikut patungan.',
+    help: 'Kontribusi',
+    ways: [
+      { key: 'fp', label: 'Lapor false positive', note: 'Snippet terkecil yang kena aturan padahal gak seharusnya.' },
+      { key: 'rule', label: 'Usulin aturan', note: 'Kebiasaan yang belum punya aturan, plus satu contoh nyata.' },
+      { key: 'setup', label: 'Pamerin setup kamu', note: 'Cara kamu jalanin antiSlopdev di agent, CI, atau hook.' },
+      { key: 'guide', label: 'Baca panduan kontribusi', note: 'Alur aturan dari ide sampai dicek, dan cara jalanin tes.' },
+    ],
+    roadmap: 'Roadmap',
+    roadmapLead: 'Rencana ke depan, dibaca langsung dari ROADMAP.md yang ditulis dalam bahasa Inggris. Item pindah ke Sekarang begitu ada yang mulai ngerjain.',
+    stages: { Now: 'Sekarang', Next: 'Berikutnya', Later: 'Nanti' } as Record<string, string>,
+    source: 'ROADMAP.md di GitHub',
+    give: 'Donasi',
+    giveLead: 'Pembayarannya terjadi di Saweria atau PayPal. Gak ada data pembayaran yang lewat situs ini.',
+    saweria: 'QRIS dan e-wallet, dari Indonesia',
+    paypal: 'Kartu atau PayPal, dari mana saja',
+  },
+  foot: { rights: '© 2026', made: 'Dibuat dengan cinta oleh', creator: 'creator antiSlopdev', faq: 'FAQ' },
 }
 
 export const copies: Record<Lang, Copy> = { en, id }
