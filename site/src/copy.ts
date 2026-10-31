@@ -78,7 +78,7 @@ const en = {
   },
   indo: {
     title: 'Reads Indonesian copy too.',
-    p1: 'Fourteen rules for Indonesian: the openers, the closers, the promo words and the chatbot leftovers that English-only tools walk past.',
+    p1: 'Fourteen rules written for Indonesian, from throat-clearing openers to chatbot leftovers that English-only tools walk straight past.',
     p2: 'Hover a squiggle to see which rule it is.',
   },
   groups: {
@@ -93,20 +93,20 @@ const en = {
     items: [
       { q: 'Is this a style guide?', a: 'No. Gradients, dark themes, monospace, motion and rounded corners are all fine when someone chose them. The rules only ask that the choice was made, and the justify level exists for exactly that.' },
       { q: 'Does it send my code anywhere?', a: 'No. The checker is a plain Node package with no network calls, unless you pass --links to test external URLs. The playground runs in your browser tab.' },
-      { q: 'How is it different from a linter?', a: 'A linter checks whether code is valid. antiSlopdev checks whether the result looks, reads and behaves like an unedited default: copy, layout choices, invented numbers, README habits and commit messages included.' },
+      { q: 'How is it different from a linter?', a: 'A linter checks whether code is valid. antiSlopdev checks whether anyone made a decision, which is why it also reads the copy, the README and the commit message.' },
       { q: 'Which agents does it work with?', a: 'Anything that reads Agent Skills: Claude Code, Cursor, Codex, GitHub Copilot, Gemini, Windsurf, Cline and others. Agents that do not read skills can still run the CLI.' },
       { q: 'It flagged something I meant to do.', a: 'Write the reason on the line above: antislopdev-allow UI-11 followed by a colon and why. For a whole file, use antislopdev-allow-file. block rules cannot be allowed, because they are never acceptable in shipped work.' },
-      { q: 'Can I add my own rules?', a: 'Fork the repo. Rules live in RULES.md and the checks in src/core/rules. Pull requests with a failing example and a passing one are welcome.' },
+      { q: 'Can I add my own rules?', a: 'Fork the repo. Rules live in RULES.md and the checks in src/core/rules. A pull request should bring one example that fails and one that passes.' },
     ],
   },
   source: {
     title: 'Read the rules. Fork them.',
-    p1: 'One Markdown file of rules and a small TypeScript engine with no dependencies. Change a rule, run the tests, ship your own house version.',
+    p1: 'One Markdown file of rules and a small TypeScript engine with no dependencies. Disagree with a rule? Change it and keep your own version.',
     button: 'View on GitHub',
   },
   rules: {
     title: 'Rules',
-    lead: 'Every rule has a stable ID and a level. The ID never changes meaning, so you can point at it in a review, a commit or a comment.',
+    lead: 'Every rule has a stable ID and a level. An ID never changes meaning, so you can quote it in a code review.',
     filter: 'Filter rules',
     all: 'All',
     none: 'No rule matches that.',
@@ -181,7 +181,7 @@ const id: Copy = {
   },
   allow: {
     title: 'Boleh dipertahankan, asal ada alasannya.',
-    p1: 'Ada kebiasaan yang memang pilihan tepat. Temuan justify lolos begitu alasannya ditulis di sebelahnya, dan alasan itu muncul di diff, jadi reviewer bisa mendebatnya.',
+    p1: 'Kadang bawaan memang pilihan yang pas. Temuan justify lolos begitu alasannya ditulis di sebelahnya, dan alasan itu ikut muncul di diff, jadi reviewer bisa mendebatnya.',
     toggle: 'Tambah alasan',
     remove: 'Hapus alasan',
     failing: 'gagal: UI-11 butuh alasan',
@@ -189,7 +189,7 @@ const id: Copy = {
   },
   indo: {
     title: 'Paham copy bahasa Indonesia.',
-    p1: 'Empat belas aturan khusus bahasa Indonesia: pembuka basa-basi, penutup klise, kosakata promosi, sampai sisa obrolan chatbot yang lolos dari alat yang cuma paham bahasa Inggris.',
+    p1: 'Empat belas aturan khusus bahasa Indonesia, dari pembuka basa-basi sampai sisa obrolan chatbot yang lolos dari alat yang cuma paham bahasa Inggris.',
     p2: 'Arahkan kursor ke garis bergelombang buat lihat aturannya.',
   },
   groups: {
@@ -204,20 +204,20 @@ const id: Copy = {
     items: [
       { q: 'Ini panduan gaya?', a: 'Bukan. Gradien, tema gelap, monospace, animasi, dan sudut membulat boleh semua kalau memang dipilih. Aturannya cuma minta pilihan itu diambil dengan sadar, dan level justify ada buat itu.' },
       { q: 'Kodeku dikirim ke mana-mana?', a: 'Gak. Pemeriksanya paket Node biasa tanpa panggilan jaringan, kecuali kamu pakai --links buat ngecek tautan luar. Playground-nya jalan di tab browser-mu.' },
-      { q: 'Apa bedanya sama linter?', a: 'Linter ngecek kode valid atau gak. antiSlopdev ngecek apakah hasilnya kelihatan, kebaca, dan berperilaku kayak bawaan yang gak disunting: copy, pilihan layout, angka karangan, kebiasaan README, sampai pesan commit.' },
+      { q: 'Apa bedanya sama linter?', a: 'Linter ngecek kode valid atau gak. antiSlopdev ngecek ada yang ambil keputusan atau gak, makanya dia juga baca copy, README, sampai pesan commit.' },
       { q: 'Jalan di agent apa aja?', a: 'Semua yang baca Agent Skills: Claude Code, Cursor, Codex, GitHub Copilot, Gemini, Windsurf, Cline, dan lainnya. Agent yang gak baca skill tetap bisa jalanin CLI-nya.' },
       { q: 'Ada yang ketangkep padahal sengaja.', a: 'Tulis alasannya di baris atas: antislopdev-allow UI-11 diikuti titik dua dan alasannya. Buat satu file penuh, pakai antislopdev-allow-file. Aturan block gak bisa diizinkan, karena memang gak pernah layak dikirim.' },
-      { q: 'Bisa nambah aturan sendiri?', a: 'Fork repo-nya. Aturan ada di RULES.md dan pemeriksanya di src/core/rules. Pull request yang bawa contoh gagal dan contoh lolos sangat diterima.' },
+      { q: 'Bisa nambah aturan sendiri?', a: 'Fork repo-nya. Aturan ada di RULES.md dan pemeriksanya di src/core/rules. Pull request-nya bawa satu contoh yang gagal dan satu yang lolos.' },
     ],
   },
   source: {
     title: 'Baca aturannya. Fork.',
-    p1: 'Satu file Markdown berisi aturan dan mesin TypeScript kecil tanpa dependency. Ubah aturan, jalankan tes, kirim versi rumahmu sendiri.',
+    p1: 'Satu file Markdown berisi aturan dan mesin TypeScript kecil tanpa dependency. Gak setuju sama satu aturan? Ubah aja dan pakai versimu sendiri.',
     button: 'Lihat di GitHub',
   },
   rules: {
     title: 'Aturan',
-    lead: 'Tiap aturan punya ID tetap dan level. Arti ID gak pernah berubah, jadi bisa kamu sebut di review, commit, atau komentar.',
+    lead: 'Tiap aturan punya ID tetap dan level. Arti ID gak pernah berubah, jadi aman dikutip waktu review kode.',
     filter: 'Saring aturan',
     all: 'Semua',
     none: 'Gak ada aturan yang cocok.',

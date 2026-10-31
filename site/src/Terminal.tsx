@@ -67,7 +67,7 @@ export function Terminal({ t }: { t: Copy['terminal'] }) {
   }, [live])
 
   return (
-    <section className="split terminal-section" aria-labelledby="terminal-title">
+    <section className="split stack terminal-section" aria-labelledby="terminal-title">
       <div className="split-copy">
         <h2 id="terminal-title" data-words>
           <Words text={t.title} />

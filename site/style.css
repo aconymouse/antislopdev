@@ -1047,6 +1047,34 @@ b.warn {
   order: 2;
 }
 
+.split.stack {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 40px;
+}
+
+.split.stack .split-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 0 64px;
+  align-items: start;
+}
+
+.split.stack .split-copy h2 {
+  grid-row: 1 / span 3;
+}
+
+.split.stack .split-copy > :not(h2) {
+  grid-column: 2;
+}
+
+.split.stack .split-copy > p:first-of-type {
+  margin-top: 0;
+}
+
+.split.stack .term-body {
+  min-height: 300px;
+}
+
 .split-copy h2,
 .section-head h2,
 .faq h2,
@@ -2641,9 +2669,44 @@ html.js .typing.is-idle .typing-ghost,
   }
 
   .play-out {
-    max-height: 340px;
     border-left: 0;
     border-top: 1px solid var(--line);
+  }
+
+  .play-scroll {
+    overflow: visible;
+  }
+
+  .play-summary {
+    position: sticky;
+    top: var(--head-h);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding-top: 0;
+    padding-bottom: 0;
+    background: var(--panel);
+  }
+
+  .play-th {
+    top: calc(var(--head-h) + 44px);
+  }
+
+  .split.stack .split-copy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .split.stack .split-copy h2 {
+    grid-row: auto;
+  }
+
+  .split.stack .split-copy > :not(h2) {
+    grid-column: auto;
+  }
+
+  .split.stack .split-copy > p:first-of-type {
+    margin-top: 18px;
   }
 
   .group-grid {

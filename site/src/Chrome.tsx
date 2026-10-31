@@ -51,7 +51,7 @@ export function Star({ label, large = false, place }: { label: string; large?: b
         <path d={marks.github} />
       </svg>
       <span>{label}</span>
-      {count !== null ? <b>{count}</b> : null}
+      {count ? <b>{count}</b> : null}
     </a>
   )
 }
@@ -224,7 +224,6 @@ export function Footer({ lang }: { lang: Lang }) {
           <a href={repo} onClick={() => track('github_click', { place: 'footer' })}>
             GitHub
           </a>
-          <a href="https://www.npmjs.com/package/antislopdev">npm</a>
           <a href={`${repo}/blob/main/LICENSE`}>MIT</a>
         </nav>
       </div>
