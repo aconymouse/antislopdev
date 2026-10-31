@@ -38,6 +38,9 @@ export function Copyable({ text, label, method, className, done }: { text: strin
   )
 }
 
+const ratio = 1672 / 941
+const head = 384 / 941
+
 const layers = [
   ['bg', 'hz-bg'],
   ['clouds', 'hz-clouds'],
@@ -52,7 +55,6 @@ export function Hero({ t }: { t: Copy['hero'] }) {
     const el = stage.current
     if (!el) return
     setReady(true)
-    if (still()) return
     let frame = 0
     let px = 0
     let py = 0
@@ -72,12 +74,39 @@ export function Hero({ t }: { t: Copy['hero'] }) {
       py = e.clientY / window.innerHeight - 0.5
       ask()
     }
+    const fit = () => {
+      const copy = el.querySelector<HTMLElement>('.hz-copy')
+      if (!copy || !window.matchMedia('(min-width: 761px)').matches) {
+        el.style.removeProperty('--top')
+        el.style.removeProperty('--w')
+        el.style.removeProperty('--top-pct')
+        return
+      }
+      const H = el.clientHeight
+      const floor = copy.offsetTop + copy.offsetHeight + 18
+      let w = window.innerWidth * 1.04
+      let h = w / ratio
+      let top = floor - head * h
+      if (top + h < H) {
+        h = (H - floor) / (1 - head)
+        w = Math.max(w, h * ratio)
+        h = w / ratio
+        top = floor - head * h
+      }
+      el.style.setProperty('--w', `${Math.round(w)}px`)
+      el.style.setProperty('--top', `${Math.round(top)}px`)
+      el.style.setProperty('--top-pct', `${((Math.max(top, 0) / H) * 100).toFixed(1)}%`)
+    }
+    fit()
+    window.addEventListener('resize', fit)
+    if (still()) return () => window.removeEventListener('resize', fit)
     paint()
     window.addEventListener('scroll', ask, { passive: true })
     window.addEventListener('pointermove', move, { passive: true })
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener('scroll', ask)
+      window.removeEventListener('resize', fit)
       window.removeEventListener('pointermove', move)
     }
   }, [])

@@ -1,16 +1,13 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { catalog, implemented } from '../../src/core/index.js'
 import { Footer, Header, repo } from './Chrome'
 import { copies, href, type Lang } from './copy'
 import { useTheater, Words } from './theater'
+import { Typed } from './Typed'
 
 type Section = { id: string; title: string; body: ReactNode }
 
-const Code = ({ children }: { children: string }) => (
-  <pre className="snippet">
-    <code>{children}</code>
-  </pre>
-)
+const Code = ({ children }: { children: string }) => <Typed text={children} />
 
 const output = `src/app/page.tsx
   14:9     justify  UI-11  Gradient text on headings · bg-clip-text text-transparent
@@ -234,6 +231,18 @@ export function Docs({ lang }: { lang: Lang }) {
   }, [lang])
 
   const at = list.findIndex((s) => s.id === active)
+  const track = useRef<HTMLDivElement>(null)
+  const [walker, setWalker] = useState(16)
+
+  useEffect(() => {
+    const place = () => {
+      const li = track.current?.querySelectorAll('li')[at]
+      if (li) setWalker(li.offsetTop + li.offsetHeight / 2)
+    }
+    place()
+    window.addEventListener('resize', place)
+    return () => window.removeEventListener('resize', place)
+  }, [at])
 
   return (
     <>
@@ -241,15 +250,19 @@ export function Docs({ lang }: { lang: Lang }) {
       <main id="content" className="wrap page docs">
         <nav className="toc" aria-label={t.docs.toc}>
           <p>{t.docs.toc}</p>
-          <ol style={{ ['--at' as string]: at }}>
-            {list.map((s, i) => (
-              <li key={s.id} className={i < at ? 'past' : i === at ? 'here' : ''}>
-                <a href={`#${s.id}`} aria-current={i === at ? 'location' : undefined}>
-                  {s.title}
-                </a>
-              </li>
-            ))}
-          </ol>
+          <div className="toc-track" ref={track}>
+            <span className="toc-trail" style={{ clipPath: `inset(0 0 calc(100% - ${walker}px) 0)` }} aria-hidden="true" />
+            <img className="toc-walker" src="/favicon.svg" alt="" width={22} height={22} style={{ transform: `translateY(${walker - 11}px)` }} />
+            <ol>
+              {list.map((s, i) => (
+                <li key={s.id} className={i < at ? 'past' : i === at ? 'here' : ''}>
+                  <a href={`#${s.id}`} aria-current={i === at ? 'location' : undefined}>
+                    {s.title}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </div>
         </nav>
         <article className="doc">
           <h1 data-words>

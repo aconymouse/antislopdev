@@ -3,6 +3,7 @@ import { Agents } from './Agents'
 import { Allow } from './Allow'
 import { Footer, Header, repo, Star } from './Chrome'
 import { Hero } from './Hero'
+import { Typed } from './Typed'
 import { copies, href, type Lang } from './copy'
 import { Indo } from './Indo'
 import { Playground } from './Playground'
@@ -101,13 +102,13 @@ export function Home({ lang }: { lang: Lang }) {
               <Star label={t.nav.star} large place="source" />
             </div>
           </div>
-          <pre className="snippet">
-            <code>{`git clone ${repo}
+          <Typed
+            text={`git clone ${repo}
 cd antislopdev
 npm install
 npm test
-npm run site`}</code>
-          </pre>
+npm run site`}
+          />
         </section>
       </main>
       <Footer lang={lang} />

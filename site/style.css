@@ -554,26 +554,25 @@ html.js [data-words].is-shown .w {
 
 .hz-layer {
   position: absolute;
-  left: -2%;
-  right: -2%;
-  top: 19%;
-  width: 104%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 100%;
+  left: 50%;
+  top: var(--top, 26%);
+  width: var(--w, 104%);
+  max-width: none;
+  height: auto;
+  aspect-ratio: 1672 / 941;
   will-change: transform;
 }
 
 .hz-bg {
-  transform: translate3d(calc(var(--px) * -10px), calc(var(--s) * 0.32px + var(--py) * -6px), 0) scale(1.02);
+  transform: translate3d(calc(-50% + var(--px) * -10px), calc(var(--s) * 0.32px + var(--py) * -6px), 0) scale(1.02);
 }
 
 .hz-clouds {
-  transform: translate3d(calc(var(--px) * -18px), calc(var(--s) * 0.2px + var(--py) * -9px), 0) scale(1.02);
+  transform: translate3d(calc(-50% + var(--px) * -18px), calc(var(--s) * 0.2px + var(--py) * -9px), 0) scale(1.02);
 }
 
 .hz-peak {
-  transform: translate3d(calc(var(--px) * -30px), calc(var(--s) * 0.06px + var(--py) * -12px), 0) scale(1.02);
+  transform: translate3d(calc(-50% + var(--px) * -30px), calc(var(--s) * 0.06px + var(--py) * -12px), 0) scale(1.02);
 }
 
 .hz:not(.is-ready) .hz-layer {
@@ -603,7 +602,7 @@ html.js [data-words].is-shown .w {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, #1c1d23 0%, #1c1d23 19%, rgb(28 29 35 / 0.7) 30%, rgb(28 29 35 / 0.15) 50%, transparent 62%),
+    linear-gradient(180deg, #1c1d23 0%, #1c1d23 calc(var(--top-pct, 26%) - 2%), rgb(28 29 35 / 0.7) calc(var(--top-pct, 26%) + 9%), rgb(28 29 35 / 0.12) calc(var(--top-pct, 26%) + 28%), transparent calc(var(--top-pct, 26%) + 40%)),
     linear-gradient(0deg, var(--paper) 0%, transparent 16%);
 }
 
@@ -1661,6 +1660,29 @@ b.warn {
   font-size: 13px;
 }
 
+.typed code {
+  display: grid;
+}
+
+.typed-ghost,
+.typed-live {
+  grid-area: 1 / 1;
+  white-space: pre;
+}
+
+.typed-live {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.typed.is-typing .typed-ghost {
+  color: transparent;
+}
+
+.typed.is-typing .typed-live {
+  visibility: visible;
+}
+
 .snippet {
   margin: 24px 0 0;
   padding: 16px 18px;
@@ -2234,32 +2256,66 @@ b.warn {
   font-size: 13px;
 }
 
-.toc ol {
+.toc-track {
   position: relative;
-  margin: 0;
-  padding: 0 0 0 18px;
-  list-style: none;
+  padding-left: 30px;
+}
+
+.toc-track::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 6px;
+  bottom: 6px;
   border-left: 1.5px dashed var(--line-strong);
+}
+
+.toc-trail {
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--muted);
+  transition: clip-path 0.55s var(--ease);
+}
+
+.toc-walker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  box-shadow: 0 0 0 4px var(--paper), 0 6px 18px -6px color-mix(in srgb, var(--accent) 70%, transparent);
+  transition: transform 0.55s var(--ease);
+}
+
+.toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .toc li {
   position: relative;
-  padding: 5px 0;
+  padding: 6px 0;
   font-size: 14px;
   color: var(--faint);
+  transition: color 0.3s;
 }
 
 .toc li::before {
   content: '';
   position: absolute;
-  left: -23px;
-  top: 13px;
-  width: 8px;
-  height: 8px;
+  left: -24px;
+  top: 14px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--paper);
   box-shadow: 0 0 0 1.5px var(--line-strong);
-  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .toc li.past {
@@ -2267,21 +2323,13 @@ b.warn {
 }
 
 .toc li.past::before {
-  background: var(--line-strong);
+  background: var(--muted);
+  box-shadow: none;
 }
 
 .toc li.here {
   color: var(--ink);
   font-weight: 600;
-}
-
-.toc li.here::before {
-  width: 12px;
-  height: 12px;
-  left: -25px;
-  top: 11px;
-  background: var(--accent-ink);
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
 .toc a:hover {
@@ -2431,11 +2479,7 @@ b.warn {
   .hz-layer {
     top: auto;
     bottom: -2%;
-    left: -33%;
     width: 165%;
-    height: auto;
-    aspect-ratio: 1672 / 941;
-    object-position: 50% 100%;
   }
 
   .hz-shade {

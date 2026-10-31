@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Copy } from './copy'
 import { still } from './track'
+import { Typed } from './Typed'
 import { Words } from './theater'
 
 type Line = { kind: 'cmd' | 'file' | 'hit' | 'sum' | 'gap' | 'dim'; text: string; level?: 'block' | 'justify' | 'warn' }
@@ -73,13 +74,13 @@ export function Terminal({ t }: { t: Copy['terminal'] }) {
         </h2>
         <p>{t.p1}</p>
         <p>{t.p2}</p>
-        <pre className="snippet">
-          <code>{`# .github/workflows/ci.yml
+        <Typed
+          text={`# .github/workflows/ci.yml
 - run: npx antislopdev@latest check .
 
 # .git/hooks/commit-msg
-npx antislopdev check --commit "$1"`}</code>
-        </pre>
+npx antislopdev check --commit "$1"`}
+        />
       </div>
       <div className="split-stage" ref={box} data-demo>
         <div className="term" aria-hidden="true">

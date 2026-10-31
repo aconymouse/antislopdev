@@ -10,14 +10,14 @@ export const href = (lang: Lang, page: Page, hash = '') => `${lang === 'en' ? '/
 
 const en = {
   meta: {
-    home: { title: 'antiSlopdev: catch the AI defaults before your users do', description: '122 named habits of AI-generated UI, copy and code, and an open-source checker that finds 105 of them. Works as an agent skill and as a CLI.' },
+    home: { title: 'antiSlopdev: the anti AI slop gatekeeper', description: '122 named habits of AI-generated UI, copy and code, and an open-source checker that finds 105 of them. Works as an agent skill and as a CLI.' },
     docs: { title: 'Docs · antiSlopdev', description: 'Install the antiSlopdev skill, run the checker in CI or on commit messages, and keep deliberate choices with a written reason.' },
     rules: { title: 'Rules · antiSlopdev', description: 'All 122 antiSlopdev rules for UI, English and Indonesian copy, code, docs, commits, claims, accessibility and performance.' },
   },
   nav: { playground: 'Playground', docs: 'Docs', rules: 'Rules', github: 'GitHub', star: 'Star', cta: 'Try it', menu: 'Menu', close: 'Close', theme: 'Theme', light: 'Light', dark: 'Dark', language: 'Language', skip: 'Skip to content' },
   hero: {
-    line1: 'Catch the AI defaults',
-    line2: 'before your users do.',
+    line1: 'The anti AI slop',
+    line2: 'gatekeeper.',
     lead: 'antiSlopdev names 122 habits of AI-generated UI, copy and code, and checks 105 of them on every change. Give it to your agent as a skill, or run it as a CLI.',
     plugin: 'Claude Code plugin',
     play: 'Open the playground',
@@ -118,14 +118,14 @@ export type Copy = typeof en
 
 const id: Copy = {
   meta: {
-    home: { title: 'antiSlopdev: tangkap kebiasaan AI sebelum pengguna sadar', description: '122 kebiasaan AI di UI, copy, dan kode diberi nama, dan 105 di antaranya dicek otomatis. Bisa dipakai sebagai skill agent atau CLI, open source.' },
+    home: { title: 'antiSlopdev: palang pintu anti AI slop', description: '122 kebiasaan AI di UI, copy, dan kode diberi nama, dan 105 di antaranya dicek otomatis. Bisa dipakai sebagai skill agent atau CLI, open source.' },
     docs: { title: 'Dokumentasi · antiSlopdev', description: 'Pasang skill antiSlopdev, jalankan pemeriksanya di CI atau di pesan commit, dan pertahankan pilihan yang disengaja lewat alasan tertulis.' },
     rules: { title: 'Aturan · antiSlopdev', description: 'Semua 122 aturan antiSlopdev untuk UI, copy Inggris dan Indonesia, kode, dokumentasi, commit, klaim, aksesibilitas, dan performa.' },
   },
   nav: { playground: 'Playground', docs: 'Dokumentasi', rules: 'Aturan', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
   hero: {
-    line1: 'Tangkap kebiasaan AI',
-    line2: 'sebelum pengguna sadar.',
+    line1: 'Palang pintu',
+    line2: 'anti AI Slop.',
     lead: 'antiSlopdev memberi nama 122 kebiasaan AI di UI, copy, dan kode, lalu mengecek 105 di antaranya setiap ada perubahan. Pasang sebagai skill di agent-mu, atau jalankan sebagai CLI.',
     plugin: 'Plugin Claude Code',
     play: 'Buka playground',
