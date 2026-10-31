@@ -19,7 +19,7 @@ const output = `src/app/page.tsx
 
 const flags: [string, string, string][] = [
   ['--json', 'machine-readable report', 'laporan JSON buat dibaca mesin'],
-  ['--links', 'open every external link and report dead ones', 'buka semua tautan luar dan laporkan yang mati'],
+  ['--links', 'open every external link and report dead ones', 'buka semua link eksternal dan laporkan yang mati'],
   ['--commit <file>', 'check a commit or PR message', 'cek pesan commit atau PR'],
   ['--only UI,TX-04', 'run only these rules or groups', 'jalankan aturan atau kelompok ini saja'],
   ['--disable CD-11', 'skip these rules', 'lewati aturan ini'],
@@ -41,8 +41,8 @@ function sections(lang: Lang): Section[] {
         </>
       ) : (
         <>
-          <p>antiSlopdev punya dua bagian. <b>Aturan</b>: {n} kebiasaan hasil AI yang diberi nama, masing-masing punya ID tetap dan level. <b>Pemeriksa</b>: mencari {auto} di antaranya di file-mu. Sisanya butuh orang yang melihat halaman yang sudah jadi.</p>
-          <p>Pasang skill-nya di agent supaya dia ngecek kerjaannya sendiri, lalu jalankan pemeriksanya di CI supaya gak ada yang lolos waktu kamu nulis kodenya sendiri.</p>
+          <p>antiSlopdev punya dua bagian. <b>Aturan</b>: {n} kebiasaan hasil AI yang diberi nama, masing-masing punya ID tetap dan level. <b>Checker</b>: mencari {auto} di antaranya di file-mu. Sisanya butuh orang yang melihat halaman yang sudah jadi.</p>
+          <p>Pasang skill-nya di agent supaya dia ngecek kerjaannya sendiri, lalu jalankan checker-nya di CI supaya gak ada yang lolos waktu kamu nulis kodenya sendiri.</p>
         </>
       ),
     },
@@ -68,13 +68,13 @@ function sections(lang: Lang): Section[] {
     },
     {
       id: 'checker',
-      title: en ? 'Run the checker' : 'Jalankan pemeriksa',
+      title: en ? 'Run the checker' : 'Jalankan checker',
       body: (
         <>
           <Code>npx antislopdev check src</Code>
           <Code>{output}</Code>
           <p>{en ? 'Each line is a finding: position, level, rule ID, rule title, and what matched. Pass files or folders; with no path it checks the current folder. node_modules, build output, lock files and anything in .gitignore are skipped.' : 'Tiap baris adalah satu temuan: posisi, level, ID aturan, judul aturan, dan bagian yang cocok. Kasih file atau folder; tanpa path, folder saat ini yang dicek. node_modules, hasil build, lock file, dan isi .gitignore dilewati.'}</p>
-          <p>{en ? 'It reads .tsx, .jsx, .html, .vue, .svelte, .astro, .css, .js, .ts, .py and friends, Markdown, package.json, and translation files under messages/, locales/ or i18n/.' : 'Bisa baca .tsx, .jsx, .html, .vue, .svelte, .astro, .css, .js, .ts, .py dan sejenisnya, Markdown, package.json, serta file terjemahan di messages/, locales/, atau i18n/.'}</p>
+          <p>{en ? 'It reads .tsx, .jsx, .html, .vue, .svelte, .astro, .css, .js, .ts, .py and friends, Markdown, package.json, and translation files under messages/, locales/ or i18n/.' : 'Bisa baca .tsx, .jsx, .html, .vue, .svelte, .astro, .css, .js, .ts, .py dan sejenisnya, Markdown, package.json, serta file i18n di messages/, locales/, atau i18n/.'}</p>
         </>
       ),
     },
@@ -85,7 +85,7 @@ function sections(lang: Lang): Section[] {
         <ul className="levels">
           <li>
             <b className="block">block</b>
-            {en ? 'Never acceptable in shipped work. Fails the run and cannot be allowed.' : 'Gak pernah layak dikirim. Menggagalkan pemeriksaan dan gak bisa diizinkan.'}
+            {en ? 'Never acceptable in shipped work. Fails the run and cannot be allowed.' : 'Gak pernah layak di-ship. Bikin pengecekan gagal dan gak bisa diizinkan.'}
           </li>
           <li>
             <b className="justify">justify</b>
@@ -93,7 +93,7 @@ function sections(lang: Lang): Section[] {
           </li>
           <li>
             <b className="warn">warn</b>
-            {en ? 'A smell. Reported, never fails on its own. Three warns of the same rule in one file count as justify.' : 'Bau. Dilaporkan, gak pernah gagal sendirian. Tiga warn aturan yang sama di satu file dihitung justify.'}
+            {en ? 'A smell. Reported, never fails on its own. Three warns of the same rule in one file count as justify.' : 'Smell. Dilaporkan, gak pernah gagal sendirian. Tiga warn aturan yang sama di satu file dihitung justify.'}
           </li>
         </ul>
       ),
@@ -103,7 +103,7 @@ function sections(lang: Lang): Section[] {
       title: en ? 'Keeping a finding' : 'Mempertahankan temuan',
       body: (
         <>
-          <p>{en ? 'Write the reason on the same line or the line above, in the file’s own comment syntax:' : 'Tulis alasannya di baris yang sama atau baris di atasnya, pakai format komentar file itu:'}</p>
+          <p>{en ? 'Write the reason on the same line or the line above, in the file’s own comment syntax:' : 'Tulis alasannya di baris yang sama atau baris di atasnya, pakai syntax komentar file itu:'}</p>
           <Code>{`// antislopdev-allow UI-11: the wordmark gradient is the brand
 {/* antislopdev-allow UI-04: the AI menu really is the AI feature */}
 <!-- antislopdev-allow TX-04: quoted as an example -->
@@ -135,7 +135,7 @@ function sections(lang: Lang): Section[] {
     },
     {
       id: 'config',
-      title: en ? 'Config' : 'Konfigurasi',
+      title: 'Config',
       body: (
         <>
           <p>{en ? 'Put antislopdev.json in the folder you run it from:' : 'Taruh antislopdev.json di folder tempat kamu menjalankannya:'}</p>
@@ -178,12 +178,12 @@ report.findings`}</Code>
     },
     {
       id: 'note',
-      title: en ? 'Delivery note' : 'Catatan serah',
+      title: 'Delivery note',
       body: (
         <>
-          <p>{en ? 'The skill asks the agent to end every handoff with three things:' : 'Skill-nya meminta agent menutup setiap serah terima dengan tiga hal:'}</p>
+          <p>{en ? 'The skill asks the agent to end every handoff with three things:' : 'Skill-nya meminta agent menutup setiap handoff dengan tiga hal:'}</p>
           <ol>
-            <li>{en ? 'What it ran: build, tests, the checker, and what it looked at in a browser.' : 'Apa yang dijalankan: build, tes, pemeriksa, dan apa yang dilihat di browser.'}</li>
+            <li>{en ? 'What it ran: build, tests, the checker, and what it looked at in a browser.' : 'Apa yang dijalankan: build, tes, checker, dan apa yang dilihat di browser.'}</li>
             <li>{en ? 'Every justify it kept, with the reason.' : 'Setiap justify yang dipertahankan, beserta alasannya.'}</li>
             <li>{en ? 'Every review rule it checked by eye, one line each.' : 'Setiap aturan review yang dicek pakai mata, satu baris per aturan.'}</li>
           </ol>
@@ -195,7 +195,7 @@ report.findings`}</Code>
       title: en ? 'Adding a rule' : 'Menambah aturan',
       body: (
         <>
-          <p>{en ? 'Rules live in RULES.md as table rows. The checks live in src/core/rules, one file per group. A new rule needs a row, a check (or the review label), and an example in the slop fixtures that it catches.' : 'Aturan ada di RULES.md dalam bentuk baris tabel. Pemeriksanya ada di src/core/rules, satu file per kelompok. Aturan baru butuh satu baris, satu pemeriksa (atau label review), dan contoh di fixture slop yang berhasil ditangkap.'}</p>
+          <p>{en ? 'Rules live in RULES.md as table rows. The checks live in src/core/rules, one file per group. A new rule needs a row, a check (or the review label), and an example in the slop fixtures that it catches.' : 'Aturan ada di RULES.md dalam bentuk baris tabel. Check-nya ada di src/core/rules, satu file per kelompok. Aturan baru butuh satu baris, satu check (atau label review), dan contoh di fixture slop yang berhasil ditangkap.'}</p>
           <Code>{`npm install
 npm test`}</Code>
           <p>

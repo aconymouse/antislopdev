@@ -127,10 +127,10 @@ export type Copy = typeof en
 const id: Copy = {
   meta: {
     home: { title: 'antiSlopdev: palang pintu anti AI slop', description: `${total} kebiasaan AI di UI, copy, kode, SEO, dan keamanan diberi nama, dan ${auto} di antaranya dicek otomatis. Skill agent atau CLI, open source.` },
-    docs: { title: 'Dokumentasi · antiSlopdev', description: 'Pasang skill antiSlopdev, jalankan pemeriksanya di CI atau di pesan commit, dan pertahankan pilihan yang disengaja lewat alasan tertulis.' },
+    docs: { title: 'Docs · antiSlopdev', description: 'Pasang skill antiSlopdev, jalankan checker-nya di CI atau di pesan commit, dan pertahankan pilihan yang disengaja lewat alasan tertulis.' },
     rules: { title: 'Aturan · antiSlopdev', description: `Semua ${total} aturan antiSlopdev untuk UI, copy Inggris dan Indonesia, kode, dokumentasi, commit, klaim, aksesibilitas, performa, SEO, dan keamanan.` },
   },
-  nav: { playground: 'Playground', docs: 'Dokumentasi', rules: 'Aturan', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
+  nav: { playground: 'Playground', docs: 'Docs', rules: 'Aturan', github: 'GitHub', star: 'Star', cta: 'Coba', menu: 'Menu', close: 'Tutup', theme: 'Tema', light: 'Terang', dark: 'Gelap', language: 'Bahasa', skip: 'Langsung ke isi' },
   hero: {
     line1: 'Palang pintu',
     line2: 'anti AI Slop.',
@@ -154,19 +154,19 @@ const id: Copy = {
   },
   agents: {
     title: 'Agent-mu ngecek kerjaannya sendiri.',
-    p1: 'Pasang skill-nya sekali. Sebelum agent bilang selesai, dia jalanin pemeriksa, benerin semua yang block, dan nulis alasan buat yang dia pertahankan.',
+    p1: 'Pasang skill-nya sekali. Sebelum agent bilang selesai, dia jalanin checker, benerin semua yang block, dan nulis alasan buat yang dia pertahankan.',
     p2: 'Formatnya Agent Skills, sama dengan yang dibaca alat-alat di bawah, jadi gak perlu disetel satu-satu per editor.',
     you: 'Kamu',
-    note: 'Catatan serah',
+    note: 'Delivery note',
     scenes: [
-      { prompt: 'Bikin halaman harga buat Generic.', wrote: 'Menulis app/pricing/page.tsx', fixed: 'Membereskan 4 temuan', kept: 'UI-11 dipertahankan: gradien wordmark itu identitas merek.' },
+      { prompt: 'Bikin halaman harga buat Generic.', wrote: 'Menulis app/pricing/page.tsx', fixed: 'Membereskan 4 temuan', kept: 'UI-11 dipertahankan: gradien wordmark itu bagian dari brand.' },
       { prompt: 'Tulis README buat CLI-nya.', wrote: 'Menulis README.md', fixed: 'Membereskan 3 temuan', kept: 'Gak ada justify. Langkah instalasi dicek dengan dijalankan.' },
-      { prompt: 'Commit perbaikan tagihan.', wrote: 'Menyusun pesan commit', fixed: 'Menulis ulang baris subjek', kept: 'Gak ada justify.' },
+      { prompt: 'Commit fix billing-nya.', wrote: 'Menyusun pesan commit', fixed: 'Menulis ulang subject line', kept: 'Gak ada justify.' },
     ],
   },
   xray: {
     title: 'Tiap kebiasaan ada namanya.',
-    p1: 'Arahkan kursor ke halaman di samping. Itu yang dikirim agent kalau gak ada yang mengambil keputusan, dan tiap bagiannya adalah aturan yang bisa kamu sebut saat review.',
+    p1: 'Arahkan kursor ke halaman di samping. Itu yang di-ship agent kalau gak ada yang mengambil keputusan, dan tiap bagiannya adalah aturan yang bisa kamu sebut saat review.',
     p2: 'Lalu tulis ulang. Produknya sama, keputusannya diambil satu per satu.',
     rewrite: 'Tulis ulang',
     restore: 'Lihat hasil AI-nya',
@@ -176,8 +176,8 @@ const id: Copy = {
   },
   terminal: {
     title: 'Satu perintah, di CI atau sebelum commit.',
-    p1: 'block menggagalkan pemeriksaan. justify gagal sampai ada yang nulis alasan di sebelahnya. warn cuma bau, tapi tiga warn aturan yang sama di satu file dihitung justify.',
-    p2: 'Bisa baca TSX, HTML, Vue, Svelte, CSS, TypeScript, Python, Markdown, package.json, file terjemahan, dan pesan commit.',
+    p1: 'block bikin pengecekan gagal. justify gagal sampai ada yang nulis alasan di sebelahnya. warn cuma smell, tapi tiga warn aturan yang sama di satu file dihitung justify.',
+    p2: 'Bisa baca TSX, HTML, Vue, Svelte, CSS, TypeScript, Python, Markdown, package.json, file i18n, dan pesan commit.',
   },
   allow: {
     title: 'Boleh dipertahankan, asal ada alasannya.',
@@ -194,20 +194,20 @@ const id: Copy = {
   },
   groups: {
     title: `${total} aturan. ${auto} dicek otomatis.`,
-    p1: 'Sisanya butuh mata manusia, jadi skill-nya minta agent mengecek bagian itu sendiri dan menuliskannya di catatan serah.',
+    p1: 'Sisanya butuh mata manusia, jadi skill-nya minta agent mengecek bagian itu sendiri dan menuliskannya di delivery note.',
     all: 'Baca semua aturan',
     auto: 'dicek otomatis',
-    names: { UI: 'Antarmuka', TX: 'Copy Inggris', ID: 'Copy Indonesia', CD: 'Kode', DOC: 'Dokumentasi', GIT: 'Commit', TR: 'Kejujuran', AX: 'Aksesibilitas', PF: 'Performa', SEO: 'SEO', SEC: 'Keamanan' },
+    names: { UI: 'UI', TX: 'Copy Inggris', ID: 'Copy Indonesia', CD: 'Kode', DOC: 'Docs', GIT: 'Commit', TR: 'Kejujuran', AX: 'Aksesibilitas', PF: 'Performa', SEO: 'SEO', SEC: 'Keamanan' },
   },
   faq: {
     title: 'Pertanyaan',
     items: [
-      { q: 'Ini panduan gaya?', a: 'Bukan. Gradien, tema gelap, monospace, animasi, dan sudut membulat boleh semua kalau memang dipilih. Aturannya cuma minta pilihan itu diambil dengan sadar, dan level justify ada buat itu.' },
-      { q: 'Kodeku dikirim ke mana-mana?', a: 'Gak. Pemeriksanya paket Node biasa tanpa panggilan jaringan, kecuali kamu pakai --links buat ngecek tautan luar. Playground-nya jalan di tab browser-mu.' },
+      { q: 'Ini style guide?', a: 'Bukan. Gradien, dark mode, monospace, animasi, dan rounded corner boleh semua kalau memang dipilih. Aturannya cuma minta pilihan itu diambil dengan sadar, dan level justify ada buat itu.' },
+      { q: 'Kodeku dikirim ke mana-mana?', a: 'Gak. Checker-nya paket Node biasa tanpa request jaringan, kecuali kamu pakai --links buat ngecek link eksternal. Playground-nya jalan di tab browser-mu.' },
       { q: 'Apa bedanya sama linter?', a: 'Linter ngecek kode valid atau gak. antiSlopdev ngecek ada yang ambil keputusan atau gak, makanya dia juga baca copy, README, sampai pesan commit.' },
       { q: 'Jalan di agent apa aja?', a: 'Semua yang baca Agent Skills: Claude Code, Cursor, Codex, GitHub Copilot, Gemini, Windsurf, Cline, dan lainnya. Agent yang gak baca skill tetap bisa jalanin CLI-nya.' },
-      { q: 'Ada yang ketangkep padahal sengaja.', a: 'Tulis alasannya di baris atas: antislopdev-allow UI-11 diikuti titik dua dan alasannya. Buat satu file penuh, pakai antislopdev-allow-file. Aturan block gak bisa diizinkan, karena memang gak pernah layak dikirim.' },
-      { q: 'Bisa nambah aturan sendiri?', a: 'Fork repo-nya. Aturan ada di RULES.md dan pemeriksanya di src/core/rules. Pull request-nya bawa satu contoh yang gagal dan satu yang lolos.' },
+      { q: 'Ada yang ketangkep padahal sengaja.', a: 'Tulis alasannya di baris atas: antislopdev-allow UI-11 diikuti titik dua dan alasannya. Buat satu file penuh, pakai antislopdev-allow-file. Aturan block gak bisa diizinkan, karena memang gak pernah layak di-ship.' },
+      { q: 'Bisa nambah aturan sendiri?', a: 'Fork repo-nya. Aturan ada di RULES.md dan check-nya di src/core/rules. Pull request-nya bawa satu contoh yang gagal dan satu yang lolos.' },
     ],
   },
   source: {
@@ -217,8 +217,8 @@ const id: Copy = {
   },
   rules: {
     title: 'Aturan',
-    lead: 'Tiap aturan punya ID tetap dan level. Arti ID gak pernah berubah, jadi aman dikutip waktu review kode.',
-    filter: 'Saring aturan',
+    lead: 'Tiap aturan punya ID tetap dan level. Arti ID gak pernah berubah, jadi aman dikutip waktu code review.',
+    filter: 'Filter aturan',
     all: 'Semua',
     none: 'Gak ada aturan yang cocok.',
     auto: 'Dicek otomatis',
@@ -227,7 +227,7 @@ const id: Copy = {
     promo: { SEO: 'Audit halaman live pakai sarangSEO', SEC: 'Pindai domain milikmu pakai wowHacker' },
   },
   docs: {
-    title: 'Dokumentasi',
+    title: 'Docs',
     toc: 'Di halaman ini',
   },
   foot: { rights: '© 2026 Hafidz Nc', faq: 'FAQ' },
